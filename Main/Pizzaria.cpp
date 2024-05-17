@@ -22,7 +22,7 @@ struct TpMotoqueiro{
 
 struct TpPizzas{
 	int codigo; //Chave primaria
-    float preco;
+    float valor;
 	char descricao[30];
 };
 
@@ -39,8 +39,10 @@ int validarCPF(char ncpf[15]);
 int validarInt(char str[11]);
 void cadastrarCliente(void);
 void cadastrarMotoqueiro(void);
+void cadastrarPizza(void);
 void exibirCliente(void);
 void exibirMotoqueiro(void);
+void exibirPizza(void);
 char menu(void);
 
 
@@ -61,15 +63,72 @@ int main(void){
 				break;
 				
 			case 'C':
-				exibirCliente();
+				cadastrarPizza();
 				break;
 				
 			case 'D':
+				exibirCliente();
+				break;	
+
+			case 'E':
 				exibirMotoqueiro();
+				break;	
+
+			case 'F':
+				exibirPizza();
 				break;			
 		}
 			
 	} while(op != 27);
+}
+
+void cadastrarPizza(void) {
+	TpPizzas aux;
+	FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
+	 
+	printf("Insira o CODIGO da Pizza:\n");
+	fflush(stdin);
+	scanf("%d", &aux.codigo);
+	
+	while (aux.codigo > 0) {
+		printf("Insira a DESCRICAO dessa Pizza:\n");
+		fflush(stdin);
+		gets(aux.descricao);
+		printf("Insira o VALOR dessa Pizza:\n");
+		scanf("%f", &aux.valor);
+		
+		fwrite(&aux, sizeof(TpPizzas), 1, ptrarquivo);
+		
+		printf("\nInsira o CODIGO da Pizza:\n");
+		fflush(stdin);
+		scanf("%d", &aux.codigo);
+	}
+	
+	clrscr();
+	fclose(ptrarquivo);
+}
+
+void exibirPizza(void) {
+	TpPizzas aux;
+	FILE *ptrarquivo = fopen("Pizzas.dat", "rb");
+	
+	if (ptrarquivo == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		fread (&aux, sizeof(TpPizzas), 1, ptrarquivo);
+
+		while (!feof(ptrarquivo)) {
+			printf("CODIGO: %d\n", aux.codigo);
+			printf("DESCRICAO: %s\n", aux.descricao);
+			printf("VALOR: %.2f\n", aux.valor);
+			fread(&aux, sizeof(TpPizzas), 1, ptrarquivo);
+		}
+		
+		fclose(ptrarquivo);
+	}
+	
+	getch();
+	clrscr();
 }
 
 int validarCPF(char ncpf[15]) {
@@ -129,10 +188,11 @@ int validarInt(char str[11]){
 	
 	return 1;
 }
+
 //ainda tenho que fazer a valida��o do n� telefone
 void cadastrarCliente(void) {
 	TpCliente aux;
-	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "ab");
+	FILE *ptrarquivo = fopen("Clientes.dat", "ab");
 	 
 	printf("Insira o TELEFONE do cliente que deseja cadastrar:\n");
 	fflush(stdin);
@@ -163,20 +223,22 @@ void cadastrarMotoqueiro(void) {
 	TpMotoqueiro aux;
 	int flag;
 	
-	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "ab");
+	FILE *ptrarquivo = fopen("Motoqueiros.dat", "ab");
 	 
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
+	fflush(stdin);
 	gets(aux.cpf);
 	flag = validarCPF(aux.cpf);
 	
 	//validacao do CPF
-	while (flag != 1 && strcmp(aux.cpf, "\0") != 0) {
+	while (flag != 1 && strlen(aux.cpf) > 0) {
 		printf("CPF invalido, insira um CPF valido:\n");
-		scanf("%d", &aux.cpf);
+		fflush(stdin);
+		gets(aux.cpf);
 		flag = validarCPF(aux.cpf);
 	}
 	
-	while (aux.cpf != 0) {
+	while (strlen(aux.cpf) > 0) {
 		printf("Insira o NOME desse motoqueiro:\n");
 		fflush(stdin);
 		gets(aux.nome);
@@ -189,15 +251,16 @@ void cadastrarMotoqueiro(void) {
 		
 		fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		
-		printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
-		for (int i = 0; i < 11; i++)
-			scanf("%d", &aux.cpf[i]);
+		printf("\nInsira o CPF do motoqueiro que deseja cadastrar:\n");
+		fflush(stdin);
+		gets(aux.cpf);
 		flag = validarCPF(aux.cpf);
+
 		//validacao do CPF
-		while (flag != 1 && aux.cpf[0] != 0) {
-			printf("CPF inv�lido, insira um CPF v�lido:\n");
-			for (int i = 0; i < 11; i++)
-				scanf("%d", &aux.cpf[i]);
+		while (flag != 1 && strlen(aux.cpf) > 0) {
+			printf("CPF invalido, insira um CPF valido:\n");
+			fflush(stdin);
+			gets(aux.cpf);
 			flag = validarCPF(aux.cpf);
 		}
 	}
@@ -208,7 +271,7 @@ void cadastrarMotoqueiro(void) {
 
 void exibirCliente(void) {
 	TpCliente aux;
-	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "rb");
+	FILE *ptrarquivo = fopen("Clientes.dat", "rb");
 	
 	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
@@ -233,14 +296,14 @@ void exibirCliente(void) {
 
 void exibirMotoqueiro(void) {
 	TpMotoqueiro aux;
-	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "rb");
+	FILE *ptrarquivo = fopen("Motoqueiros.dat", "rb");
 	
 	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
 	else {
 		fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		while (!feof(ptrarquivo)){
-			printf("CPF: %d\n", aux.cpf);
+			printf("CPF: %s\n", aux.cpf);
 			printf("NOME: %s\n", aux.nome);
 			printf("ENDERECO: %s\n", aux.endereco);
 			printf("TELEFONE: %s\n", aux.telefone);
@@ -259,8 +322,10 @@ char menu(void) {
 	printf("# # # # MENU # # # # \n");
 	printf("[A] Cadastrar CLIENTES\n");
 	printf("[B] Cadastrar MOTOQUEIROS\n");
-	printf("[C] Exibir CLIENTES\n");
-	printf("[D] Exibir MOTOQUEIROS\n");
+	printf("[C] Cadastrar PIZZAS\n");
+	printf("[D] Exibir CLIENTES\n");
+	printf("[E] Exibir MOTOQUEIROS\n");
+	printf("[F] Exibir PIZZAS\n");
 	
 	return toupper(getche());
 }
