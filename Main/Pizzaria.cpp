@@ -1,3 +1,4 @@
+<<<<<<< HEAD:Pizzaria.cpp
 #include <stdio.h>
 #include <string.h>
 #include <conio2.h>
