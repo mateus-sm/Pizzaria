@@ -40,9 +40,14 @@ int validarInt(char str[11]);
 void cadastrarCliente(void);
 void cadastrarMotoqueiro(void);
 void cadastrarPizza(void);
+void cadastrarPedido(void);
 void exibirCliente(void);
 void exibirMotoqueiro(void);
 void exibirPizza(void);
+int buscaCodigo(char file[50], int cod);
+int buscaCPF(char file[50], char texto[50]);
+int buscaTelefone(char file[50], char texto[50]);
+void exibirPedidos(void);
 char menu(void);
 
 
@@ -67,19 +72,195 @@ int main(void){
 				break;
 				
 			case 'D':
-				exibirCliente();
+				cadastrarPedido();
 				break;	
 
 			case 'E':
-				exibirMotoqueiro();
+				exibirCliente();
 				break;	
 
 			case 'F':
+				exibirMotoqueiro();
+				break;
+
+			case 'G':
 				exibirPizza();
+				break;
+
+			case 'H':
+				exibirPedidos();
 				break;			
 		}
 			
 	} while(op != 27);
+}
+
+void exibirPedidos(void) {
+	TpPedidos aux;
+	FILE *ptrarquivo = fopen("Pedidos.dat", "rb");
+	
+	if (ptrarquivo == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		fread (&aux, sizeof(TpPedidos), 1, ptrarquivo);
+
+		while (!feof(ptrarquivo)) {
+			printf("NUMERO: %d\n", aux.numero);
+			printf("TELEFONE: %s\n", aux.telefone);
+			printf("CODIGO: %d\n", aux.codigo);
+			printf("CPF: %s\n", aux.cpf);
+			printf("SITUACAO: %s\n", aux.situacao);
+			printf("DATA DO PEDIDO: %d/%d/%d\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			fread(&aux, sizeof(TpPedidos), 1, ptrarquivo);
+		}
+		
+		fclose(ptrarquivo);
+	}
+	
+	getch();
+	clrscr();
+}
+
+void cadastrarPedido(void) {
+	TpPedidos aux;
+	int flag;
+	FILE *ptrarquivo = fopen("Pedidos.dat", "ab");
+	 
+	printf("Insira o NUMERO do Pedido:\n");
+	fflush(stdin);
+	scanf("%d", &aux.numero);
+	
+	while (aux.numero > 0) {
+		printf("Insira o TELEFONE do Cliente:\n");
+		fflush(stdin);
+		gets(aux.telefone);
+
+		flag = buscaTelefone("Clientes.dat", aux.telefone);
+		while (flag != 1 && strlen(aux.telefone) > 0) {
+			printf("Insira o TELEFONE do Cliente:\n");
+			fflush(stdin);
+			gets(aux.telefone);
+
+			flag = buscaTelefone("Clientes.dat", aux.telefone);
+		}
+
+		if (strlen(aux.telefone) > 0) {
+			printf("Insira o CODIGO dessa Pizza:\n");
+			scanf("%d", &aux.codigo);
+
+			flag = buscaCodigo("Pizzas.dat", aux.codigo);
+			while (flag != 1 && aux.codigo > 0) {
+				printf("Insira o CODIGO dessa Pizza:\n");
+				scanf("%d", &aux.codigo);
+
+				flag = buscaCodigo("Pizzas.dat", aux.codigo);
+			}			
+
+			if (aux.codigo > 0) {
+				printf("Digite o CPF do Motoqueiro\n");
+				fflush(stdin);
+				gets(aux.cpf);
+				
+				flag = buscaCPF("Motoqueiros.dat", aux.cpf);
+				while (flag != 1 && strlen(aux.cpf) > 0) {
+					printf("Digite o CPF do Motoqueiro\n");
+					fflush(stdin);
+					gets(aux.cpf);
+
+					flag = buscaCPF("Motoqueiros.dat", aux.cpf);
+				}
+
+				if (strlen(aux.cpf) > 0) {
+					strcpy(aux.situacao, "Em preparacao"); 				
+					
+					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
+					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
+
+					fwrite(&aux, sizeof(TpPedidos), 1, ptrarquivo);	
+
+					printf("\nInsira o NUMERO do Pedido:\n");
+					fflush(stdin);
+					scanf("%d", &aux.numero);
+				}
+			}	
+		}
+	}
+	
+	clrscr();
+	fclose(ptrarquivo);
+}
+
+int buscaTelefone(char file[50], char texto[50]) {
+	TpCliente aux;
+
+	FILE *ptr = fopen(file, "rb");
+
+	if (ptr == NULL) {
+		printf("ERRO de abertura\n");
+	} else {
+		fread(&aux, sizeof(TpCliente), 1, ptr);
+
+		while(!feof(ptr) && strcmp(texto, aux.telefone) != 0) {
+			fread(&aux, sizeof(TpCliente), 1, ptr);
+		}
+
+		if (strcmp(aux.telefone, texto) == 0) {
+			return 1;
+		} else {
+			return -1;
+		}	
+
+		fclose(ptr);	
+	}
+
+}
+
+int buscaCPF(char file[50], char texto[50]) {
+	TpMotoqueiro aux;
+
+	FILE *ptr = fopen(file, "rb");
+
+	if (ptr == NULL) {
+		printf("ERRO de abertura\n");
+	} else {
+		fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+
+		while(!feof(ptr) && strcmp(texto, aux.cpf) != 0) {
+			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+		}
+
+		if (strcmp(aux.cpf, texto) == 0) {
+			return 1;
+		} else {
+			return -1;
+		}	
+
+		fclose(ptr);
+	}
+
+}
+
+int buscaCodigo(char file[50], int cod) {
+	TpPizzas aux;
+
+	FILE *ptr = fopen(file, "rb");
+
+	if (ptr == NULL) {
+		printf("ERRO de abertura\n");
+	} else {
+		fread(&aux, sizeof(TpPizzas), 1, ptr);
+
+		while(!feof(ptr) && aux.codigo != cod) {
+			fread(&aux, sizeof(TpPizzas), 1, ptr);
+		}
+
+		if (aux.codigo == cod) {
+			return 1;
+		} else {
+			return -1;
+		}	
+	}
+
 }
 
 void cadastrarPizza(void) {
@@ -323,9 +504,11 @@ char menu(void) {
 	printf("[A] Cadastrar CLIENTES\n");
 	printf("[B] Cadastrar MOTOQUEIROS\n");
 	printf("[C] Cadastrar PIZZAS\n");
-	printf("[D] Exibir CLIENTES\n");
-	printf("[E] Exibir MOTOQUEIROS\n");
-	printf("[F] Exibir PIZZAS\n");
+	printf("[D] Cadastrar PEDIDOS\n");
+	printf("[E] Exibir CLIENTES\n");
+	printf("[F] Exibir MOTOQUEIROS\n");
+	printf("[G] Exibir PIZZAS\n");
+	printf("[H] Exibir PEDIDOS\n");
 	
 	return toupper(getche());
 }
