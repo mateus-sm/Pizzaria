@@ -33,5 +33,4 @@ struct TpPedidos{
     int codigo;
     char cpf[15];
 	char situacao[30];
-
 };
