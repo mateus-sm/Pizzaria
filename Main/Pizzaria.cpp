@@ -10,14 +10,14 @@ struct TpData{
 };
 
 struct TpCliente{
-	char telefone[10]; //Chave primaria
-	char cep[8], nome[50], endereco[50], cidade[30];
+	char telefone[20]; //Chave primaria
+	char cep[15], nome[50], endereco[50], cidade[30];
 };
 
 struct TpMotoqueiro{
 	TpData data;
-	int cpf[11]; //Chave primaria //alterei pra INT para fazer a valida��o
-	char telefone[11], nome[30], endereco[50];
+	char cpf[20]; //Chave primaria
+	char telefone[20], nome[50], endereco[50];
 };
 
 struct TpPizzas{
@@ -29,13 +29,14 @@ struct TpPizzas{
 struct TpPedidos{
 	TpData dataPedido;
     int numero; //Chave primaria
-    char telefone[11];
+    char telefone[20];
     int codigo;
-    int cpf[11]; //alterei pra INT para fazer a valida��o
+    char cpf[20];
 	char situacao[30];
 };
 
-int validarCPF(int ncpf[15]);
+int validarCPF(char ncpf[15]);
+int validarInt(char str[11]);
 void cadastrarCliente(void);
 void cadastrarMotoqueiro(void);
 void exibirCliente(void);
@@ -71,13 +72,18 @@ int main(void){
 	} while(op != 27);
 }
 
-int validarCPF(int ncpf[15]) {
+int validarCPF(char ncpf[15]) {
 	int i = 0, j = 10;
 	int dig1, dig2;
 	int soma = 0, resto;
 	
-	while (i < 9) {
-		soma += ncpf[i] * j;
+	//se algum caracter for < 0 ou > 9 //quebra o codigo 
+	if(validarInt(ncpf) != 1){
+		return 0;
+	}
+		
+	while (i < 9){
+		soma += (ncpf[i] - 48) * j;
 		i++;
 		j--;
 	}
@@ -88,14 +94,13 @@ int validarCPF(int ncpf[15]) {
 	else  // se nao o digito tem que ser igual ao resto -11
 		dig1 = 11 - resto;
 	
-	
-	if (ncpf[9] != dig1) //cpf inv�lido
+	if ((ncpf[9] - 48) != dig1) //cpf inv�lido
 		return 0;
 	else {
 		i = 0, j = 11, soma = 0;
 	
 		while (i < 10) {
-			soma += ncpf[i] * j;
+			soma += (ncpf[i] - 48) * j;
 			i++;
 			j--;
 		}
@@ -107,13 +112,23 @@ int validarCPF(int ncpf[15]) {
 			dig2 = 11 - resto;
 		
 	}
-
-	if (ncpf[10] != dig2)
+	
+	if ((ncpf[10] - 48) != dig2)
 		return 0;
 	else
 		return 1;
 }
 
+int validarInt(char str[11]){
+	int i;
+	int TL = strlen(str);
+	
+	for(i = 0 ; i < TL - 1 ; i++)
+		if(str[i] < 48 || str[i] > 57)
+			return 0;
+	
+	return 1;
+}
 //ainda tenho que fazer a valida��o do n� telefone
 void cadastrarCliente(void) {
 	TpCliente aux;
@@ -151,13 +166,12 @@ void cadastrarMotoqueiro(void) {
 	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "ab");
 	 
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
-	for (int i = 0; i < 11; i++)
-		scanf("%d", &aux.cpf[i]);
+	gets(aux.cpf);
 	flag = validarCPF(aux.cpf);
-
-	//valida��o do CPF
-	while (flag != 1 && aux.cpf[0] != 0) {
-		printf("CPF inv�lido, insira um CPF v�lido:\n");
+	
+	//validacao do CPF
+	while (flag != 1 && strcmp(aux.cpf, "\0") != 0) {
+		printf("CPF invalido, insira um CPF valido:\n");
 		scanf("%d", &aux.cpf);
 		flag = validarCPF(aux.cpf);
 	}
@@ -179,7 +193,7 @@ void cadastrarMotoqueiro(void) {
 		for (int i = 0; i < 11; i++)
 			scanf("%d", &aux.cpf[i]);
 		flag = validarCPF(aux.cpf);
-		//valida��o do CPF
+		//validacao do CPF
 		while (flag != 1 && aux.cpf[0] != 0) {
 			printf("CPF inv�lido, insira um CPF v�lido:\n");
 			for (int i = 0; i < 11; i++)
