@@ -1,4 +1,3 @@
-<<<<<<< HEAD:Pizzaria.cpp
 #include <stdio.h>
 #include <string.h>
 #include <conio2.h>
@@ -12,12 +11,12 @@ struct TpData{
 
 struct TpCliente{
 	char telefone[10]; //Chave primaria
-	char cep[8], nome[30], endereco[50], cidade[30];
+	char cep[8], nome[50], endereco[50], cidade[30];
 };
 
 struct TpMotoqueiro{
 	TpData data;
-	int cpf[11]; //Chave primaria //alterei pra INT para fazer a validação
+	int cpf[11]; //Chave primaria //alterei pra INT para fazer a validaï¿½ï¿½o
 	char telefone[11], nome[30], endereco[50];
 };
 
@@ -28,59 +27,95 @@ struct TpPizzas{
 };
 
 struct TpPedidos{
-	TpData datapedido;
+	TpData dataPedido;
     int numero; //Chave primaria
     char telefone[11];
     int codigo;
-    int cpf[11]; //alterei pra INT para fazer a validação
+    int cpf[11]; //alterei pra INT para fazer a validaï¿½ï¿½o
 	char situacao[30];
 };
 
-int validarcpf(int ncpf[15]){
+int validarCPF(int ncpf[15]);
+void cadastrarCliente(void);
+void cadastrarMotoqueiro(void);
+void exibirCliente(void);
+void exibirMotoqueiro(void);
+char menu(void);
+
+
+int main(void){
+	char op;
+	
+	do {
+		op = menu();
+		clrscr();
+		
+		switch(op){
+			case 'A':
+				cadastrarCliente();
+				break;
+				
+			case 'B':
+				cadastrarMotoqueiro();
+				break;
+				
+			case 'C':
+				exibirCliente();
+				break;
+				
+			case 'D':
+				exibirMotoqueiro();
+				break;			
+		}
+			
+	} while(op != 27);
+}
+
+int validarCPF(int ncpf[15]) {
 	int i = 0, j = 10;
 	int dig1, dig2;
 	int soma = 0, resto;
 	
-	while(i < 9){
+	while (i < 9) {
 		soma += ncpf[i] * j;
 		i++;
 		j--;
 	}
 	
 	resto = soma % 11;
-	if(resto < 2) // se resto < 2 o priemiro digito tem que ser = 0
+	if (resto < 2) // se resto < 2 o priemiro digito tem que ser = 0
 		dig1 = 0;
 	else  // se nao o digito tem que ser igual ao resto -11
 		dig1 = 11 - resto;
 	
 	
-	if(ncpf[9] != dig1) //cpf inválido
+	if (ncpf[9] != dig1) //cpf invï¿½lido
 		return 0;
-	else{
+	else {
 		i = 0, j = 11, soma = 0;
 	
-		while(i < 10){
+		while (i < 10) {
 			soma += ncpf[i] * j;
 			i++;
 			j--;
 		}
 	
 		resto = soma % 11;
-		if(resto < 2)
+		if (resto < 2)
 			dig2 = 0;
 		else
 			dig2 = 11 - resto;
 		
 	}
 
-	if(ncpf[10] != dig2)
+	if (ncpf[10] != dig2)
 		return 0;
 	else
 		return 1;
 }
 
-//ainda tenho que fazer a validação do n° telefone
-void cadastrarcliente(void){
+//ainda tenho que fazer a validaï¿½ï¿½o do nï¿½ telefone
+void cadastrarCliente(void) {
 	TpCliente aux;
 	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "ab");
 	 
@@ -88,7 +123,7 @@ void cadastrarcliente(void){
 	fflush(stdin);
 	gets(aux.telefone);
 	
-	while(strcmp(aux.telefone, "\0") != 0){
+	while (strcmp(aux.telefone, "\0") != 0) {
 		printf("Insira o NOME desse cliente:\n");
 		gets(aux.nome);
 		printf("Insira o ENDERECO desse cliente:\n");
@@ -100,7 +135,7 @@ void cadastrarcliente(void){
 		
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		
-		printf("Insira o TELEFONE do cliente que deseja cadastrar:\n");
+		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
 		fflush(stdin);
 	}
@@ -109,24 +144,25 @@ void cadastrarcliente(void){
 	fclose(ptrarquivo);
 }
 
-void cadastrarmotoqueiro(void){
+void cadastrarMotoqueiro(void) {
 	TpMotoqueiro aux;
 	int flag;
 	
 	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "ab");
 	 
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
-	for(int i = 0; i < 11; i++)
-		scanf("%d",&aux.cpf[i]);
-	flag = validarcpf(aux.cpf);
-	//validação do CPF
-	while(flag != 1 && aux.cpf[0] != 0){
-		printf("CPF inválido, insira um CPF válido:\n");
-		scanf("%d",&aux.cpf);
-		flag = validarcpf(aux.cpf);
+	for (int i = 0; i < 11; i++)
+		scanf("%d", &aux.cpf[i]);
+	flag = validarCPF(aux.cpf);
+
+	//validaï¿½ï¿½o do CPF
+	while (flag != 1 && aux.cpf[0] != 0) {
+		printf("CPF invï¿½lido, insira um CPF vï¿½lido:\n");
+		scanf("%d", &aux.cpf);
+		flag = validarCPF(aux.cpf);
 	}
 	
-	while(aux.cpf != 0){
+	while (aux.cpf != 0) {
 		printf("Insira o NOME desse motoqueiro:\n");
 		fflush(stdin);
 		gets(aux.nome);
@@ -140,15 +176,15 @@ void cadastrarmotoqueiro(void){
 		fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		
 		printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
-		for(int i = 0; i < 11; i++)
-			scanf("%d",&aux.cpf[i]);
-		flag = validarcpf(aux.cpf);
-		//validação do CPF
-		while(flag != 1 && aux.cpf[0] != 0){
-			printf("CPF inválido, insira um CPF válido:\n");
-			for(int i = 0; i < 11; i++)
-				scanf("%d",&aux.cpf[i]);
-			flag = validarcpf(aux.cpf);
+		for (int i = 0; i < 11; i++)
+			scanf("%d", &aux.cpf[i]);
+		flag = validarCPF(aux.cpf);
+		//validaï¿½ï¿½o do CPF
+		while (flag != 1 && aux.cpf[0] != 0) {
+			printf("CPF invï¿½lido, insira um CPF vï¿½lido:\n");
+			for (int i = 0; i < 11; i++)
+				scanf("%d", &aux.cpf[i]);
+			flag = validarCPF(aux.cpf);
 		}
 	}
 	
@@ -156,15 +192,16 @@ void cadastrarmotoqueiro(void){
 	fclose(ptrarquivo);
 }
 
-void exibircliente(void){
+void exibirCliente(void) {
 	TpCliente aux;
 	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "rb");
 	
-	if(ptrarquivo == NULL)
+	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
 	else{
-		fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
-		while(!feof(ptrarquivo)){
+		fread (&aux, sizeof(TpCliente), 1, ptrarquivo);
+
+		while (!feof(ptrarquivo)) {
 			printf("TELEFONE: %s\n", aux.telefone);
 			printf("NOME: %s\n", aux.nome);
 			printf("ENDERECO: %s\n", aux.endereco);
@@ -173,7 +210,6 @@ void exibircliente(void){
 			fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		}
 		
-		
 		fclose(ptrarquivo);
 	}
 	
@@ -181,15 +217,15 @@ void exibircliente(void){
 	clrscr();
 }
 
-void exibirmotoqueiro(void){
+void exibirMotoqueiro(void) {
 	TpMotoqueiro aux;
 	FILE *ptrarquivo = fopen("arquivopizzaria.dat", "rb");
 	
-	if(ptrarquivo == NULL)
+	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
-	else{
+	else {
 		fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
-		while(!feof(ptrarquivo)){
+		while (!feof(ptrarquivo)){
 			printf("CPF: %d\n", aux.cpf);
 			printf("NOME: %s\n", aux.nome);
 			printf("ENDERECO: %s\n", aux.endereco);
@@ -205,7 +241,7 @@ void exibirmotoqueiro(void){
 	clrscr();
 }
 
-char menu(void){
+char menu(void) {
 	printf("# # # # MENU # # # # \n");
 	printf("[A] Cadastrar CLIENTES\n");
 	printf("[B] Cadastrar MOTOQUEIROS\n");
@@ -213,32 +249,4 @@ char menu(void){
 	printf("[D] Exibir MOTOQUEIROS\n");
 	
 	return toupper(getche());
-}
-
-int main(void){
-	char op;
-	
-	do{
-		op = menu();
-		clrscr();
-		
-		switch(op){
-			case 'A':
-				cadastrarcliente();
-				break;
-				
-			case 'B':
-				cadastrarmotoqueiro();
-				break;
-				
-			case 'C':
-				exibircliente();
-				break;
-				
-			case 'D':
-				exibirmotoqueiro();
-				break;			
-		}
-			
-	}while(op != 27);
 }
