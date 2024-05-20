@@ -51,7 +51,7 @@ void exibirPedidos(void);
 void alterarCliente(void);
 void alterarMotoqueiro(void);
 void alterarPizza(void);
-void alterarPedidos(void);
+void alterarPedido(void);
 
 int buscaCodigo(char file[50], int cod);
 int buscaCPF(char file[50], char texto[50]);
@@ -114,36 +114,11 @@ int main(void){
 				break;
 				
 			case 'L':
-				alterarPedidos();
+				alterarPedido();
 				break;
 		}
 			
 	} while(op != 27);
-}
-
-int buscaPedido(char file[50], int pedido){
-	TpPedidos aux;
-
-	FILE *ptr = fopen(file, "rb");
-
-	if (ptr == NULL) {
-		printf("ERRO de abertura\n");
-	} else {
-		fread(&aux, sizeof(TpPedidos), 1, ptr);
-
-		while(!feof(ptr) && aux.numero != pedido) {
-			fread(&aux, sizeof(TpPedidos), 1, ptr);
-		}
-
-		if (aux.numero == pedido) {
-			return ftell(ptr) - sizeof(TpPedidos);
-		} else {
-			return -1;
-		}	
-		
-		fclose(ptr);
-	}
-
 }
 
 void alterarPedido(void){
@@ -183,7 +158,7 @@ void alterarPedido(void){
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("Insira o novo NUMERO do pedido: \n");
+				printf("\nInsira o novo NUMERO do pedido: \n");
 				scanf("%d", &aux.numero);
 				
 				while(aux.numero <= 0){
@@ -194,7 +169,7 @@ void alterarPedido(void){
 				fwrite(&aux, sizeof(TpPedidos), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'B'){
-				printf("Insira o novo TELEFONE do pedido: \n");
+				printf("\nInsira o novo TELEFONE do pedido: \n");
 				fflush(stdin);
 				gets(aux.telefone);
 				flag = buscaTelefone("Clientes.dat", aux.telefone);
@@ -209,7 +184,7 @@ void alterarPedido(void){
 				fwrite(&aux, sizeof(TpPedidos), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'C'){
-				printf("Insira o novo CODIGO DA PIZZA do pedido \n");
+				printf("\nInsira o novo CODIGO DA PIZZA do pedido \n");
 				scanf("%d", &aux.codigo);
 				flag = buscaCodigo("Pizzas.dat", aux.codigo);
 				
@@ -222,7 +197,7 @@ void alterarPedido(void){
 				fwrite(&aux, sizeof(TpPedidos), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'D'){
-				printf("Insira o novo CPF DO MOTOQUEIRO do pedido \n");
+				printf("\nInsira o novo CPF DO MOTOQUEIRO do pedido \n");
 				fflush(stdin);
 				gets(aux.cpf);
 				flag = buscaCPF("Motoqueiros.dat", aux.cpf);
@@ -237,7 +212,7 @@ void alterarPedido(void){
 				fwrite(&aux, sizeof(TpPedidos), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			} else if(op == 'E'){
-				printf("Para qual SITUACAO do pedido voce deseja alterar: \n");
+				printf("\nPara qual SITUACAO do pedido voce deseja alterar: \n");
 				printf("[A] Em preparacao \n");
 				printf("[B] Em rota de entrega \n");
 				printf("[C] Entregue \n");
@@ -254,9 +229,9 @@ void alterarPedido(void){
 				else
 					strcpy(aux.situacao,"Cancelado");
 				
-				printf("Dados ALTERADOS\n");
+				printf("\nDados ALTERADOS\n");
 			}else if(op == 'F'){
-				printf("Insira a nova DATA DO PEDIDP: [dd mm aaaa]\n");
+				printf("\nInsira a nova DATA DO PEDIDP: [dd mm aaaa]\n");
 				scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.m);
 				
 				while(aux.dataPedido.d > 31 || aux.dataPedido.d < 1 || aux.dataPedido.m > 12 || aux.dataPedido.m < 1 || aux.dataPedido.a > 2024 || aux.dataPedido.a < 1){
@@ -265,13 +240,14 @@ void alterarPedido(void){
 				}
 				
 				fwrite(&aux, sizeof(TpPedidos), 1, ptr);
-				printf("Dados ALTERADOS\n");
+				printf("\nDados ALTERADOS\n");
 			}else
 				printf("Alteração de dados CANCELADA\n");
 		}
 		
 		getch();
 		fclose(ptr);
+		clrscr();
 	}
 	
 }
@@ -308,7 +284,7 @@ void alterarPizza(void){
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("Insira o novo CODIGO: \n");
+				printf("\nInsira o novo CODIGO: \n");
 				scanf("%d", &aux.codigo);
 				
 				while(aux.codigo <= 0){
@@ -319,7 +295,7 @@ void alterarPizza(void){
 				fwrite(&aux, sizeof(TpPizzas), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'B'){
-				printf("Insira a nova DESCRICAO: \n");
+				printf("\nInsira a nova DESCRICAO: \n");
 				fflush(stdin);
 				gets(aux.descricao);
 				
@@ -331,7 +307,7 @@ void alterarPizza(void){
 				fwrite(&aux, sizeof(TpPizzas), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'C'){
-				printf("Insira o novo VALOR: \n");
+				printf("\nInsira o novo VALOR: \n");
 				scanf("%f", &aux.valor);
 				
 				while(aux.valor <= 0){
@@ -342,11 +318,12 @@ void alterarPizza(void){
 				fwrite(&aux, sizeof(TpPizzas), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("Alteração de dados CANCELADA\n");
+				printf("\nAlteração de dados CANCELADA\n");
 		}
 		
 		getch();
 		fclose(ptr);
+		clrscr();
 	}
 	
 }
@@ -386,7 +363,7 @@ void alterarMotoqueiro(void){
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("Insira o novo CPF: \n");
+				printf("\nInsira o novo CPF: \n");
 				gets(aux.cpf);
 				flag = validarCPF(aux.cpf);
 				
@@ -400,7 +377,7 @@ void alterarMotoqueiro(void){
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'B'){
-				printf("Insira o novo NOME: \n");
+				printf("\nInsira o novo NOME: \n");
 				gets(aux.nome);
 				
 				while(strlen(aux.nome) <= 0){
@@ -411,7 +388,7 @@ void alterarMotoqueiro(void){
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'C'){
-				printf("Insira o novo ENDERECO: \n");
+				printf("\nInsira o novo ENDERECO: \n");
 				gets(aux.endereco);
 				
 				while(strlen(aux.endereco) <= 0){
@@ -422,7 +399,7 @@ void alterarMotoqueiro(void){
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'D'){
-				printf("Insira o novo TELEFONE: \n");
+				printf("\nInsira o novo TELEFONE: \n");
 				gets(aux.telefone);
 				
 				while(strlen(aux.telefone) <= 0){
@@ -433,7 +410,7 @@ void alterarMotoqueiro(void){
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'E'){
-				printf("Insira a nova DATA DE ADMISSAO: [dd mm aaaa]\n");
+				printf("\nInsira a nova DATA DE ADMISSAO: [dd mm aaaa]\n");
 				scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.m);
 				
 				while(aux.data.d > 31 || aux.data.d < 1 || aux.data.m > 12 || aux.data.m < 1 || aux.data.a > 2024 || aux.data.a < 1){
@@ -444,12 +421,12 @@ void alterarMotoqueiro(void){
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("Alteração de dados CANCELADA\n");
-			
+				printf("\nAlteração de dados CANCELADA\n");
 		}
 		
 		getch();
 		fclose(ptr);
+		clrscr();	
 	}
 	
 }
@@ -489,42 +466,43 @@ void alterarCliente(void){
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("Insira o novo TELEFONE: \n");
+				printf("\nInsira o novo TELEFONE: \n");
 				gets(aux.telefone);
 				
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'B'){
-				printf("Insira o novo NOME: \n");
+				printf("\nInsira o novo NOME: \n");
 				gets(aux.nome);
 				
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'C'){
-				printf("Insira o novo ENDERECO: \n");
+				printf("\nInsira o novo ENDERECO: \n");
 				gets(aux.endereco);
 				
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'D'){
-				printf("Insira a nova CIDADE: \n");
+				printf("\nInsira a nova CIDADE: \n");
 				gets(aux.cidade);
 				
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else if(op == 'E'){
-				printf("Insira o novo CEP: \n");
+				printf("\nInsira o novo CEP: \n");
 				gets(aux.cep);
 				
 				fwrite(&aux, sizeof(TpCliente), 1, ptr);
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("Alteração de dados CANCELADA\n");
+				printf("\nAlteração de dados CANCELADA\n");
 			
 		}
 		
 		getch();
 		fclose(ptr);
+		clrscr();
 	}
 		
 }
@@ -549,6 +527,31 @@ int buscaTelefone(char file[50], char texto[50]) {
 		}	
 
 		fclose(ptr);	
+	}
+
+}
+
+int buscaPedido(char file[50], int pedido){
+	TpPedidos aux;
+
+	FILE *ptr = fopen(file, "rb");
+
+	if (ptr == NULL) {
+		printf("ERRO de abertura\n");
+	} else {
+		fread(&aux, sizeof(TpPedidos), 1, ptr);
+
+		while(!feof(ptr) && aux.numero != pedido) {
+			fread(&aux, sizeof(TpPedidos), 1, ptr);
+		}
+
+		if (aux.numero == pedido) {
+			return ftell(ptr) - sizeof(TpPedidos);
+		} else {
+			return -1;
+		}	
+		
+		fclose(ptr);
 	}
 
 }
