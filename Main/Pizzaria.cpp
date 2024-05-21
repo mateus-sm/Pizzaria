@@ -65,84 +65,119 @@ int buscaPedido(FILE *ptr, int pedido);
 
 char menu(void);
 
+char menuNum(void);
+char menuCad(void);
+char menuExib(void);
+char menuAlt(void);
+char menuExcl(void);
+
 
 int main(void){
 	char op;
 	
 	do {
-		op = menu();
+		op = menuNum();
 		clrscr();
 		
 		switch(op){
-			case 'A':
-				cadastrarCliente();
-				break;
-				
-			case 'B':
-				cadastrarMotoqueiro();
-				break;
-				
-			case 'C':
-				cadastrarPizza();
-				break;
-				
-			case 'D':
-				cadastrarPedido();
-				break;	
+			case '1':
+				op = menuCad();
 
-			case 'E':
-				exibirCliente();
-				break;	
+				switch (op) {
+					case '1':
+						cadastrarCliente();
+						break;
+						
+					case '2':
+						cadastrarMotoqueiro();
+						break;
+						
+					case '3':
+						cadastrarPizza();
+						break;
+						
+					case '4':
+						cadastrarPedido();
+						break;
+				}
 
-			case 'F':
-				exibirMotoqueiro();
-				break;
+			break;
 
-			case 'G':
-				exibirPizza();
-				break;
+			case '2':
+				op = menuExib();
 
-			case 'H':
-				exibirPedidos();
-				break;	
-			
-			case 'I':
-				alterarCliente();
-				break;	
-				
-			case 'J':
-				alterarMotoqueiro();
-				break;	
-				
-			case 'K':
-				alterarPizza();
-				break;
-				
-			case 'L':
-				alterarPedido();
-				break;
-				
-			case 'M':
-				exclusaofisicaCliente();
-				break;
-				
-			case 'N':
-				exclusaofisicaMotoqueiro();
-				break;
-				
-			case 'O':
-				exclusaofisicaPizza();
-				break;
-				
-			case 'P':
-				exclusaofisicaPedido();
-				break;
+				switch (op) {
+					case '1':
+						exibirCliente();
+						break;	
+
+					case '2':
+						exibirMotoqueiro();
+						break;
+
+					case '3':
+						exibirPizza();
+						break;
+
+					case '4':
+						exibirPedidos();
+						break;
+				}
+
+			break;
+
+			case '3':
+				op = menuAlt();
+
+				switch (op) {
+					case '1':
+						alterarCliente();
+						break;	
+						
+					case '2':
+						alterarMotoqueiro();
+						break;	
+						
+					case '3':
+						alterarPizza();
+						break;
+						
+					case '4':
+						alterarPedido();
+						break;
+				}
+
+			break;
+
+			case '4':
+				op = menuExcl();
+
+				switch (op) {
+					case '1':
+						exclusaofisicaCliente();
+						break;
+						
+					case '2':
+						exclusaofisicaMotoqueiro();
+						break;
+						
+					case '3':
+						exclusaofisicaPizza();
+						break;
+						
+					case '4':
+						exclusaofisicaPedido();
+						break;
+				}
+
+			break;
 		}
 			
 	} while(op != 27);
 }
 
 void exclusaofisicaPedido(void){
+	clrscr();
 	TpPedidos aux;
 	int flag, auxnum;
 	
@@ -179,15 +214,15 @@ void exclusaofisicaPedido(void){
 			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
 			
 			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
 				fseek(ptr, 0, 0);
 				fread(&aux, sizeof(TpPedidos), 1, ptr);
 					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
 					if(auxnum != aux.numero)
 						fwrite(&aux, sizeof(TpPedidos), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpPedidos), 1, ptr);//ve se nao é EOF
+					fread(&aux, sizeof(TpPedidos), 1, ptr);//ve se nao ï¿½ EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -209,6 +244,7 @@ void exclusaofisicaPedido(void){
 }
 
 void exclusaofisicaCliente(void){
+	clrscr();
 	TpCliente aux;
 	int flag;
 	char tel[30];
@@ -245,15 +281,15 @@ void exclusaofisicaCliente(void){
 			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
 			
 			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
 				fseek(ptr, 0, 0);
 				fread(&aux, sizeof(TpCliente), 1, ptr);
 					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
 					if(strcmp(tel, aux.telefone) != 0)
 						fwrite(&aux, sizeof(TpCliente), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao é EOF
+					fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao ï¿½ EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -275,6 +311,7 @@ void exclusaofisicaCliente(void){
 }
 
 void exclusaofisicaMotoqueiro(void){
+	clrscr();
 	TpMotoqueiro aux;
 	int flag;
 	char cpf[30];
@@ -311,15 +348,15 @@ void exclusaofisicaMotoqueiro(void){
 			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
 			
 			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
 				fseek(ptr, 0, 0);
 				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
 					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
 					if(strcmp(cpf, aux.cpf) != 0)
 						fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpMotoqueiro), 1, ptr);//ve se nao é EOF
+					fread(&aux, sizeof(TpMotoqueiro), 1, ptr);//ve se nao ï¿½ EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -341,6 +378,7 @@ void exclusaofisicaMotoqueiro(void){
 }
 
 void exclusaofisicaPizza(void){
+	clrscr();
 	TpPizzas aux;
 	int flag, auxcod;
 
@@ -374,15 +412,15 @@ void exclusaofisicaPizza(void){
 			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
 			
 			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
 				fseek(ptr, 0, 0);
 				fread(&aux, sizeof(TpPizzas), 1, ptr);
 					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
 					if( aux.codigo != auxcod)
 						fwrite(&aux, sizeof(TpPizzas), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpPizzas), 1, ptr);//ve se nao é EOF
+					fread(&aux, sizeof(TpPizzas), 1, ptr);//ve se nao ï¿½ EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -404,6 +442,7 @@ void exclusaofisicaPizza(void){
 }
 
 void alterarPedido(void){
+	clrscr();
 	TpPedidos aux;
 	int flag;
 	char op;
@@ -525,7 +564,7 @@ void alterarPedido(void){
 				
 				printf("\nDados ALTERADOS\n");
 			}else
-				printf("Alteração de dados CANCELADA\n");
+				printf("Alteraï¿½ï¿½o de dados CANCELADA\n");
 				
 			fwrite(&aux, sizeof(TpPedidos), 1, ptrpedido);
 
@@ -541,6 +580,7 @@ void alterarPedido(void){
 	
 }
 void alterarPizza(void){
+	clrscr();
 	TpPizzas aux;
 	int flag;
 	char op;
@@ -608,7 +648,7 @@ void alterarPizza(void){
 				
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("\nAlteração de dados CANCELADA\n");
+				printf("\nAlteraï¿½ï¿½o de dados CANCELADA\n");
 			
 			fwrite(&aux, sizeof(TpPizzas), 1, ptr);
 
@@ -622,6 +662,7 @@ void alterarPizza(void){
 }
 
 void alterarMotoqueiro(void){
+	clrscr();
 	TpMotoqueiro aux;
 	int flag;
 	char op;
@@ -713,7 +754,7 @@ void alterarMotoqueiro(void){
 				
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("\nAlteração de dados CANCELADA\n");
+				printf("\nAlteraï¿½ï¿½o de dados CANCELADA\n");
 				
 			fwrite(&aux, sizeof(TpMotoqueiro), 1, ptr);
 
@@ -727,6 +768,7 @@ void alterarMotoqueiro(void){
 }
 
 void alterarCliente(void){
+	clrscr();
 	TpCliente aux;
 	int flag;
 	char op;
@@ -792,7 +834,7 @@ void alterarCliente(void){
 				
 				printf("Dados ALTERADOS\n");
 			}else
-				printf("\nAlteração de dados CANCELADA\n");
+				printf("\nAlteraï¿½ï¿½o de dados CANCELADA\n");
 				
 			fwrite(&aux, sizeof(TpCliente), 1, ptr);
 			
@@ -894,6 +936,7 @@ int buscaCodigo(FILE *ptr, int cod) {
 }
 
 void cadastrarPedido(void) {
+	clrscr();
 	TpPedidos aux;
 	int flag;
 	FILE *ptrpedido = fopen("Pedidos.dat", "ab");
@@ -971,6 +1014,7 @@ void cadastrarPedido(void) {
 }
 
 void cadastrarPizza(void) {
+	clrscr();
 	TpPizzas aux;
 	FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
 	 
@@ -1057,6 +1101,7 @@ int validarInt(char str[11]){
 
 //ainda tenho que fazer a validaï¿½ï¿½o do nï¿½ telefone
 void cadastrarCliente(void) {
+	clrscr();
 	TpCliente aux;
 	FILE *ptrarquivo = fopen("Clientes.dat", "ab");
 	 
@@ -1086,6 +1131,7 @@ void cadastrarCliente(void) {
 }
 
 void cadastrarMotoqueiro(void) {
+	clrscr();
 	TpMotoqueiro aux;
 	int flag;
 	
@@ -1136,6 +1182,7 @@ void cadastrarMotoqueiro(void) {
 }
 
 void exibirCliente(void) {
+	clrscr();
 	TpCliente aux;
 	FILE *ptrarquivo = fopen("Clientes.dat", "rb");
 	
@@ -1161,6 +1208,7 @@ void exibirCliente(void) {
 }
 
 void exibirMotoqueiro(void) {
+	clrscr();
 	TpMotoqueiro aux;
 	FILE *ptrarquivo = fopen("Motoqueiros.dat", "rb");
 	
@@ -1185,6 +1233,7 @@ void exibirMotoqueiro(void) {
 }
 
 void exibirPizza(void) {
+	clrscr();
 	TpPizzas aux;
 	FILE *ptrarquivo = fopen("Pizzas.dat", "rb");
 	
@@ -1208,6 +1257,7 @@ void exibirPizza(void) {
 }
 
 void exibirPedidos(void) {
+	clrscr();
 	TpPedidos aux;
 	FILE *ptrarquivo = fopen("Pedidos.dat", "rb");
 	
@@ -1258,4 +1308,72 @@ char menu(void) {
 	textcolor(7);
 	
 	return toupper(getche());
+}
+
+char menuNum(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(1);
+	printf("[1] Cadastrar\n");
+	textcolor(2);
+	printf("[2] Exibir\n");
+	textcolor(3);
+	printf("[3] Alterar\n");
+	textcolor(5);
+	printf("[4] Excluir\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuCad(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(1);
+	printf("[1] Cadastrar CLIENTES\n");
+	printf("[2] Cadastrar MOTOQUEIROS\n");
+	printf("[3] Cadastrar PIZZAS\n");
+	printf("[4] Cadastrar PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuExib(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(2);
+	printf("[1] Exibir CLIENTES\n");
+	printf("[2] Exibir MOTOQUEIROS\n");
+	printf("[3] Exibir PIZZAS\n");
+	printf("[4] Exibir PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuAlt(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(3);
+	printf("[1] Alterar CLIENTES\n");
+	printf("[2] Alterar MOTOQUEIROS\n");
+	printf("[3] Alterar PIZZAS\n");
+	printf("[4] Alterar PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuExcl(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(5);
+	printf("[1] Excluir CLIENTES\n");
+	printf("[2] Excluir MOTOQUEIROS\n");
+	printf("[3] Excluir PIZZAS\n");
+	printf("[4] Excluir PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
 }
