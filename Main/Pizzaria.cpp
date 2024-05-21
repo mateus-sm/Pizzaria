@@ -53,10 +53,10 @@ void alterarMotoqueiro(void);
 void alterarPizza(void);
 void alterarPedido(void);
 
-void exclusaofisicaCliente(void);
-void exclusaofisicaMotoqueiro(void);
-void exclusaofisicaPizza(void);
-void exclusaofisicaPedido(void);
+void exclusaoFisicaCliente(void);
+void exclusaoFisicaMotoqueiro(void);
+void exclusaoFisicaPizza(void);
+void exclusaoFisicaPedido(void);
 
 int buscaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
@@ -153,19 +153,19 @@ int main(void){
 
 				switch (op) {
 					case '1':
-						exclusaofisicaCliente();
+						exclusaoFisicaCliente();
 						break;
 						
 					case '2':
-						exclusaofisicaMotoqueiro();
+						exclusaoFisicaMotoqueiro();
 						break;
 						
 					case '3':
-						exclusaofisicaPizza();
+						exclusaoFisicaPizza();
 						break;
 						
 					case '4':
-						exclusaofisicaPedido();
+						exclusaoFisicaPedido();
 						break;
 				}
 
@@ -175,7 +175,7 @@ int main(void){
 	} while(op != 27);
 }
 
-void exclusaofisicaPedido(void){
+void exclusaoFisicaPedido(void){
 	clrscr();
 	TpPedido aux;
 	int flag, auxnum;
@@ -242,7 +242,7 @@ void exclusaofisicaPedido(void){
 	}
 }
 
-void exclusaofisicaCliente(void){
+void exclusaoFisicaCliente(void){
 	clrscr();
 	TpCliente aux;
 	int flag;
@@ -309,7 +309,7 @@ void exclusaofisicaCliente(void){
 	}
 }
 
-void exclusaofisicaMotoqueiro(void){
+void exclusaoFisicaMotoqueiro(void){
 	clrscr();
 	TpMotoqueiro aux;
 	int flag;
@@ -376,7 +376,7 @@ void exclusaofisicaMotoqueiro(void){
 	}
 }
 
-void exclusaofisicaPizza(void){
+void exclusaoFisicaPizza(void){
 	clrscr();
 	TpPizza aux;
 	int flag, auxcod;
