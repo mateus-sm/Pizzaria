@@ -20,13 +20,13 @@ struct TpMotoqueiro{
 	char telefone[20], nome[50], endereco[50];
 };
 
-struct TpPizzas{
+struct TpPizza{
 	int codigo; //Chave primaria
     float valor;
 	char descricao[30];
 };
 
-struct TpPedidos{
+struct TpPedido{
 	TpData dataPedido;
     int numero; //Chave primaria
     char telefone[20];
@@ -177,7 +177,7 @@ int main(void){
 
 void exclusaofisicaPedido(void){
 	clrscr();
-	TpPedidos aux;
+	TpPedido aux;
 	int flag, auxnum;
 	
 	FILE *ptr = fopen("Pedidos.dat", "rb");
@@ -201,7 +201,7 @@ void exclusaofisicaPedido(void){
 		
 		if(auxnum > 0){
 			fseek(ptr, flag, 0); //vai para a pos encontrada
-			fread(&aux, sizeof(TpPedidos), 1, ptr);
+			fread(&aux, sizeof(TpPedido), 1, ptr);
 			printf("---> Dados do PEDIDO <---\n");
 			printf("Numero: %d\n", aux.numero);
 			printf("Telefone: %s\n", aux.telefone);
@@ -215,13 +215,13 @@ void exclusaofisicaPedido(void){
 			if(toupper(getche()) == 'Y'){
 				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 				fseek(ptr, 0, 0);
-				fread(&aux, sizeof(TpPedidos), 1, ptr);
+				fread(&aux, sizeof(TpPedido), 1, ptr);
 					
 				while(!feof(ptr)){ //enquanto o arquivo p essoa n�o chegar no fim
 					if(auxnum != aux.numero)
-						fwrite(&aux, sizeof(TpPedidos), 1, ptrnovo);
+						fwrite(&aux, sizeof(TpPedido), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpPedidos), 1, ptr);//ve se nao � EOF
+					fread(&aux, sizeof(TpPedido), 1, ptr);//ve se nao � EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -378,7 +378,7 @@ void exclusaofisicaMotoqueiro(void){
 
 void exclusaofisicaPizza(void){
 	clrscr();
-	TpPizzas aux;
+	TpPizza aux;
 	int flag, auxcod;
 
 	FILE *ptr = fopen("Pizzas.dat", "rb");
@@ -402,7 +402,7 @@ void exclusaofisicaPizza(void){
 		
 		if(auxcod > 0){
 			fseek(ptr, flag, 0); //vai para a pos encontrada
-			fread(&aux, sizeof(TpPizzas), 1, ptr);
+			fread(&aux, sizeof(TpPizza), 1, ptr);
 			printf("---> Dados da PIZZA <---\n");
 			printf("Codigo: %d\n", aux.codigo);
 			printf("Descricao: %s\n", aux.descricao);
@@ -413,13 +413,13 @@ void exclusaofisicaPizza(void){
 			if(toupper(getche()) == 'Y'){
 				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 				fseek(ptr, 0, 0);
-				fread(&aux, sizeof(TpPizzas), 1, ptr);
+				fread(&aux, sizeof(TpPizza), 1, ptr);
 					
 				while(!feof(ptr)){ //enquanto o arquivo p essoa n�o chegar no fim
 					if( aux.codigo != auxcod)
-						fwrite(&aux, sizeof(TpPizzas), 1, ptrnovo);
+						fwrite(&aux, sizeof(TpPizza), 1, ptrnovo);
 			
-					fread(&aux, sizeof(TpPizzas), 1, ptr);//ve se nao � EOF
+					fread(&aux, sizeof(TpPizza), 1, ptr);//ve se nao � EOF
 				}
 				
 				//fecha e renomeia os arquivos
@@ -442,7 +442,7 @@ void exclusaofisicaPizza(void){
 
 void alterarPedido(void){
 	clrscr();
-	TpPedidos aux;
+	TpPedido aux;
 	int flag;
 	char op;
 	
@@ -573,7 +573,7 @@ void alterarPedido(void){
 			}else
 				printf("Alteracao de dados CANCELADA\n");
 				
-			fwrite(&aux, sizeof(TpPedidos), 1, ptrpedido);
+			fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
 
 		}
 		
@@ -589,7 +589,7 @@ void alterarPedido(void){
 
 void alterarPizza(void){
 	clrscr();
-	TpPizzas aux;
+	TpPizza aux;
 	int flag;
 	char op;
 	
@@ -662,7 +662,7 @@ void alterarPizza(void){
 			}else
 				printf("\nAlteracao de dados CANCELADA\n");
 			
-			fwrite(&aux, sizeof(TpPizzas), 1, ptr);
+			fwrite(&aux, sizeof(TpPizza), 1, ptr);
 
 		}
 		
@@ -892,21 +892,21 @@ int buscaTelefone(FILE *ptr, char texto[50]) {
 }
 
 int buscaPedido(FILE *ptr, int pedido){
-	TpPedidos aux;
+	TpPedido aux;
 
 	fseek(ptr, 0, 0);
 
 	if (ptr == NULL) {
 		printf("ERRO de abertura\n");
 	} else {
-		fread(&aux, sizeof(TpPedidos), 1, ptr);
+		fread(&aux, sizeof(TpPedido), 1, ptr);
 
 		while(!feof(ptr) && aux.numero != pedido) {
-			fread(&aux, sizeof(TpPedidos), 1, ptr);
+			fread(&aux, sizeof(TpPedido), 1, ptr);
 		}
 
 		if (aux.numero == pedido)
-			return ftell(ptr) - sizeof(TpPedidos);
+			return ftell(ptr) - sizeof(TpPedido);
 		else 
 			return -1;
 		
@@ -937,21 +937,21 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 }
 
 int buscaCodigo(FILE *ptr, int cod) {
-	TpPizzas aux;
+	TpPizza aux;
 
 	fseek(ptr, 0, 0);
 
 	if (ptr == NULL)
 		printf("ERRO de abertura\n");
 	else {
-		fread(&aux, sizeof(TpPizzas), 1, ptr);
+		fread(&aux, sizeof(TpPizza), 1, ptr);
 
 		while(!feof(ptr) && aux.codigo != cod) {
-			fread(&aux, sizeof(TpPizzas), 1, ptr);
+			fread(&aux, sizeof(TpPizza), 1, ptr);
 		}
 
 		if (aux.codigo == cod) {
-			return ftell(ptr) - sizeof(TpPizzas);
+			return ftell(ptr) - sizeof(TpPizza);
 		} else {
 			return -1;
 		}	
@@ -961,7 +961,7 @@ int buscaCodigo(FILE *ptr, int cod) {
 
 void cadastrarPedido(void) {
 	clrscr();
-	TpPedidos aux;
+	TpPedido aux;
 	int flag;
 	FILE *ptrpedido = fopen("Pedidos.dat", "ab");
 	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
@@ -1020,7 +1020,7 @@ void cadastrarPedido(void) {
 					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
 
-					fwrite(&aux, sizeof(TpPedidos), 1, ptrpedido);	
+					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);	
 
 					printf("\nInsira o NUMERO do Pedido:\n");
 					fflush(stdin);
@@ -1039,7 +1039,7 @@ void cadastrarPedido(void) {
 
 void cadastrarPizza(void) {
 	clrscr();
-	TpPizzas aux;
+	TpPizza aux;
 	FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
 	 
 	printf("Insira o CODIGO da Pizza:\n");
@@ -1053,7 +1053,7 @@ void cadastrarPizza(void) {
 		printf("Insira o VALOR dessa Pizza:\n");
 		scanf("%f", &aux.valor);
 		
-		fwrite(&aux, sizeof(TpPizzas), 1, ptrarquivo);
+		fwrite(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		
 		printf("\nInsira o CODIGO da Pizza:\n");
 		fflush(stdin);
@@ -1257,19 +1257,19 @@ void exibirMotoqueiro(void) {
 
 void exibirPizza(void) {
 	clrscr();
-	TpPizzas aux;
+	TpPizza aux;
 	FILE *ptrarquivo = fopen("Pizzas.dat", "rb");
 	
 	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
 	else{
-		fread (&aux, sizeof(TpPizzas), 1, ptrarquivo);
+		fread (&aux, sizeof(TpPizza), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
 			printf("CODIGO: %d\n", aux.codigo);
 			printf("DESCRICAO: %s\n", aux.descricao);
 			printf("VALOR: %.2f\n\n", aux.valor);
-			fread(&aux, sizeof(TpPizzas), 1, ptrarquivo);
+			fread(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		}
 		
 		fclose(ptrarquivo);
@@ -1281,13 +1281,13 @@ void exibirPizza(void) {
 
 void exibirPedidos(void) {
 	clrscr();
-	TpPedidos aux;
+	TpPedido aux;
 	FILE *ptrarquivo = fopen("Pedidos.dat", "rb");
 	
 	if (ptrarquivo == NULL)
 		printf("ERRO de abertura\n");
 	else{
-		fread (&aux, sizeof(TpPedidos), 1, ptrarquivo);
+		fread (&aux, sizeof(TpPedido), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
 			printf("NUMERO: %d\n", aux.numero);
@@ -1296,7 +1296,7 @@ void exibirPedidos(void) {
 			printf("CPF: %s\n", aux.cpf);
 			printf("SITUACAO: %s\n", aux.situacao);
 			printf("DATA DO PEDIDO: %d/%d/%d\n\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
-			fread(&aux, sizeof(TpPedidos), 1, ptrarquivo);
+			fread(&aux, sizeof(TpPedido), 1, ptrarquivo);
 		}
 		
 		fclose(ptrarquivo);
