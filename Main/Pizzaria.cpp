@@ -53,6 +53,11 @@ void alterarMotoqueiro(void);
 void alterarPizza(void);
 void alterarPedido(void);
 
+void exclusaofisicaCliente(void);
+void exclusaofisicaMotoqueiro(void);
+void exclusaofisicaPizza(void);
+void exclusaofisicaPedido(void);
+
 int buscaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
 int buscaTelefone(FILE *ptr, char texto[50]);
@@ -116,9 +121,286 @@ int main(void){
 			case 'L':
 				alterarPedido();
 				break;
+				
+			case 'M':
+				exclusaofisicaCliente();
+				break;
+				
+			case 'N':
+				exclusaofisicaMotoqueiro();
+				break;
+				
+			case 'O':
+				exclusaofisicaPizza();
+				break;
+				
+			case 'P':
+				exclusaofisicaPedido();
+				break;
 		}
 			
 	} while(op != 27);
+}
+
+void exclusaofisicaPedido(void){
+	TpPedidos aux;
+	int flag, auxnum;
+	
+	FILE *ptr = fopen("Pedidos.dat", "rb");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("Digite o NUMERO do pedido que deseja excluir: \n");
+		fflush(stdin);
+		scanf("%d", &auxnum);
+		
+		flag = buscaPedido(ptr, auxnum);
+		
+		while (flag == -1 && auxnum > 0){
+			printf("Insira um numero do pedido CADASTRADO: \n");
+			fflush(stdin);
+			scanf("%d", &auxnum);
+		
+			flag = buscaPedido(ptr, auxnum);
+		}
+		
+		if(auxnum > 0){
+			fseek(ptr, flag, 0); //vai para a pos encontrada
+			fread(&aux, sizeof(TpPedidos), 1, ptr);
+			printf("---> Dados do PEDIDO <---\n");
+			printf("Numero: %d\n", aux.numero);
+			printf("Telefone: %s\n", aux.telefone);
+			printf("Codigo da pizza: %d\n", aux.codigo);
+			printf("CPF: %s\n", aux.cpf);
+			printf("Situacao: %s\n", aux.situacao);
+			printf("Data do pedido: %d/%d/%d \n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			
+			if(toupper(getche()) == 'Y'){
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				fseek(ptr, 0, 0);
+				fread(&aux, sizeof(TpPedidos), 1, ptr);
+					
+				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+					if(auxnum != aux.numero)
+						fwrite(&aux, sizeof(TpPedidos), 1, ptrnovo);
+			
+					fread(&aux, sizeof(TpPedidos), 1, ptr);//ve se nao é EOF
+				}
+				
+				//fecha e renomeia os arquivos
+					fclose(ptr);
+					fclose(ptrnovo);
+					remove("Pedidos.dat");
+					rename("novo.dat", "Pedidos.dat");
+					printf("\nExclusao realizada com sucesso!\n");
+
+			} else{
+				printf("\nExclusao nao realizada\n");
+				fclose(ptr);
+			}
+		}
+		fclose(ptr);
+		getch();
+		clrscr();	
+	}
+}
+
+void exclusaofisicaCliente(void){
+	TpCliente aux;
+	int flag;
+	char tel[30];
+
+	FILE *ptr = fopen("Clientes.dat", "rb");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("Digite o TELEFONE do cliente que deseja excluir: \n");
+		fflush(stdin);
+		gets(tel);
+		
+		flag = buscaTelefone(ptr, tel);
+		
+		while (flag == -1 && strlen(tel) > 0){
+			printf("Insira um telefone CADASTRADO: \n");
+			fflush(stdin);
+			gets(tel);
+		
+			flag = buscaTelefone(ptr, tel);
+		}
+		
+		if(strlen(tel) > 0){
+			fseek(ptr, flag, 0); //vai para a pos encontrada
+			fread(&aux, sizeof(TpCliente), 1, ptr);
+			printf("---> Dados do CLIENTE <---\n");
+			printf("Telefone: %s\n", aux.telefone);
+			printf("Nome: %s\n", aux.nome);
+			printf("Endereco: %s\n", aux.endereco);
+			printf("Cidade: %s\n", aux.cidade);
+			printf("Cep: %s\n", aux.cep);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			
+			if(toupper(getche()) == 'Y'){
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				fseek(ptr, 0, 0);
+				fread(&aux, sizeof(TpCliente), 1, ptr);
+					
+				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+					if(strcmp(tel, aux.telefone) != 0)
+						fwrite(&aux, sizeof(TpCliente), 1, ptrnovo);
+			
+					fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao é EOF
+				}
+				
+				//fecha e renomeia os arquivos
+					fclose(ptr);
+					fclose(ptrnovo);
+					remove("Clientes.dat");
+					rename("novo.dat", "Clientes.dat");
+					printf("\nExclusao realizada com sucesso!\n");
+
+			} else{
+				printf("\nExclusao nao realizada\n");
+				fclose(ptr);
+			}
+		}
+		fclose(ptr);
+		getch();
+		clrscr();	
+	}
+}
+
+void exclusaofisicaMotoqueiro(void){
+	TpMotoqueiro aux;
+	int flag;
+	char cpf[30];
+
+	FILE *ptr = fopen("Motoqueiros.dat", "rb");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("Digite o CPF do motoqueiro que deseja excluir: \n");
+		fflush(stdin);
+		gets(cpf);
+		
+		flag = buscaCPF(ptr, cpf);
+		
+		while (flag == -1 && strlen(cpf) > 0){
+			printf("Insira um CPF CADASTRADO: \n");
+			fflush(stdin);
+			gets(cpf);
+		
+			flag = buscaCPF(ptr, cpf);
+		}
+		
+		if(strlen(cpf) > 0){
+			fseek(ptr, flag, 0); //vai para a pos encontrada
+			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+			printf("---> Dados do MOTOQUEIRO <---\n");
+			printf("CPF: %s\n", aux.cpf);
+			printf("Nome: %s\n", aux.nome);
+			printf("Endereco: %s\n", aux.endereco);
+			printf("Telefone: %s\n", aux.telefone);
+			printf("Data de admissao: %d/%d/%d \n", aux.data.d, aux.data.m, aux.data.a);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			
+			if(toupper(getche()) == 'Y'){
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				fseek(ptr, 0, 0);
+				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+					
+				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+					if(strcmp(cpf, aux.cpf) != 0)
+						fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrnovo);
+			
+					fread(&aux, sizeof(TpMotoqueiro), 1, ptr);//ve se nao é EOF
+				}
+				
+				//fecha e renomeia os arquivos
+					fclose(ptr);
+					fclose(ptrnovo);
+					remove("Motoqueiros.dat");
+					rename("novo.dat", "Motoqueiros.dat");
+					printf("\nExclusao realizada com sucesso!\n");
+
+			} else{
+				printf("\nExclusao nao realizada\n");
+				fclose(ptr);
+			}
+		}
+		fclose(ptr);
+		getch();
+		clrscr();	
+	}
+}
+
+void exclusaofisicaPizza(void){
+	TpPizzas aux;
+	int flag, auxcod;
+
+	FILE *ptr = fopen("Pizzas.dat", "rb");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("Digite o CODIGO DA PIZZA que deseja excluir: \n");
+		fflush(stdin);
+		scanf("%d",&auxcod);
+		
+		flag = buscaCodigo(ptr, auxcod);
+		
+		while (flag == -1 && auxcod > 0){
+			printf("Insira um codigo da pizza CADASTRADO: \n");
+			fflush(stdin);
+			scanf("%d",&auxcod);
+			
+			flag = buscaCodigo(ptr, auxcod);
+		}
+		
+		if(auxcod > 0){
+			fseek(ptr, flag, 0); //vai para a pos encontrada
+			fread(&aux, sizeof(TpPizzas), 1, ptr);
+			printf("---> Dados da PIZZA <---\n");
+			printf("Codigo: %d\n", aux.codigo);
+			printf("Descricao: %s\n", aux.descricao);
+			printf("Valor: %.2f\n", aux.valor);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			
+			if(toupper(getche()) == 'Y'){
+				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo é zerado
+				fseek(ptr, 0, 0);
+				fread(&aux, sizeof(TpPizzas), 1, ptr);
+					
+				while(!feof(ptr)){ //enquanto o arquivo p essoa não chegar no fim
+					if( aux.codigo != auxcod)
+						fwrite(&aux, sizeof(TpPizzas), 1, ptrnovo);
+			
+					fread(&aux, sizeof(TpPizzas), 1, ptr);//ve se nao é EOF
+				}
+				
+				//fecha e renomeia os arquivos
+					fclose(ptr);
+					fclose(ptrnovo);
+					remove("Pizzas.dat");
+					rename("novo.dat", "Pizzas.dat");
+					printf("\nExclusao realizada com sucesso!\n");
+
+			} else{
+				printf("\nExclusao nao realizada\n");
+				fclose(ptr);
+			}
+		}
+		fclose(ptr);
+		getch();
+		clrscr();	
+	}
 }
 
 void alterarPedido(void){
@@ -525,6 +807,8 @@ void alterarCliente(void){
 int buscaTelefone(FILE *ptr, char texto[50]) {
 	TpCliente aux;
 
+	fseek(ptr, 0, 0);
+	
 	if (ptr == NULL) {
 		printf("ERRO de abertura\n");
 	} else {
@@ -543,6 +827,8 @@ int buscaTelefone(FILE *ptr, char texto[50]) {
 
 int buscaPedido(FILE *ptr, int pedido){
 	TpPedidos aux;
+
+	fseek(ptr, 0, 0);
 
 	if (ptr == NULL) {
 		printf("ERRO de abertura\n");
@@ -566,6 +852,8 @@ int buscaPedido(FILE *ptr, int pedido){
 int buscaCPF(FILE *ptr, char texto[50]) {
 	TpMotoqueiro aux;
 
+	fseek(ptr, 0, 0);
+
 	if (ptr == NULL)
 		printf("ERRO de abertura\n");
 	else
@@ -584,6 +872,8 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 
 int buscaCodigo(FILE *ptr, int cod) {
 	TpPizzas aux;
+
+	fseek(ptr, 0, 0);
 
 	if (ptr == NULL)
 		printf("ERRO de abertura\n");
@@ -621,7 +911,7 @@ void cadastrarPedido(void) {
 		gets(aux.telefone);
 
 		flag = buscaTelefone(ptrcliente, aux.telefone);
-		printf("\nBusca terminou flag vale: %d\n", flag);
+		//printf("\nBusca terminou flag vale: %d\n", flag);
 		
 		while (flag == -1 && strlen(aux.telefone) > 0) {
 			printf("Insira um TELEFONE cadastrado:\n");
@@ -960,6 +1250,11 @@ char menu(void) {
 	printf("[J] Alterar MOTOQUEIROS\n");
 	printf("[K] Alterar PIZZAS\n");
 	printf("[L] Alterar PEDIDOS\n");
+	textcolor(5);
+	printf("[M] Excluir CLIENTES\n");
+	printf("[N] Excluir MOTOQUEIROS\n");
+	printf("[O] Excluir PIZZAS\n");
+	printf("[P] Excluir PEDIDOS\n");
 	textcolor(7);
 	
 	return toupper(getche());
