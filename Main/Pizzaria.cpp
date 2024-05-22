@@ -63,6 +63,8 @@ int buscaCPF(FILE *ptr, char texto[50]);
 int buscaTelefone(FILE *ptr, char texto[50]);
 int buscaPedido(FILE *ptr, int pedido);
 
+void estadoPizza(void);
+
 char menu(void);
 char menuNum(void);
 char menuCad(void);
@@ -121,6 +123,9 @@ int main(void){
 					case '4':
 						exibirPedidos();
 						break;
+					case '5':
+						estadoPizza();
+						break;
 				}
 
 			break;
@@ -173,6 +178,82 @@ int main(void){
 		}
 			
 	} while(op != 27);
+}
+
+void estadoPizza(void) {
+	TpPedido aux;
+	TpPizza auxPizza;
+	int cont, flag;
+	FILE *ptr = fopen("Pedidos.dat", "rb");
+	FILE *ptrPizza = fopen("Pizzas.dat", "rb");
+
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	if (ptr == NULL || ptrPizza == NULL) {
+		printf("Erro de abertura!");
+	} else {
+		cont = 0;
+		while (!feof(ptr)) {
+			
+			if (strcmp(aux.situacao, "Em preparacao") == 0) {
+				if (cont == 0)
+					printf("\n###Pizzas em preparacao###");
+
+				flag = buscaCodigo(ptrPizza, aux.codigo);
+				fseek(ptrPizza, flag, 0);
+				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+				printf("\nNumero do pedido: %d\n", aux.numero);
+				//printf("Codigo da pizza: %d\n", aux.codigo);
+				printf("Descricao: %s\n", auxPizza.descricao);
+				printf("Descricao da pizza: %s\n", aux.situacao);
+				printf("Valor: %.2f\n", auxPizza.valor);
+
+				cont++;
+			}
+
+			fread(&aux, sizeof(TpPedido), 1, ptr);
+		}
+
+		if (cont == 0) {
+			printf("\nNenhuma Pizza em Andamento");
+		}
+
+		fseek(ptr, 0, 0); //Volta ptr de pedidos pra fazer mais um loop
+		fread(&aux, sizeof(TpPedido), 1, ptr); 
+		cont = 0;
+		while (!feof(ptr)) {
+			
+			if (strcmp(aux.situacao, "Em rota de entrega") == 0) {
+				if (cont == 0)
+					printf("\n###Pizzas em rota###");
+
+				flag = buscaCodigo(ptrPizza, aux.codigo);
+				fseek(ptrPizza, flag, 0);
+				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+				printf("\nNumero do pedido: %d\n", aux.numero);
+				//printf("Codigo da pizza: %d\n", aux.codigo);
+				printf("Descricao: %s\n", auxPizza.descricao);
+				printf("Descricao da pizza: %s\n", aux.situacao);
+				printf("Valor: %.2f\n", auxPizza.valor);
+
+				cont++;
+			}
+
+			fread(&aux, sizeof(TpPedido), 1, ptr);
+		}
+
+		if (cont == 0) {
+			printf("\nNenhuma Pizza em rota de entrega");
+		}
+
+		fclose(ptr);
+		fclose(ptrPizza);
+	}
+
+	getch();
 }
 
 void exclusaoFisicaPedido(void){
@@ -1370,6 +1451,7 @@ char menuExib(void) {
 	printf("[2] Exibir MOTOQUEIROS\n");
 	printf("[3] Exibir PIZZAS\n");
 	printf("[4] Exibir PEDIDOS\n");
+	printf("[5] Exibir Estado Pizza\n");
 	textcolor(7);
 
 	return getche();
