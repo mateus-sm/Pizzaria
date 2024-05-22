@@ -64,6 +64,8 @@ int buscaTelefone(FILE *ptr, char texto[50]);
 int buscaPedido(FILE *ptr, int pedido);
 
 void estadoPizza(void);
+void filtrarLetra(void);
+void exibirFiltro(FILE *ptr, char letra);
 
 char menu(void);
 char menuNum(void);
@@ -71,6 +73,7 @@ char menuCad(void);
 char menuExib(void);
 char menuAlt(void);
 char menuExcl(void);
+char menuRel(void);
 
 
 int main(void){
@@ -123,9 +126,6 @@ int main(void){
 					case '4':
 						exibirPedidos();
 						break;
-					case '5':
-						estadoPizza();
-						break;
 				}
 
 			break;
@@ -175,9 +175,73 @@ int main(void){
 				}
 
 			break;
+
+			case '5':
+				op = menuRel();
+
+				switch (op) {
+					case '1':
+						estadoPizza();
+					break;
+					case '2':
+						filtrarLetra();
+					break;
+				}
+			break;
 		}
-			
+
 	} while(op != 27);
+}
+
+void filtrarLetra(void) {
+	TpCliente aux;
+	char letra;
+
+	FILE *ptr = fopen("Clientes.dat", "rb");
+
+	fread(&aux, sizeof(TpCliente), 1, ptr);
+
+	if (ptr == NULL) {
+		printf("\nErro de abertura!");
+	} else {
+		printf("\nDigite a inicial que quer filtrar o nome dos clientes: \n");
+		scanf("%c", &letra);
+
+		//Passar letra por parametro pois é o que pede no PDF
+		exibirFiltro(ptr, letra);
+
+		fclose(ptr);
+	}
+
+	getch();
+}
+
+void exibirFiltro(FILE *ptr, char letra) {
+	TpCliente aux;
+	int cont;
+
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpCliente), 1, ptr);
+
+	cont = 0;
+	while(!feof(ptr)) {
+
+		if (tolower(aux.nome[0]) == tolower(letra)) {
+			if (cont == 0);
+				printf("\n###Clientes que comecam com %c ###\n", toupper(letra));
+
+			printf("Nome: %s\n", aux.nome);
+
+			cont++;
+		}
+
+		fread(&aux, sizeof(TpCliente), 1, ptr);
+	}
+
+	if (cont == 0) {
+		printf("Nao existem clientes com essa inicial");
+	}
+	
 }
 
 void estadoPizza(void) {
@@ -1425,6 +1489,8 @@ char menuNum(void) {
 	printf("[3] Alterar\n");
 	textcolor(5);
 	printf("[4] Excluir\n");
+	textcolor(8);
+	printf("[5] Relatorios\n");
 	textcolor(7);
 
 	return getche();
@@ -1451,7 +1517,6 @@ char menuExib(void) {
 	printf("[2] Exibir MOTOQUEIROS\n");
 	printf("[3] Exibir PIZZAS\n");
 	printf("[4] Exibir PEDIDOS\n");
-	printf("[5] Exibir Estado Pizza\n");
 	textcolor(7);
 
 	return getche();
@@ -1478,6 +1543,17 @@ char menuExcl(void) {
 	printf("[2] Excluir MOTOQUEIROS\n");
 	printf("[3] Excluir PIZZAS\n");
 	printf("[4] Excluir PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuRel(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(8);
+	printf("[1] Exibir Estado Pizza\n");
+	printf("[2] Filtrar por letra\n");
 	textcolor(7);
 
 	return getche();
