@@ -68,6 +68,8 @@ void ordenacaoExaustivaMotoqueiro(void);
 void ordenacaoExaustivaPizza(void);
 void ordenacaoExaustivaPedido(void);
 
+void insercaoDiretaCliente(void);
+
 void estadoPizza(void);
 void filtrarLetra(void);
 void exibirFiltro(FILE *ptr, char letra);
@@ -202,6 +204,53 @@ int main(void){
 	} while(op != 27);
 }
 
+void insercaoDiretaCliente(void) {
+	TpCliente A, B, aux;
+	//criarArquivo("Clientes.dat");
+
+	FILE *ptr = fopen("Clientes.dat", "rb+");
+
+	int quantidade;
+
+	fseek(ptr, 0, 2);
+	quantidade = ftell(ptr) / sizeof(TpCliente);
+
+	int qtdA = quantidade - 1;
+	fseek(ptr, qtdA * sizeof(TpCliente), 0);
+	fread(&A, sizeof(TpCliente), 1, ptr);
+	printf("\nUltimo registro: %s\n", A.nome);
+	
+	int qtdB = qtdA - 1;
+	fseek(ptr, qtdB * sizeof(TpCliente), 0);
+	fread(&B, sizeof(TpCliente), 1, ptr);
+	printf("Penultimo registro: %s\n", B.nome);
+
+	while(qtdB > 0 && stricmp(A.nome, B.nome) > 0) {
+		//aux = B;
+		fseek(ptr, qtdB * sizeof(TpCliente), 0); //Foi para penultima posição
+		fwrite(&A, sizeof(TpCliente), 1, ptr); //coloca o conteudo da ultima na penultima
+
+		fseek(ptr, qtdA * sizeof(TpCliente), 0);
+		fwrite(&B, sizeof(TpCliente), 1, ptr);
+
+		qtdA--;
+		fseek(ptr, qtdA * sizeof(TpCliente), 0);
+		fread(&A, sizeof(TpCliente), 1, ptr);
+		printf("\nUltimo registro da segunda iteração: %s\n", A.nome);
+		
+		qtdB--;
+		fseek(ptr, qtdB * sizeof(TpCliente), 0);
+		fread(&B, sizeof(TpCliente), 1, ptr);
+		printf("Penultimo registro da segunda iteração: %s\n", B.nome);
+	}
+
+	fclose(ptr);
+}
+
+void criarArquivo(char nome[50]) {
+	fopen(nome, "ab");
+}
+
 void ordenacaoExaustivaCliente(void){
 	int a, b, qtde;
 	TpCliente regA, regB;
@@ -235,7 +284,6 @@ void ordenacaoExaustivaCliente(void){
 		fclose(ptrarquivo);
 	}
 }
-
 
 void ordenacaoExaustivaMotoqueiro(void){
 	int a, b, qtde;
@@ -352,7 +400,9 @@ void filtrarLetra(void) {
 		printf("\nErro de abertura!");
 	} else {
 		printf("\nDigite a inicial que quer filtrar o nome dos clientes: \n");
-		scanf("%c", &letra);
+		fflush(stdin);
+		letra = getch();
+
 
 		//Passar letra por parametro pois é o que pede no PDF
 		exibirFiltro(ptr, letra);
@@ -1229,7 +1279,7 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 }
 
 int buscaBinariaCodigo(FILE *ptr, int cod){
-	ordenacaoExaustivaPizza(); //busca ordenada
+	
 	
 	TpPizza aux;
 	int inicio = 0, fim, meio;
@@ -1358,6 +1408,8 @@ void cadastrarPizza(void) {
 		scanf("%f", &aux.valor);
 		
 		fwrite(&aux, sizeof(TpPizza), 1, ptrarquivo);
+
+		ordenacaoExaustivaPizza(); //busca ordenada
 		
 		printf("\nInsira o CODIGO da Pizza:\n");
 		fflush(stdin);
@@ -1447,7 +1499,8 @@ void cadastrarCliente(void) {
 		gets(aux.cep);
 		
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
-		
+		insercaoDiretaCliente();
+
 		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
 		fflush(stdin);
