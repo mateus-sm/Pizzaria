@@ -58,10 +58,15 @@ void exclusaoFisicaMotoqueiro(void);
 void exclusaoFisicaPizza(void);
 void exclusaoFisicaPedido(void);
 
-int buscaCodigo(FILE *ptr, int cod);
+int buscaBinariaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
 int buscaTelefone(FILE *ptr, char texto[50]);
 int buscaPedido(FILE *ptr, int pedido);
+
+void ordenacaoExaustivaCliente(void);
+void ordenacaoExaustivaMotoqueiro(void);
+void ordenacaoExaustivaPizza(void);
+void ordenacaoExaustivaPedido(void);
 
 void estadoPizza(void);
 void filtrarLetra(void);
@@ -112,18 +117,22 @@ int main(void){
 
 				switch (op) {
 					case '1':
+						ordenacaoExaustivaCliente();
 						exibirCliente();
 						break;	
 
 					case '2':
+						ordenacaoExaustivaMotoqueiro();
 						exibirMotoqueiro();
 						break;
 
 					case '3':
+						ordenacaoExaustivaPizza();
 						exibirPizza();
 						break;
 
 					case '4':
+						ordenacaoExaustivaPedido();
 						exibirPedidos();
 						break;
 				}
@@ -191,6 +200,144 @@ int main(void){
 		}
 
 	} while(op != 27);
+}
+
+void ordenacaoExaustivaCliente(void){
+	int a, b, qtde;
+	TpCliente regA, regB;
+	
+	FILE *ptrarquivo = fopen("Clientes.dat", "rb+");
+	
+	if(ptrarquivo == NULL)
+		printf("ERRO na abertura\n");
+	else{
+		fseek(ptrarquivo,0, 2); //manda o ponteiro para o final
+		qtde = ftell(ptrarquivo) / sizeof(TpCliente); //descobre a quantidade de registros
+		for(a = 0 ; a < qtde - 1; a++)
+			for(b = a + 1; b < qtde ; b++){
+				
+				fseek(ptrarquivo, a * sizeof(TpCliente), 0);
+				fread(&regA, sizeof(TpCliente), 1, ptrarquivo);
+				fseek(ptrarquivo, b * sizeof(TpCliente), 0);
+				fread(&regB, sizeof(TpCliente), 1, ptrarquivo);
+				
+				if(stricmp(regA.nome, regB.nome) > 0){ //se o registro A for maior que o registro B // faz a troca	
+					//escreve RegA em B
+					fseek(ptrarquivo, b * sizeof(TpCliente), 0);
+					fwrite(&regA, sizeof(TpCliente), 1, ptrarquivo);
+					
+					//escreve RegB em A
+					fseek(ptrarquivo, a * sizeof(TpCliente), 0);
+					fwrite(&regB, sizeof(TpCliente), 1, ptrarquivo);
+				}
+			}
+			
+		fclose(ptrarquivo);
+	}
+}
+
+
+void ordenacaoExaustivaMotoqueiro(void){
+	int a, b, qtde;
+	TpMotoqueiro regA, regB;
+	
+	FILE *ptrarquivo = fopen("Motoqueiros.dat", "rb+");
+	
+	if(ptrarquivo == NULL)
+		printf("ERRO na abertura\n");
+	else{
+		fseek(ptrarquivo,0, 2); //manda o ponteiro para o final
+		qtde = ftell(ptrarquivo) / sizeof(TpMotoqueiro); //descobre a quantidade de registros
+		for(a = 0 ; a < qtde - 1; a++)
+			for(b = a + 1; b < qtde ; b++){
+				
+				fseek(ptrarquivo, a * sizeof(TpMotoqueiro), 0);
+				fread(&regA, sizeof(TpMotoqueiro), 1, ptrarquivo);
+				fseek(ptrarquivo, b * sizeof(TpMotoqueiro), 0);
+				fread(&regB, sizeof(TpMotoqueiro), 1, ptrarquivo);
+				
+				if(stricmp(regA.nome, regB.nome) > 0){ //se o registro A for maior que o registro B // faz a troca	
+					//escreve RegA em B
+					fseek(ptrarquivo, b * sizeof(TpMotoqueiro), 0);
+					fwrite(&regA, sizeof(TpMotoqueiro), 1, ptrarquivo);
+					
+					//escreve RegB em A
+					fseek(ptrarquivo, a * sizeof(TpMotoqueiro), 0);
+					fwrite(&regB, sizeof(TpMotoqueiro), 1, ptrarquivo);
+				}
+			}
+			
+		fclose(ptrarquivo);
+	}
+}
+
+void ordenacaoExaustivaPizza(void){
+	int a, b, qtde;
+	TpPizza regA, regB;
+	
+	FILE *ptrarquivo = fopen("Pizzas.dat", "rb+");
+	
+	if(ptrarquivo == NULL)
+		printf("ERRO na abertura\n");
+	else{
+		fseek(ptrarquivo,0, 2); //manda o ponteiro para o final
+		qtde = ftell(ptrarquivo) / sizeof(TpPizza); //descobre a quantidade de registros
+		for(a = 0 ; a < qtde - 1; a++)
+			for(b = a + 1; b < qtde ; b++){
+				
+				fseek(ptrarquivo, a * sizeof(TpPizza), 0);
+				fread(&regA, sizeof(TpPizza), 1, ptrarquivo);
+				fseek(ptrarquivo, b * sizeof(TpPizza), 0);
+				fread(&regB, sizeof(TpPizza), 1, ptrarquivo);
+				
+				if(regA.codigo > regB.codigo){ //se o registro A for maior que o registro B // faz a troca	
+					//escreve RegA em B
+					fseek(ptrarquivo, b * sizeof(TpPizza), 0);
+					fwrite(&regA, sizeof(TpPizza), 1, ptrarquivo);
+					
+					//escreve RegB em A
+					fseek(ptrarquivo, a * sizeof(TpPizza), 0);
+					fwrite(&regB, sizeof(TpPizza), 1, ptrarquivo);
+				}
+			}
+			
+		fclose(ptrarquivo);
+	}
+
+}
+
+void ordenacaoExaustivaPedido(void){
+	int a, b, qtde;
+	TpPedido regA, regB;
+	
+	FILE *ptrarquivo = fopen("Pedidos.dat", "rb+");
+	
+	if(ptrarquivo == NULL)
+		printf("ERRO na abertura\n");
+	else{
+		fseek(ptrarquivo,0, 2); //manda o ponteiro para o final
+		qtde = ftell(ptrarquivo) / sizeof(TpPedido); //descobre a quantidade de registros
+		for(a = 0 ; a < qtde - 1; a++)
+			for(b = a + 1; b < qtde ; b++){
+				
+				fseek(ptrarquivo, a * sizeof(TpPedido), 0);
+				fread(&regA, sizeof(TpPedido), 1, ptrarquivo);
+				fseek(ptrarquivo, b * sizeof(TpPedido), 0);
+				fread(&regB, sizeof(TpPedido), 1, ptrarquivo);
+				
+				if(regA.numero > regB.numero){ //se o registro A for maior que o registro B // faz a troca	
+					//escreve RegA em B
+					fseek(ptrarquivo, b * sizeof(TpPedido), 0);
+					fwrite(&regA, sizeof(TpPedido), 1, ptrarquivo);
+					
+					//escreve RegB em A
+					fseek(ptrarquivo, a * sizeof(TpPedido), 0);
+					fwrite(&regB, sizeof(TpPedido), 1, ptrarquivo);
+				}
+			}
+			
+		fclose(ptrarquivo);
+	}
 }
 
 void filtrarLetra(void) {
@@ -264,7 +411,7 @@ void estadoPizza(void) {
 				if (cont == 0)
 					printf("\n###Pizzas em preparacao###");
 
-				flag = buscaCodigo(ptrPizza, aux.codigo);
+				flag = buscaBinariaCodigo(ptrPizza, aux.codigo);
 				fseek(ptrPizza, flag, 0);
 				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
@@ -293,7 +440,7 @@ void estadoPizza(void) {
 				if (cont == 0)
 					printf("\n###Pizzas em rota###");
 
-				flag = buscaCodigo(ptrPizza, aux.codigo);
+				flag = buscaBinariaCodigo(ptrPizza, aux.codigo);
 				fseek(ptrPizza, flag, 0);
 				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
@@ -535,14 +682,14 @@ void exclusaoFisicaPizza(void){
 		fflush(stdin);
 		scanf("%d",&auxcod);
 		
-		flag = buscaCodigo(ptr, auxcod);
+		flag = buscaBinariaCodigo(ptr, auxcod);
 		
 		while (flag == -1 && auxcod > 0){
 			printf("Insira um codigo da pizza CADASTRADO: \n");
 			fflush(stdin);
 			scanf("%d",&auxcod);
 			
-			flag = buscaCodigo(ptr, auxcod);
+			flag = buscaBinariaCodigo(ptr, auxcod);
 		}
 		
 		if(auxcod > 0){
@@ -663,12 +810,12 @@ void alterarPedido(void){
 			}else if(op == 'C'){
 				printf("\nInsira o novo CODIGO DA PIZZA do pedido \n");
 				scanf("%d", &aux.codigo);
-				flag = buscaCodigo(ptrpizza, aux.codigo);
+				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 				
 				while(aux.codigo < 0 || flag == -1){
 					printf("Insira um codigo da pizza CADASTRADO \n");
 					scanf("%d", &aux.codigo);
-					flag = buscaCodigo(ptrpizza, aux.codigo);
+					flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 				}
 				
 				printf("Dados ALTERADOS\n");
@@ -746,19 +893,19 @@ void alterarPizza(void){
 		printf("Insira o CODIGO da Pizza que desja ALTERAR: \n");
 		fflush(stdin);
 		scanf("%d",&aux.codigo);	
-		flag = buscaCodigo(ptr, aux.codigo);
+		flag = buscaBinariaCodigo(ptr, aux.codigo);
 		
 		while (flag == -1 && aux.codigo > 0){
 			printf("Insira um CODIGO cadastrado: \n");
 			fflush(stdin);
 			scanf("%d",&aux.codigo);
-			flag = buscaCodigo(ptr, aux.codigo);
+			flag = buscaBinariaCodigo(ptr, aux.codigo);
 
 		}
 		
 		if(aux.codigo > 0){
 			fseek(ptr, flag, 0);
-			fread(&aux,sizeof(TpCliente), 1, ptr);
+			fread(&aux,sizeof(TpPizza), 1, ptr);
 			fseek(ptr, flag, 0);
 
 			printf("\n###Conteudo do Registro###\n");
@@ -1081,26 +1228,37 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 
 }
 
-int buscaCodigo(FILE *ptr, int cod) {
+int buscaBinariaCodigo(FILE *ptr, int cod){
+	ordenacaoExaustivaPizza(); //busca ordenada
+	
 	TpPizza aux;
-
-	fseek(ptr, 0, 0);
-
-	if (ptr == NULL)
-		printf("ERRO de abertura\n");
-	else {
+	int inicio = 0, fim, meio;
+	
+	fseek(ptr, 0, 2);
+	fim = ftell(ptr) / sizeof(TpPizza); // recebe TL
+	
+	meio = (inicio + fim) / 2;
+	
+	fseek(ptr, meio * sizeof(TpPizza), 0);
+	fread(&aux, sizeof(TpPizza), 1, ptr);
+	while(inicio < fim && aux.codigo != cod){
+		
+		if(cod > aux.codigo)
+			inicio = meio + 1;
+		else
+			fim = meio - 1;
+			
+		meio = (inicio + fim) / 2;
+		
+		fseek(ptr, meio * sizeof(TpPizza), 0);
 		fread(&aux, sizeof(TpPizza), 1, ptr);
-
-		while(!feof(ptr) && aux.codigo != cod) {
-			fread(&aux, sizeof(TpPizza), 1, ptr);
-		}
-
-		if (aux.codigo == cod) {
-			return ftell(ptr) - sizeof(TpPizza);
-		} else {
-			return -1;
-		}	
 	}
+	
+	if(aux.codigo == cod)
+		return ftell(ptr) - sizeof(TpPizza);
+	else
+		return -1;
+
 
 }
 
@@ -1121,12 +1279,12 @@ void cadastrarPedido(void) {
 		printf("Insira o TELEFONE do Cliente:\n");
 		fflush(stdin);
 		gets(aux.telefone);
-
+		
 		flag = buscaTelefone(ptrcliente, aux.telefone);
 		//printf("\nBusca terminou flag vale: %d\n", flag);
 		
 		while (flag == -1 && strlen(aux.telefone) > 0) {
-			printf("Insira um TELEFONE cadastrado:\n");
+			printf("Insira um telefone do cliente CADASTRADO:\n");
 			fflush(stdin);
 			gets(aux.telefone);
 
@@ -1137,12 +1295,12 @@ void cadastrarPedido(void) {
 			printf("Insira o CODIGO dessa Pizza:\n");
 			scanf("%d", &aux.codigo);
 
-			flag = buscaCodigo(ptrpizza, aux.codigo);
+			flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			while (flag == -1 && aux.codigo > 0) {
-				printf("Insira o CODIGO dessa Pizza:\n");
+				printf("Insira um codigo CADASTRADO:\n");
 				scanf("%d", &aux.codigo);
 
-				flag = buscaCodigo(ptrpizza, aux.codigo);
+				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			}			
 
 			if (aux.codigo > 0) {
@@ -1152,7 +1310,7 @@ void cadastrarPedido(void) {
 				
 				flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				while (flag == -1 && strlen(aux.cpf) > 0) {
-					printf("Digite o CPF do Motoqueiro\n");
+					printf("Digite um CPF do motoqueiro CADASTRADO\n");
 					fflush(stdin);
 					gets(aux.cpf);
 
@@ -1165,14 +1323,15 @@ void cadastrarPedido(void) {
 					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
 
-					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);	
-
-					printf("\nInsira o NUMERO do Pedido:\n");
-					fflush(stdin);
-					scanf("%d", &aux.numero);
+					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
 				}
 			}	
 		}
+		
+		printf("Insira o NUMERO do Pedido:\n");
+		fflush(stdin);
+		scanf("%d", &aux.numero);
+		
 	}
 	
 	clrscr();
