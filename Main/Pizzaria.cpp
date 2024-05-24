@@ -1434,8 +1434,18 @@ void alterarCliente(void){
 	}
 		
 }
-int buscaSeqIndexadaCPF(FILE *ptr, char tel[30]) {
-	
+int buscaSeqIndexadaPedidos(FILE *ptr, int num) {
+	TpPedido aux;
+
+	fseek(ptr, 0, 2);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	while(aux.numero <= num)
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+
+	if(aux.numero == num)
+		return ftell(ptr) - sizeof(TpPedido);
+	else	
+		return -1;
 }
 
 int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
