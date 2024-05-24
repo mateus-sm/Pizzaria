@@ -35,29 +35,34 @@ struct TpPedido{
 	char situacao[30];
 };
 
-int validarCPF(char ncpf[15]);
-int validarInt(char str[11]);
-
+//Cadastro
 void cadastrarCliente(void);
 void cadastrarMotoqueiro(void);
 void cadastrarPizza(void);
 void cadastrarPedido(void);
+//Auxiliares de Cadastro
+int validarCPF(char ncpf[15]);
+int validarInt(char str[11]);
 
+//Exibição
 void exibirCliente(void);
 void exibirMotoqueiro(void);
 void exibirPizza(void);
 void exibirPedidos(void);
 
+//Alteração
 void alterarCliente(void);
 void alterarMotoqueiro(void);
 void alterarPizza(void);
 void alterarPedido(void);
 
+//Exclusão
 void exclusaoFisicaCliente(void);
 void exclusaoFisicaMotoqueiro(void);
 void exclusaoFisicaPizza(void);
 void exclusaoFisicaPedido(void);
 
+//Metodos de Busca
 int buscaBinariaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
 int buscaTelefone(FILE *ptr, char texto[50]);
@@ -75,10 +80,12 @@ void selecaoDiretaPizza(void);
 //Relatorios
 void estadoPizza(void);
 void filtrarLetra(void);
-void exibirFiltro(FILE *ptr, char letra);
 void relatorioCliente(void);
+//Auxiliares de Relatorios
+void exibirFiltro(FILE *ptr, char letra);
 float buscaPreco(FILE *ptrpizza, int cod);
 
+//Menus
 char menu(void);
 char menuNum(void);
 char menuCad(void);
@@ -272,13 +279,13 @@ void relatorioCliente(void) {
 					pos = buscaBinariaCodigo(ptrpizza, aux.codigo);
 					fseek(ptrpizza, pos, 0);
 					fread(&aux3, sizeof(TpPizza), 1, ptrpizza);
-					printf("%s\n", aux3.descricao);
+					printf("1x %s - R$ %.2f\n", aux3.descricao, valor);
 				}
 				
 				fread(&aux, sizeof(TpPedido), 1, ptrpedido);
 			}
 
-			printf("Total gasto: %.2f\n\n", total);			
+			printf("Total gasto = R$ %.2f\n\n", total);			
 		}
 
 		getch();
