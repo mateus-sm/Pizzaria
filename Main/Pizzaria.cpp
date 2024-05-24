@@ -12,18 +12,23 @@ struct TpData{
 struct TpCliente{
 	char telefone[20]; //Chave primaria
 	char cep[15], nome[50], endereco[50], cidade[30];
+	char status;
 };
 
 struct TpMotoqueiro{
 	TpData data;
 	char cpf[20]; //Chave primaria
 	char telefone[20], nome[50], endereco[50];
+	char status;
+
 };
 
 struct TpPizza{
 	int codigo; //Chave primaria
     float valor;
 	char descricao[30];
+	char status;
+
 };
 
 struct TpPedido{
@@ -33,6 +38,8 @@ struct TpPedido{
     int codigo;
     char cpf[20];
 	char situacao[30];
+	char status;
+
 };
 
 //Cadastro
@@ -65,7 +72,7 @@ void exclusaoFisicaPedido(void);
 //Metodos de Busca
 int buscaBinariaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
-int buscaTelefone(FILE *ptr, char texto[50]);
+int buscaSentinelaTelefone(FILE *ptr, char nome[30]);
 int buscaPedido(FILE *ptr, int pedido);
 
 //Metodos de OrdenaÃ§Ã£o
@@ -256,7 +263,7 @@ void relatorioCliente(void) {
 
 			//InformaÃ§oes
 			printf("\nTELEFONE: %s\n", telAtual);
-			pos = buscaTelefone(ptrcliente, telAtual);
+			pos = buscaSentinelaTelefone(ptrcliente, telAtual);
 			fseek(ptrcliente, pos, 0);
 			fread(&aux2, sizeof(TpCliente), 1, ptrcliente);
 			printf("NOME: %s\n", aux2.nome);
@@ -407,7 +414,6 @@ void bubbleSortPedido(void) {
 
 void insercaoDiretaCliente(void) {
 	TpCliente A, B, aux;
-	//criarArquivo("Clientes.dat");
 
 	FILE *ptr = fopen("Clientes.dat", "rb+");
 
@@ -416,7 +422,7 @@ void insercaoDiretaCliente(void) {
 	fseek(ptr, 0, 2);
 	quantidade = ftell(ptr) / sizeof(TpCliente);
 	//quantidade++;
-	printf("Tamanho total eh %d quantidade eh %d", ftell(ptr), quantidade);
+	//printf("Tamanho total eh %d quantidade eh %d", ftell(ptr), quantidade);
 
 	int qtdA = quantidade - 1;
 	fseek(ptr, qtdA * sizeof(TpCliente), 0);
@@ -448,10 +454,6 @@ void insercaoDiretaCliente(void) {
 	}
 
 	fclose(ptr);
-}
-
-void criarArquivo(char nome[50]) {
-	fopen(nome, "ab");
 }
 
 void ordenacaoExaustivaCliente(void){
@@ -802,14 +804,14 @@ void exclusaoFisicaCliente(void){
 		fflush(stdin);
 		gets(tel);
 		
-		flag = buscaTelefone(ptr, tel);
+		flag = buscaSentinelaTelefone(ptr, tel);
 		
 		while (flag == -1 && strlen(tel) > 0){
 			printf("Insira um telefone CADASTRADO: \n");
 			fflush(stdin);
 			gets(tel);
 		
-			flag = buscaTelefone(ptr, tel);
+			flag = buscaSentinelaTelefone(ptr, tel);
 		}
 		
 		if(strlen(tel) > 0){
@@ -1050,13 +1052,13 @@ void alterarPedido(void){
 				printf("\nInsira o novo TELEFONE do pedido: \n");
 				fflush(stdin);
 				gets(aux.telefone);
-				flag = buscaTelefone(ptrcliente, aux.telefone);
+				flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 				
 				while(strlen(aux.telefone) <= 0 || flag == -1){
 					printf("Insira um telefone CADASTRADO: \n");
 					fflush(stdin);
 					gets(aux.telefone);
-					flag = buscaTelefone(ptrcliente, aux.telefone);
+					flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 				}
 				
 				printf("Dados ALTERADOS\n");
@@ -1344,14 +1346,14 @@ void alterarCliente(void){
 		printf("Insira o TELEFONE do Cliente que desja ALTERAR:\n");
 		fflush(stdin);
 		gets(aux.telefone);
-		flag = buscaTelefone(ptr, aux.telefone);
+		flag = buscaSentinelaTelefone(ptr, aux.telefone);
 		
 		while (flag == -1 && strlen(aux.telefone) > 0) {
 			printf("Insira um TELEFONE cadastrado:\n");
 			fflush(stdin);
 			gets(aux.telefone);
 	
-			flag = buscaTelefone(ptr, aux.telefone);
+			flag = buscaSentinelaTelefone(ptr, aux.telefone);
 			//printf("\nO tamanho de um reg eh: %d e o ponteiro esta em: %d\n", sizeof(TpCliente), flag);
 		}
 		
@@ -1415,25 +1417,38 @@ void alterarCliente(void){
 		
 }
 
-int buscaTelefone(FILE *ptr, char texto[50]) {
-	TpCliente aux;
+int buscaSentinelaTelefone(FILE *ptr, char nome[30]){
+    TpCliente aux, novo;
+    int qtde;
+    
+    fseek(ptr, 0, 2);
+    
+    //gravação do sentinela
+    qtde = ftell(ptr)/sizeof(TpCliente);
+    fseek(ptr, (qtde-1) * sizeof(TpCliente), 0);
+    fread(&novo, sizeof(TpCliente), 1, ptr);
+    
+    strcpy(novo.nome,nome);
+    //deixa o registro adicionado como inativo 
+    novo.status = 'I';
+    
+	fseek(ptr, qtde * sizeof(TpCliente), 0);
+    fwrite(&novo, sizeof(TpCliente), 1, ptr);
 
-	fseek(ptr, 0, 0);
+    //faz a busca
+    fseek(ptr, 0, 0);
+    fread(&aux, sizeof(TpCliente), 1, ptr);
+    int i = 0;
+    while(!feof(ptr) && stricmp(aux.nome, nome) != 0){
+        fread(&aux, sizeof(TpCliente), 1, ptr);
+        i++;
+    }
+    
+    if(stricmp(aux.nome, nome) == 0 && i < qtde - 1)
+        return ftell(ptr) - sizeof(TpCliente);
+    else
+        return -1; 
 	
-	if (ptr == NULL) {
-		printf("ERRO de abertura\n");
-	} else {
-		fread(&aux, sizeof(TpCliente), 1, ptr);
-
-		while(!feof(ptr) && strcmp(texto, aux.telefone) != 0) {
-			fread(&aux, sizeof(TpCliente), 1, ptr);
-		}
-
-		if (strcmp(aux.telefone, texto) == 0)
-			return ftell(ptr) - sizeof(TpCliente);
-		else 
-			return -1;
-	}
 }
 
 int buscaPedido(FILE *ptr, int pedido){
@@ -1533,7 +1548,7 @@ void cadastrarPedido(void) {
 		fflush(stdin);
 		gets(aux.telefone);
 		
-		flag = buscaTelefone(ptrcliente, aux.telefone);
+		flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 		//printf("\nBusca terminou flag vale: %d\n", flag);
 		
 		while (flag == -1 && strlen(aux.telefone) > 0) {
@@ -1541,7 +1556,7 @@ void cadastrarPedido(void) {
 			fflush(stdin);
 			gets(aux.telefone);
 
-			flag = buscaTelefone(ptrcliente, aux.telefone);
+			flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 		}
 
 		if (strlen(aux.telefone) > 0) {
@@ -1575,6 +1590,8 @@ void cadastrarPedido(void) {
 					
 					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
+					
+					aux.status = 'A';
 
 					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
 
@@ -1614,6 +1631,8 @@ void cadastrarPizza(void) {
 		printf("Insira o VALOR dessa Pizza:\n");
 		scanf("%f", &aux.valor);
 		
+		aux.status = 'A';
+
 		fwrite(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		fclose(ptrarquivo);
 		selecaoDiretaPizza();
@@ -1707,11 +1726,13 @@ void cadastrarCliente(void) {
 		printf("Insira o CEP desse cliente:\n");
 		gets(aux.cep);
 		
+		aux.status = 'A';
+		
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		fclose(ptrarquivo);
 		insercaoDiretaCliente();
 		FILE *ptrarquivo = fopen("Clientes.dat", "ab");
-
+		
 		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
 		fflush(stdin);
@@ -1752,6 +1773,8 @@ void cadastrarMotoqueiro(void) {
 		printf("Insira a DATA DE ADMISSAO desse motoqueiro: [dd mm aaaa]\n");
 		scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
 		
+		aux.status = 'A';
+
 		fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		
 		printf("\nInsira o CPF do motoqueiro que deseja cadastrar:\n");
@@ -1783,11 +1806,13 @@ void exibirCliente(void) {
 		fread (&aux, sizeof(TpCliente), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("NOME: %s\n", aux.nome);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("CIDADE: %s\n", aux.cidade);
-			printf("CEP: %s\n\n", aux.cep);
+			if(aux.status != 'I'){
+				printf("TELEFONE: %s\n", aux.telefone);
+				printf("NOME: %s\n", aux.nome);
+				printf("ENDERECO: %s\n", aux.endereco);
+				printf("CIDADE: %s\n", aux.cidade);
+				printf("CEP: %s\n\n", aux.cep);
+			}
 			fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		}
 		
@@ -1808,11 +1833,13 @@ void exibirMotoqueiro(void) {
 	else {
 		fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		while (!feof(ptrarquivo)){
-			printf("CPF: %s\n", aux.cpf);
-			printf("NOME: %s\n", aux.nome);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+			if(aux.status != 'I'){
+				printf("CPF: %s\n", aux.cpf);
+				printf("NOME: %s\n", aux.nome);
+				printf("ENDERECO: %s\n", aux.endereco);
+				printf("TELEFONE: %s\n", aux.telefone);
+				printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+			}
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		}
 		
@@ -1834,9 +1861,11 @@ void exibirPizza(void) {
 		fread (&aux, sizeof(TpPizza), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
-			printf("CODIGO: %d\n", aux.codigo);
-			printf("DESCRICAO: %s\n", aux.descricao);
-			printf("VALOR: %.2f\n\n", aux.valor);
+			if(aux.status != 'I'){
+				printf("CODIGO: %d\n", aux.codigo);
+				printf("DESCRICAO: %s\n", aux.descricao);
+				printf("VALOR: %.2f\n\n", aux.valor);
+			}
 			fread(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		}
 		
@@ -1858,12 +1887,14 @@ void exibirPedidos(void) {
 		fread (&aux, sizeof(TpPedido), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
-			printf("NUMERO: %d\n", aux.numero);
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("CODIGO: %d\n", aux.codigo);
-			printf("CPF: %s\n", aux.cpf);
-			printf("SITUACAO: %s\n", aux.situacao);
-			printf("DATA DO PEDIDO: %d/%d/%d\n\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			if(aux.status != 'I'){
+				printf("NUMERO: %d\n", aux.numero);
+				printf("TELEFONE: %s\n", aux.telefone);
+				printf("CODIGO: %d\n", aux.codigo);
+				printf("CPF: %s\n", aux.cpf);
+				printf("SITUACAO: %s\n", aux.situacao);
+				printf("DATA DO PEDIDO: %d/%d/%d\n\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			}
 			fread(&aux, sizeof(TpPedido), 1, ptrarquivo);
 		}
 		
