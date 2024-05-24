@@ -225,7 +225,7 @@ void relatorioCliente(void) {
 	FILE *ptrpedido = fopen("Pedidos.dat", "rb+");
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
 
-	int pos, count = 0, tamanhoPedidos;
+	int pos, count = 0, tamanhoPedidos, flag;
 	float valor, total = 0;
 	char telAtual[20];
 
@@ -241,14 +241,14 @@ void relatorioCliente(void) {
 		printf("ERRO de abertura\n");
 	} else {
 		while (count < tamanhoPedidos) {
-			total = 0;
+			total = 0, flag = 0;
 			//Pegar numero de um cliente
 			fseek(ptrpedido, 0, 0);
 			fread (&aux, sizeof(TpPedido), 1, ptrpedido);		
-			while (!feof(ptrpedido)) {
+			while (!feof(ptrpedido) && !flag) {
 				if (strcmp(telAtual, aux.telefone) != 0) {
 					strcpy(telAtual, aux.telefone);
-					break; //Precisa remover
+					flag = 1;
 				}
 
 				fread (&aux, sizeof(TpPedido), 1, ptrpedido);
