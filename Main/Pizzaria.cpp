@@ -232,12 +232,14 @@ void relatorioCliente(void) {
 	FILE *ptrpedido = fopen("Pedidos.dat", "rb+");
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
 
-	int pos, count = 0, tamanhoPedidos, flag;
+	int pos, count = 0, tamanhoPedidos, flag, countLista = 0;
 	float valor, total = 0;
 	char telAtual[20];
 
 	fseek(ptrpedido, 0, 2);
 	tamanhoPedidos = ftell(ptrpedido) / sizeof(TpPedido);
+
+	char listaTel[tamanhoPedidos][30];
 
 	//Pegar numero de um cliente
 	//Pesquisar em todos os pedidos esse numero
@@ -253,9 +255,25 @@ void relatorioCliente(void) {
 			fseek(ptrpedido, 0, 0);
 			fread (&aux, sizeof(TpPedido), 1, ptrpedido);		
 			while (!feof(ptrpedido) && !flag) {
+				
 				if (strcmp(telAtual, aux.telefone) != 0) {
 					strcpy(telAtual, aux.telefone);
-					flag = 1;
+
+					for (int j = 0; j < countLista; j++) { // Checar se o num atual ja foi o atual anteriormente
+						if (strcmp(listaTel[j], telAtual) == 0) {
+							flag = 1;
+						}
+					}	
+
+					if (flag == 1) {
+						flag = 0;
+					} else {
+						flag = 1;
+						strcpy(listaTel[countLista], telAtual);
+						countLista++;							
+					}					
+
+
 				}
 
 				fread (&aux, sizeof(TpPedido), 1, ptrpedido);
@@ -1423,7 +1441,7 @@ int buscaSentinelaTelefone(FILE *ptr, char nome[30]){
     
     fseek(ptr, 0, 2);
     
-    //gravação do sentinela
+    //gravaï¿½ï¿½o do sentinela
     qtde = ftell(ptr)/sizeof(TpCliente);
     fseek(ptr, (qtde-1) * sizeof(TpCliente), 0);
     fread(&novo, sizeof(TpCliente), 1, ptr);
