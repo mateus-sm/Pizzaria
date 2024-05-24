@@ -1434,41 +1434,41 @@ void alterarCliente(void){
 	}
 		
 }
-
-int buscaSentinelaTelefone(FILE *ptr, char nome[30]){
-    TpCliente aux, novo;
-    int qtde;
-    
-    fseek(ptr, 0, 2);
-    
-    //grava��o do sentinela
-    qtde = ftell(ptr)/sizeof(TpCliente);
-    fseek(ptr, (qtde-1) * sizeof(TpCliente), 0);
-    fread(&novo, sizeof(TpCliente), 1, ptr);
-    
-    strcpy(novo.nome,nome);
-    //deixa o registro adicionado como inativo 
-    novo.status = 'I';
-    
-	fseek(ptr, qtde * sizeof(TpCliente), 0);
-    fwrite(&novo, sizeof(TpCliente), 1, ptr);
-
-    //faz a busca
-    fseek(ptr, 0, 0);
-    fread(&aux, sizeof(TpCliente), 1, ptr);
-    int i = 0;
-    while(!feof(ptr) && stricmp(aux.nome, nome) != 0){
-        fread(&aux, sizeof(TpCliente), 1, ptr);
-        i++;
-    }
-    
-    if(stricmp(aux.nome, nome) == 0 && i < qtde - 1)
-        return ftell(ptr) - sizeof(TpCliente);
-    else
-        return -1; 
+int buscaSeqIndexadaCPF(FILE *ptr, char tel[30]) {
 	
 }
 
+int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
+	TpCliente aux;
+	int achou = 0;
+	int tam, cont = 0;
+	
+	strcpy(aux.telefone, tel);
+	aux.status = 'I';
+	//printf("%s \n%c", aux.telefone, aux.status);
+	fseek(ptr, 0, 2);
+	tam = ftell(ptr)/sizeof(TpCliente);
+	fwrite(&aux, sizeof(TpCliente), 1, ptr);
+    
+    fseek(ptr, 0, 0); 	
+    fread(&aux, sizeof(TpCliente), 1, ptr);
+    while(!achou){
+    	printf("PRIMEIRO TELEFONE: %s TELEFONE PROCURADO: %s\n",aux.telefone, tel);
+    	getch();
+    	if(strcmp(aux.telefone, tel) == 0 && aux.status == 'A')
+    		achou = 1;
+    	else{
+    		fread(&aux, sizeof(TpCliente), 1, ptr);
+    		cont++;
+    	}
+    }
+    
+	if(cont < tam - 1)
+        return ftell(ptr) - sizeof(TpCliente);
+    else
+        return -1; 
+}
+	
 int buscaPedido(FILE *ptr, int pedido){
 	TpPedido aux;
 
@@ -1476,14 +1476,14 @@ int buscaPedido(FILE *ptr, int pedido){
 
 	if (ptr == NULL) {
 		printf("ERRO de abertura\n");
-	} else {
+	}else {
 		fread(&aux, sizeof(TpPedido), 1, ptr);
 
 		while(!feof(ptr) && aux.numero != pedido) {
 			fread(&aux, sizeof(TpPedido), 1, ptr);
 		}
 
-		if (aux.numero == pedido)
+		if (aux.numero == pedido && aux.status != 'I')
 			return ftell(ptr) - sizeof(TpPedido);
 		else 
 			return -1;
@@ -1507,7 +1507,7 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
 		}
 		
-		if(strcmp(aux.cpf, texto) == 0) 
+		if(strcmp(aux.cpf, texto) == 0 && aux.status != 'I') 
 			return ftell(ptr) - sizeof(TpMotoqueiro);
 		else 
 			return -1;
@@ -1515,7 +1515,6 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 }
 
 int buscaBinariaCodigo(FILE *ptr, int cod){
-	
 	
 	TpPizza aux;
 	int inicio = 0, fim, meio;
@@ -1540,7 +1539,7 @@ int buscaBinariaCodigo(FILE *ptr, int cod){
 		fread(&aux, sizeof(TpPizza), 1, ptr);
 	}
 	
-	if(aux.codigo == cod)
+	if(aux.codigo == cod && aux.status != 'I')
 		return ftell(ptr) - sizeof(TpPizza);
 	else
 		return -1;
@@ -1809,6 +1808,7 @@ void cadastrarMotoqueiro(void) {
 		}
 	}
 	
+	ordenacaoExaustivaMotoqueiro();
 	clrscr();
 	fclose(ptrarquivo);
 }
