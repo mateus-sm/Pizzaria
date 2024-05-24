@@ -70,6 +70,7 @@ void ordenacaoExaustivaPedido(void);
 
 void insercaoDiretaCliente(void);
 void bubbleSortPedido(void);
+void selecaoDiretaPizza(void);
 
 void estadoPizza(void);
 void filtrarLetra(void);
@@ -129,7 +130,6 @@ int main(void){
 						break;
 
 					case '3':
-						ordenacaoExaustivaPizza();
 						exibirPizza();
 						break;
 
@@ -201,6 +201,62 @@ int main(void){
 		}
 
 	} while(op != 27);
+}
+
+void selecaoDiretaPizza(void) {
+	TpPizza A, B;
+	FILE *ptr = fopen("Pizzas.dat", "rb+");
+
+	fseek(ptr, 0, 2);
+	int tamanho = ftell(ptr) / sizeof(TpPizza);
+
+	int maior, pos, i;
+
+	while (tamanho > 0) {
+		fseek(ptr, 0, 0);//Ir para primeiro reg
+		fread(&A, sizeof(TpPizza), 1, ptr);//Ler conteudo
+		maior = A.codigo;
+
+		//Achar maior registro
+		pos = 0;
+		for (i = 0; i < tamanho; i++) {
+			fseek(ptr, i * sizeof(TpPizza), 0);//Ir para primeiro reg
+			fread(&A, sizeof(TpPizza), 1, ptr);//Ler conteudo
+			//printf("Registro: %d, codigo: %d\n", i, A.codigo);
+
+			//Comparar
+			if (maior < A.codigo) {
+				//printf("%d eh maior que %d\n", A.codigo, maior);
+				maior = A.codigo;
+				pos = i;
+				//printf("maior %d pos %d\n", maior, pos);
+			}
+		}
+
+		//Colocar maior na ultima posição
+		fseek(ptr, (tamanho - 1) * sizeof(TpPizza), 0); //Pegar ultimo reg
+		fread(&A, sizeof(TpPizza), 1, ptr);
+		//printf("Ultima posicao contem: %d\n", A.codigo);
+
+		fseek(ptr, pos * sizeof(TpPizza), 0); //Pegar maior reg
+		fread(&B, sizeof(TpPizza), 1, ptr);
+		//printf("Maior posicao contem: %d\n", B.codigo);
+
+		if (pos < tamanho - 1) {
+			fseek(ptr, (tamanho - 1) * sizeof(TpPizza), 0);
+			fwrite(&B, sizeof(TpPizza), 1, ptr);
+			//printf("%d colocado na pos %d", B.codigo, (tamanho - 1));
+
+			fseek(ptr, pos * sizeof(TpPizza), 0);
+			fwrite(&A, sizeof(TpPizza), 1, ptr);
+			//printf(" %d colocado na pos %d\n", A.codigo, pos);
+			//printf("Trocou\n\n");	
+		}
+
+		tamanho--;
+	}
+	
+	fclose(ptr);
 }
 
 void bubbleSortPedido(void) {
@@ -1453,8 +1509,10 @@ void cadastrarPizza(void) {
 		scanf("%f", &aux.valor);
 		
 		fwrite(&aux, sizeof(TpPizza), 1, ptrarquivo);
-
-		ordenacaoExaustivaPizza(); //busca ordenada
+		fclose(ptrarquivo);
+		selecaoDiretaPizza();
+		FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
+		//ordenacaoExaustivaPizza(); //busca ordenada
 		
 		printf("\nInsira o CODIGO da Pizza:\n");
 		fflush(stdin);
