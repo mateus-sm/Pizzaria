@@ -215,17 +215,17 @@ void bubbleSortPedido(void) {
 		for (int i = 0; i < tamanho - 1; i++) {
 			//Ler primeiro e segundo registros do arquivo
 			qtdA = i + 1;
-			fseek(ptr, qtdA * sizeof(TpCliente), 0);
-			fread(&A, sizeof(TpCliente), 1, ptr);
-			printf("\nPrimeiro registro: %d\n", A.numero);
+			fseek(ptr, qtdA * sizeof(TpPedido), 0);
+			fread(&A, sizeof(TpPedido), 1, ptr);
+			//printf("\nPrimeiro registro: %d\n", A.numero);
 			
 			qtdB = qtdA - 1;
-			fseek(ptr, qtdB * sizeof(TpCliente), 0);
-			fread(&B, sizeof(TpCliente), 1, ptr);
-			printf("Segundo registro: %d\n", B.numero);
+			fseek(ptr, qtdB * sizeof(TpPedido), 0);
+			fread(&B, sizeof(TpPedido), 1, ptr);
+			//printf("Segundo registro: %d\n", B.numero);
 
 			//Comparar
-			if (A.numero > B.numero) {
+			if (B.numero > A.numero) {
 				//Trocar
 				//Ir para primeira pos
 				fseek(ptr, qtdA * sizeof(TpPedido), 0);
@@ -1738,7 +1738,8 @@ char menu(void) {
 }
 
 char menuNum(void) {
-	clrscr();
+	//clrscr();
+	system("cls");
 	printf("# # # # MENU # # # # \n");
 	textcolor(1);
 	printf("[1] Cadastrar\n");
