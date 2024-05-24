@@ -69,6 +69,7 @@ void ordenacaoExaustivaPizza(void);
 void ordenacaoExaustivaPedido(void);
 
 void insercaoDiretaCliente(void);
+void bubbleSortPedido(void);
 
 void estadoPizza(void);
 void filtrarLetra(void);
@@ -119,7 +120,6 @@ int main(void){
 
 				switch (op) {
 					case '1':
-						ordenacaoExaustivaCliente();
 						exibirCliente();
 						break;	
 
@@ -134,7 +134,6 @@ int main(void){
 						break;
 
 					case '4':
-						ordenacaoExaustivaPedido();
 						exibirPedidos();
 						break;
 				}
@@ -204,6 +203,46 @@ int main(void){
 	} while(op != 27);
 }
 
+void bubbleSortPedido(void) {
+	TpPedido A, B;
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+
+	fseek(ptr, 0, 2);
+	int tamanho = ftell(ptr) / sizeof(TpPedido);
+	int qtdA, qtdB;
+
+	while (tamanho > 0) {
+		for (int i = 0; i < tamanho - 1; i++) {
+			//Ler primeiro e segundo registros do arquivo
+			qtdA = i + 1;
+			fseek(ptr, qtdA * sizeof(TpCliente), 0);
+			fread(&A, sizeof(TpCliente), 1, ptr);
+			printf("\nPrimeiro registro: %d\n", A.numero);
+			
+			qtdB = qtdA - 1;
+			fseek(ptr, qtdB * sizeof(TpCliente), 0);
+			fread(&B, sizeof(TpCliente), 1, ptr);
+			printf("Segundo registro: %d\n", B.numero);
+
+			//Comparar
+			if (A.numero > B.numero) {
+				//Trocar
+				//Ir para primeira pos
+				fseek(ptr, qtdA * sizeof(TpPedido), 0);
+				fwrite(&B, sizeof(TpPedido), 1, ptr);
+
+				//Ir para segunda e copiar a primeira
+				fseek(ptr, qtdB * sizeof(TpPedido), 0);
+				fwrite(&A, sizeof(TpPedido), 1, ptr);
+			}
+		}
+
+		tamanho--;
+	}
+	
+	fclose(ptr);
+}
+
 void insercaoDiretaCliente(void) {
 	TpCliente A, B, aux;
 	//criarArquivo("Clientes.dat");
@@ -214,18 +253,20 @@ void insercaoDiretaCliente(void) {
 
 	fseek(ptr, 0, 2);
 	quantidade = ftell(ptr) / sizeof(TpCliente);
+	//quantidade++;
+	printf("Tamanho total eh %d quantidade eh %d", ftell(ptr), quantidade);
 
 	int qtdA = quantidade - 1;
 	fseek(ptr, qtdA * sizeof(TpCliente), 0);
 	fread(&A, sizeof(TpCliente), 1, ptr);
-	printf("\nUltimo registro: %s\n", A.nome);
+	//printf("\nUltimo registro: %s\n", A.nome);
 	
 	int qtdB = qtdA - 1;
 	fseek(ptr, qtdB * sizeof(TpCliente), 0);
 	fread(&B, sizeof(TpCliente), 1, ptr);
-	printf("Penultimo registro: %s\n", B.nome);
+	//printf("Penultimo registro: %s\n", B.nome);
 
-	while(qtdB > 0 && stricmp(A.nome, B.nome) > 0) {
+	while(qtdB >= 0 && stricmp(A.nome, B.nome) < 0) {
 		//aux = B;
 		fseek(ptr, qtdB * sizeof(TpCliente), 0); //Foi para penultima posição
 		fwrite(&A, sizeof(TpCliente), 1, ptr); //coloca o conteudo da ultima na penultima
@@ -236,12 +277,12 @@ void insercaoDiretaCliente(void) {
 		qtdA--;
 		fseek(ptr, qtdA * sizeof(TpCliente), 0);
 		fread(&A, sizeof(TpCliente), 1, ptr);
-		printf("\nUltimo registro da segunda iteração: %s\n", A.nome);
+		//printf("\nUltimo registro da segunda iteracao: %s\n", A.nome);
 		
 		qtdB--;
 		fseek(ptr, qtdB * sizeof(TpCliente), 0);
 		fread(&B, sizeof(TpCliente), 1, ptr);
-		printf("Penultimo registro da segunda iteração: %s\n", B.nome);
+		//printf("Penultimo registro da segunda iteracao: %s\n", B.nome);
 	}
 
 	fclose(ptr);
@@ -1351,7 +1392,7 @@ void cadastrarPedido(void) {
 				scanf("%d", &aux.codigo);
 
 				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
-			}			
+			}
 
 			if (aux.codigo > 0) {
 				printf("Digite o CPF do Motoqueiro\n");
@@ -1374,6 +1415,10 @@ void cadastrarPedido(void) {
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
 
 					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
+
+					fclose(ptrpedido);
+					bubbleSortPedido();
+					FILE *ptrpedido = fopen("Pedidos.dat", "ab");
 				}
 			}	
 		}
@@ -1499,7 +1544,9 @@ void cadastrarCliente(void) {
 		gets(aux.cep);
 		
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
+		fclose(ptrarquivo);
 		insercaoDiretaCliente();
+		FILE *ptrarquivo = fopen("Clientes.dat", "ab");
 
 		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
