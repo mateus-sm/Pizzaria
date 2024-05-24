@@ -63,18 +63,21 @@ int buscaCPF(FILE *ptr, char texto[50]);
 int buscaTelefone(FILE *ptr, char texto[50]);
 int buscaPedido(FILE *ptr, int pedido);
 
-void ordenacaoExaustivaCliente(void);
+//Metodos de Ordenação
 void ordenacaoExaustivaMotoqueiro(void);
-void ordenacaoExaustivaPizza(void);
-void ordenacaoExaustivaPedido(void);
-
 void insercaoDiretaCliente(void);
 void bubbleSortPedido(void);
 void selecaoDiretaPizza(void);
+//void ordenacaoExaustivaCliente(void);
+//void ordenacaoExaustivaPizza(void);
+//void ordenacaoExaustivaPedido(void);
 
+//Relatorios
 void estadoPizza(void);
 void filtrarLetra(void);
 void exibirFiltro(FILE *ptr, char letra);
+void relatorioCliente(void);
+float buscaPreco(FILE *ptrpizza, int cod);
 
 char menu(void);
 char menuNum(void);
@@ -196,11 +199,107 @@ int main(void){
 					case '2':
 						filtrarLetra();
 					break;
+					case '3':
+						relatorioCliente();
+					break;
 				}
 			break;
 		}
 
 	} while(op != 27);
+}
+
+void relatorioCliente(void) {
+	TpPedido aux;
+	TpCliente aux2;
+	TpPizza aux3;
+
+	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
+	FILE *ptrpedido = fopen("Pedidos.dat", "rb+");
+	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
+
+	int pos, count = 0, tamanhoPedidos;
+	float valor, total = 0;
+	char telAtual[20];
+
+	fseek(ptrpedido, 0, 2);
+	tamanhoPedidos = ftell(ptrpedido) / sizeof(TpPedido);
+
+	//Pegar numero de um cliente
+	//Pesquisar em todos os pedidos esse numero
+	//Pegar o preco da pizza em cada um deles
+	//Imprimir e repetir
+
+	if (ptrcliente == NULL || ptrpedido == NULL || ptrpizza == NULL) {
+		printf("ERRO de abertura\n");
+	} else {
+		while (count < tamanhoPedidos) {
+			total = 0;
+			//Pegar numero de um cliente
+			fseek(ptrpedido, 0, 0);
+			fread (&aux, sizeof(TpPedido), 1, ptrpedido);		
+			while (!feof(ptrpedido)) {
+				if (strcmp(telAtual, aux.telefone) != 0) {
+					strcpy(telAtual, aux.telefone);
+					break; //Precisa remover
+				}
+
+				fread (&aux, sizeof(TpPedido), 1, ptrpedido);
+			}
+
+			//Informaçoes
+			printf("\nTELEFONE: %s\n", telAtual);
+			pos = buscaTelefone(ptrcliente, telAtual);
+			fseek(ptrcliente, pos, 0);
+			fread(&aux2, sizeof(TpCliente), 1, ptrcliente);
+			printf("NOME: %s\n", aux2.nome);
+			printf("Pizzas pedidas: \n");
+			
+			//Buscar detalhes do pedido
+			fseek(ptrpedido, 0, 0);
+			fseek(ptrcliente, 0, 0);
+			//Passar por todos os pedidos, ver se o cliente é o atual, se for buscar valor da pizza
+			fread (&aux, sizeof(TpPedido), 1, ptrpedido);	
+			while (!feof(ptrpedido)) {
+
+				if (strcmp(telAtual, aux.telefone) == 0) {
+					//Se o tel atual for igual ao do pedido lido precisa-se buscar o valor
+					valor = buscaPreco(ptrpizza, aux.codigo);
+					total += valor;
+					count++;
+
+					//Imprimir pizza
+					pos = buscaBinariaCodigo(ptrpizza, aux.codigo);
+					fseek(ptrpizza, pos, 0);
+					fread(&aux3, sizeof(TpPizza), 1, ptrpizza);
+					printf("%s\n", aux3.descricao);
+				}
+				
+				fread(&aux, sizeof(TpPedido), 1, ptrpedido);
+			}
+
+			printf("Total gasto: %.2f\n\n", total);			
+		}
+
+		getch();
+
+		fclose(ptrcliente);
+		fclose(ptrpedido);
+		fclose(ptrpizza);
+	}
+}
+
+float buscaPreco(FILE *ptrpizza, int cod) {
+	TpPizza aux;
+	int pos;
+
+	pos = buscaBinariaCodigo(ptrpizza, cod);
+	
+	fseek(ptrpizza, pos, 0);
+	fread(&aux, sizeof(TpPizza), 1, ptrpizza);
+	//printf("\nValor achado: %f\n", aux.valor);
+
+	return aux.valor;
 }
 
 void selecaoDiretaPizza(void) {
@@ -1872,6 +1971,7 @@ char menuRel(void) {
 	textcolor(8);
 	printf("[1] Exibir Estado Pizza\n");
 	printf("[2] Filtrar por letra\n");
+	printf("[3] Relatorio de Clientes\n");
 	textcolor(7);
 
 	return getche();
