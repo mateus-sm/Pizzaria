@@ -1449,24 +1449,28 @@ int buscaSeqIndexadaPedidos(FILE *ptr, int num) {
 		return -1;
 }
 
-int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
+int buscaSentinelaTelefone(FILE *ptr, char tel[30]) {
 	TpCliente aux;
 	int achou = 0;
 	int tam, cont = 0;
 	
+	// Colocar numa struct o que voce quer usar para pesquisar, e sinalizar ela como lixo
 	strcpy(aux.telefone, tel);
 	aux.status = 'I';
 	//printf("%s \n%c", aux.telefone, aux.status);
+
+	// Colocar o que quer pesquisar em TL e calcular tamanho 
 	fseek(ptr, 0, 2);
 	tam = ftell(ptr) / sizeof(TpCliente);
 	fwrite(&aux, sizeof(TpCliente), 1, ptr);
     
-    fseek(ptr, 0, 0); 	
+	// Voltar para o inicio e iniciar loop
+    fseek(ptr, 0, 0);
     fread(&aux, sizeof(TpCliente), 1, ptr);
-    while(!achou){
-    	//printf("Primeiro Telefone: %s Telefone Procurado: %s\n", aux.telefone, tel);
+    while(!achou) {
+    	//printf("Telefone atual: %s Telefone Procurado: %s\n", aux.telefone, tel);
     	//getch();
-    	if(strcmp(aux.telefone, tel) == 0 && aux.status == 'A')
+    	if (strcmp(aux.telefone, tel) == 0 && aux.status == 'A')
     		achou = 1;
     	else {
     		fread(&aux, sizeof(TpCliente), 1, ptr);
@@ -1474,10 +1478,10 @@ int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
     	}
     }
     
-	if(cont < tam - 1)
+	if (cont < tam - 1)
         return ftell(ptr) - sizeof(TpCliente);
     else
-        return -1; 
+        return -1;
 }
 	
 int buscaPedido(FILE *ptr, int pedido){
