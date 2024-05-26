@@ -1434,6 +1434,7 @@ void alterarCliente(void){
 	}
 		
 }
+
 int buscaSeqIndexadaPedidos(FILE *ptr, int num) {
 	TpPedido aux;
 
@@ -1457,17 +1458,17 @@ int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
 	aux.status = 'I';
 	//printf("%s \n%c", aux.telefone, aux.status);
 	fseek(ptr, 0, 2);
-	tam = ftell(ptr)/sizeof(TpCliente);
+	tam = ftell(ptr) / sizeof(TpCliente);
 	fwrite(&aux, sizeof(TpCliente), 1, ptr);
     
     fseek(ptr, 0, 0); 	
     fread(&aux, sizeof(TpCliente), 1, ptr);
     while(!achou){
-    	printf("PRIMEIRO TELEFONE: %s TELEFONE PROCURADO: %s\n",aux.telefone, tel);
-    	getch();
+    	//printf("Primeiro Telefone: %s Telefone Procurado: %s\n", aux.telefone, tel);
+    	//getch();
     	if(strcmp(aux.telefone, tel) == 0 && aux.status == 'A')
     		achou = 1;
-    	else{
+    	else {
     		fread(&aux, sizeof(TpCliente), 1, ptr);
     		cont++;
     	}
