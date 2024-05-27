@@ -63,13 +63,13 @@ void alterarMotoqueiro(void);
 void alterarPizza(void);
 void alterarPedido(void);
 
-//Exclusão Lógica
+//Exclusï¿½o Lï¿½gica
 void exclusaoLogicaCliente(void);
 void exclusaoLogicaMotoqueiro(void);
 void exclusaoLogicaPizza(void);
 void exclusaoLogicaPedido(void);
 
-//ExclusÃ£o Física
+//ExclusÃ£o Fï¿½sica
 void exclusaoFisicaCliente(void);
 void exclusaoFisicaMotoqueiro(void);
 void exclusaoFisicaPizza(void);
@@ -298,7 +298,7 @@ void exclusaoLogicaPedido(void){
 			if(toupper(getche()) == 'Y'){
 				aux.status = 'I';
 				fwrite(&aux,sizeof(TpPedido), 1, ptr);
-				printf("\nCliente excluido com sucesso\n");
+				printf("\nPedido excluido com sucesso\n");
 			} else
 				printf("\nExclusao nao realizada\n");
 		}
@@ -307,6 +307,19 @@ void exclusaoLogicaPedido(void){
 		getch();
 		clrscr();
 	}
+}
+
+int verificaCodPedido(FILE *ptr, int cod) {
+	TpPedido aux;
+
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	while(!feof(ptr) && (aux.codigo != cod || aux.status != 'A')) 
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+	
+	if(aux.codigo == cod && aux.status == 'A')
+		return 1;
+	else
+		return -1;
 }
 
 void exclusaoLogicaPizza(void){
@@ -331,31 +344,50 @@ void exclusaoLogicaPizza(void){
 		
 			flag = buscaBinariaCodigo(ptr, cod);
 		}
-		
-		if(cod > 0){
-			fseek(ptr, flag, 0);
-			fread(&aux,sizeof(TpPizza), 1, ptr);
-			fseek(ptr, flag, 0);	
 
-			printf("---> Dados da PIZZA <---\n");
-			printf("CODIGO: %d\n", aux.codigo);
-			printf("DESCRICAO: %s\n", aux.descricao);
-			printf("VALOR: %.2f\n", aux.valor);
-			printf("STATUS: %c\n", aux.status);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			if(toupper(getche()) == 'Y'){
-				aux.status = 'I';
-				fwrite(&aux,sizeof(TpPizza), 1, ptr);
-				printf("\nCliente excluido com sucesso\n");
-			} else
-				printf("\nExclusao nao realizada\n");
+		flag = verificaCodPedido(ptr, cod);
+		
+		if (flag == 1) {
+			if(cod > 0){
+				fseek(ptr, flag, 0);
+				fread(&aux,sizeof(TpPizza), 1, ptr);
+				fseek(ptr, flag, 0);	
+
+				printf("---> Dados da PIZZA <---\n");
+				printf("CODIGO: %d\n", aux.codigo);
+				printf("DESCRICAO: %s\n", aux.descricao);
+				printf("VALOR: %.2f\n", aux.valor);
+				printf("STATUS: %c\n", aux.status);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				if(toupper(getche()) == 'Y'){
+					aux.status = 'I';
+					fwrite(&aux,sizeof(TpPizza), 1, ptr);
+					printf("\nPizza excluida com sucesso\n");
+				} else
+					printf("\nExclusao nao realizada\n");
+			}			
+		} else {
+			printf("Pizza cadastrada com pedido ativo!\nExclusao nao realizada\n");
 		}
 		
 		fclose(ptr);
 		getch();
 		clrscr();
 	}
+}
+
+int verificaCPFPedido(FILE *ptr, char cpf[30]) {
+	TpPedido aux;
+
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	while(!feof(ptr) && (stricmp(aux.cpf, cpf) != 0 || aux.status != 'A')) 
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+	
+	if(stricmp(aux.cpf, cpf) == 0 && aux.status == 'A')
+		return 1;
+	else
+		return -1;
 }
 
 void exclusaoLogicaMotoqueiro(void){
@@ -372,42 +404,63 @@ void exclusaoLogicaMotoqueiro(void){
 		fflush(stdin);
 		gets(cpf);
 		
-		flag = buscaSentinelaTelefone(ptr, cpf);
+		flag = buscaCPF(ptr, cpf);
 		
 		while (flag == -1 && strlen(cpf) > 0){
 			printf("Insira um CPF CADASTRADO: \n");
 			fflush(stdin);
 			gets(cpf);
 		
-			flag = buscaSentinelaTelefone(ptr, cpf);
+			flag = buscaCPF(ptr, cpf);
 		}
-		
-		if(strlen(cpf) > 0){
-			fseek(ptr, flag, 0);
-			fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
-			fseek(ptr, flag, 0);	
 
-			printf("---> Dados do MOTOQUEIRO <---\n");
-			printf("CPF: %s\n", aux.cpf);
-			printf("NOME: %s\n", aux.nome);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
-			printf("STATUS: %c\n", aux.status);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			if(toupper(getche()) == 'Y'){
-				aux.status = 'I';
-				fwrite(&aux,sizeof(TpMotoqueiro), 1, ptr);
-				printf("\nCliente excluido com sucesso\n");
-			} else
-				printf("\nExclusao nao realizada\n");
+		flag = verificaCPFPedido(ptr, cpf);
+		
+		if (flag == 1) {
+			if(strlen(cpf) > 0){
+				fseek(ptr, flag, 0);
+				fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
+				fseek(ptr, flag, 0);	
+
+				printf("---> Dados do MOTOQUEIRO <---\n");
+				printf("CPF: %s\n", aux.cpf);
+				printf("NOME: %s\n", aux.nome);
+				printf("ENDERECO: %s\n", aux.endereco);
+				printf("TELEFONE: %s\n", aux.telefone);
+				printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+				printf("STATUS: %c\n", aux.status);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				if(toupper(getche()) == 'Y'){
+					aux.status = 'I';
+					fwrite(&aux,sizeof(TpMotoqueiro), 1, ptr);
+					printf("\nMotoqueiro excluido com sucesso\n");
+				} else
+					printf("\nExclusao nao realizada\n");
+			}			
+		} else {
+			printf("Motoqueiro cadastrado com pedido ativo!\nExclusao nao realizada\n");
 		}
+
 		
 		fclose(ptr);
 		getch();
 		clrscr();
 	}
+}
+
+int verificaTelPedido(FILE *ptr, char tel[30]) {
+	TpPedido aux;
+
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	while(!feof(ptr) && (stricmp(aux.telefone, tel) != 0 || aux.status != 'A')) 
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+	
+	if(stricmp(aux.telefone, tel) == 0 && aux.status == 'A')
+		return 1;
+	else
+		return -1;
+	
 }
 
 void exclusaoLogicaCliente(void){
@@ -433,29 +486,35 @@ void exclusaoLogicaCliente(void){
 		
 			flag = buscaSentinelaTelefone(ptr, tel);
 		}
-		
-		if(strlen(tel) > 0){
-			fseek(ptr, flag, 0);
-			fread(&aux,sizeof(TpCliente), 1, ptr);
-			fseek(ptr, flag, 0);	
 
-			printf("---> Dados do CLIENTE <---\n");
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("NOME: %s\n", aux.nome);
-			printf("CIDADE: %s\n", aux.cidade);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("CEP: %s\n", aux.cep);
-			printf("STATUS: %c\n", aux.status);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			if(toupper(getche()) == 'Y'){
-				aux.status = 'I';
-				fwrite(&aux,sizeof(TpCliente), 1, ptr);
-				printf("\nCliente excluido com sucesso\n");
-			} else
-				printf("\nExclusao nao realizada\n");
+		flag = verificaTelPedido(ptr, tel);
+
+		if (flag == 1) {
+			if(strlen(tel) > 0){
+				fseek(ptr, flag, 0);
+				fread(&aux,sizeof(TpCliente), 1, ptr);
+				fseek(ptr, flag, 0);	
+
+				printf("---> Dados do CLIENTE <---\n");
+				printf("TELEFONE: %s\n", aux.telefone);
+				printf("NOME: %s\n", aux.nome);
+				printf("CIDADE: %s\n", aux.cidade);
+				printf("ENDERECO: %s\n", aux.endereco);
+				printf("CEP: %s\n", aux.cep);
+				printf("STATUS: %c\n", aux.status);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				if(toupper(getche()) == 'Y'){
+					aux.status = 'I';
+					fwrite(&aux,sizeof(TpCliente), 1, ptr);
+					printf("\nTelefone excluido com sucesso\n");
+				} else
+					printf("\nExclusao nao realizada\n");
+			}
+		} else {
+			printf("Cliente cadastrado com pedido ativo!\nExclusao nao realizada\n");
 		}
-		
+
 		fclose(ptr);
 		getch();
 		clrscr();
@@ -1046,6 +1105,33 @@ void exclusaoFisicaPedido(void){
 	}
 }
 
+void excluirClienteInativo(void) {
+	TpCliente aux;
+	FILE *ptr = fopen("Clientes.dat", "rb");
+
+	if (ptr == NULL){
+		printf("Erro de abertura\n");
+	} else {
+		FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
+		fseek(ptr, 0, 0);
+		fread(&aux, sizeof(TpCliente), 1, ptr);
+			
+		while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
+			if(aux.status != 'I')
+				fwrite(&aux, sizeof(TpCliente), 1, ptrnovo);
+	
+			fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao ï¿½ EOF
+		}
+		
+		//fecha e renomeia os arquivos
+		fclose(ptr);
+		fclose(ptrnovo);
+		remove("Clientes.dat");
+		rename("novo.dat", "Clientes.dat");
+		printf("\nExclusao de inativos realizada com sucesso!\n");	
+	}
+}
+
 void exclusaoFisicaCliente(void){
 	clrscr();
 	TpCliente aux;
@@ -1054,46 +1140,75 @@ void exclusaoFisicaCliente(void){
 
 	FILE *ptr = fopen("Clientes.dat", "rb");
 	
-		if(strlen(tel) > 0){
-			fseek(ptr, flag, 0); //vai para a pos encontrada
-			fread(&aux, sizeof(TpCliente), 1, ptr);
-			printf("---> Dados do CLIENTE <---\n");
-			printf("Telefone: %s\n", aux.telefone);
-			printf("Nome: %s\n", aux.nome);
-			printf("Endereco: %s\n", aux.endereco);
-			printf("Cidade: %s\n", aux.cidade);
-			printf("Cep: %s\n", aux.cep);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			
-			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
-				fseek(ptr, 0, 0);
-				fread(&aux, sizeof(TpCliente), 1, ptr);
-					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
-					if(strcmp(tel, aux.telefone) != 0)
-						fwrite(&aux, sizeof(TpCliente), 1, ptrnovo);
-			
-					fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao ï¿½ EOF
-				}
-				
-				//fecha e renomeia os arquivos
-					fclose(ptr);
-					fclose(ptrnovo);
-					remove("Clientes.dat");
-					rename("novo.dat", "Clientes.dat");
-					printf("\nExclusao realizada com sucesso!\n");
+	if (ptr == NULL) {
+		printf("Erro de abertura\n");
+	} else {
 
-			} else{
-				printf("\nExclusao nao realizada\n");
-				fclose(ptr);
-			}
+		fclose(ptr);
+		excluirClienteInativo();
+		FILE *ptr = fopen("Clientes.dat", "rb");
+
+		printf("Digite o TELEFONE do cliente que deseja excluir: \n");
+		fflush(stdin);
+		gets(tel);
+		
+		flag = buscaSentinelaTelefone(ptr, tel);
+		
+		while (flag == -1 && strlen(tel) > 0){
+			printf("Insira um TELEFONE CADASTRADO: \n");
+			fflush(stdin);
+			gets(tel);
+		
+			flag = buscaSentinelaTelefone(ptr, tel);
 		}
+
+		flag = verificaTelPedido(ptr, tel);
+
+		if (flag == 1) {
+			if(strlen(tel) > 0){
+				fseek(ptr, flag, 0); //vai para a pos encontrada
+				fread(&aux, sizeof(TpCliente), 1, ptr);
+				printf("---> Dados do CLIENTE <---\n");
+				printf("Telefone: %s\n", aux.telefone);
+				printf("Nome: %s\n", aux.nome);
+				printf("Endereco: %s\n", aux.endereco);
+				printf("Cidade: %s\n", aux.cidade);
+				printf("Cep: %s\n", aux.cep);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				
+				if(toupper(getche()) == 'Y'){
+					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
+					fseek(ptr, 0, 0);
+					fread(&aux, sizeof(TpCliente), 1, ptr);
+						
+					while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
+						if(strcmp(tel, aux.telefone) != 0)
+							fwrite(&aux, sizeof(TpCliente), 1, ptrnovo);
+				
+						fread(&aux, sizeof(TpCliente), 1, ptr);//ve se nao ï¿½ EOF
+					}
+					
+					//fecha e renomeia os arquivos
+						fclose(ptr);
+						fclose(ptrnovo);
+						remove("Clientes.dat");
+						rename("novo.dat", "Clientes.dat");
+						printf("\nExclusao realizada com sucesso!\n");
+
+				} else{
+					printf("\nExclusao nao realizada\n");
+					fclose(ptr);
+				}
+			}
+		} else {
+			printf("Cliente cadastrado com pedido ativo!\nExclusao nao realizada\n");
+		}
+
 		fclose(ptr);
 		getch();
-		clrscr();	
-	
+		clrscr();		
+	}
 }
 
 void exclusaoFisicaMotoqueiro(void){
@@ -1120,43 +1235,50 @@ void exclusaoFisicaMotoqueiro(void){
 		
 			flag = buscaCPF(ptr, cpf);
 		}
-		
-		if(strlen(cpf) > 0){
-			fseek(ptr, flag, 0); //vai para a pos encontrada
-			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
-			printf("---> Dados do MOTOQUEIRO <---\n");
-			printf("CPF: %s\n", aux.cpf);
-			printf("Nome: %s\n", aux.nome);
-			printf("Endereco: %s\n", aux.endereco);
-			printf("Telefone: %s\n", aux.telefone);
-			printf("Data de admissao: %d/%d/%d \n", aux.data.d, aux.data.m, aux.data.a);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			
-			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
-				fseek(ptr, 0, 0);
-				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
-					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
-					if(strcmp(cpf, aux.cpf) != 0)
-						fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrnovo);
-			
-					fread(&aux, sizeof(TpMotoqueiro), 1, ptr);//ve se nao ï¿½ EOF
-				}
-				
-				//fecha e renomeia os arquivos
-					fclose(ptr);
-					fclose(ptrnovo);
-					remove("Motoqueiros.dat");
-					rename("novo.dat", "Motoqueiros.dat");
-					printf("\nExclusao realizada com sucesso!\n");
 
-			} else{
-				printf("\nExclusao nao realizada\n");
-				fclose(ptr);
-			}
+		flag = verificaCPFPedido(ptr, cpf);
+
+		if (flag == 1) {
+			if(strlen(cpf) > 0){
+				fseek(ptr, flag, 0); //vai para a pos encontrada
+				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+				printf("---> Dados do MOTOQUEIRO <---\n");
+				printf("CPF: %s\n", aux.cpf);
+				printf("Nome: %s\n", aux.nome);
+				printf("Endereco: %s\n", aux.endereco);
+				printf("Telefone: %s\n", aux.telefone);
+				printf("Data de admissao: %d/%d/%d \n", aux.data.d, aux.data.m, aux.data.a);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				
+				if(toupper(getche()) == 'Y'){
+					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
+					fseek(ptr, 0, 0);
+					fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+						
+					while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
+						if(strcmp(cpf, aux.cpf) != 0)
+							fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrnovo);
+				
+						fread(&aux, sizeof(TpMotoqueiro), 1, ptr);//ve se nao ï¿½ EOF
+					}
+					
+					//fecha e renomeia os arquivos
+						fclose(ptr);
+						fclose(ptrnovo);
+						remove("Motoqueiros.dat");
+						rename("novo.dat", "Motoqueiros.dat");
+						printf("\nExclusao realizada com sucesso!\n");
+
+				} else{
+					printf("\nExclusao nao realizada\n");
+					fclose(ptr);
+				}
+			}			
+		} else {
+			printf("Motoqueiro cadastrado com pedido ativo!\nExclusao nao realizada\n");
 		}
+	
 		fclose(ptr);
 		getch();
 		clrscr();	
@@ -1186,41 +1308,48 @@ void exclusaoFisicaPizza(void){
 			
 			flag = buscaBinariaCodigo(ptr, auxcod);
 		}
-		
-		if(auxcod > 0){
-			fseek(ptr, flag, 0); //vai para a pos encontrada
-			fread(&aux, sizeof(TpPizza), 1, ptr);
-			printf("---> Dados da PIZZA <---\n");
-			printf("Codigo: %d\n", aux.codigo);
-			printf("Descricao: %s\n", aux.descricao);
-			printf("Valor: %.2f\n", aux.valor);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			
-			if(toupper(getche()) == 'Y'){
-				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
-				fseek(ptr, 0, 0);
-				fread(&aux, sizeof(TpPizza), 1, ptr);
-					
-				while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
-					if( aux.codigo != auxcod)
-						fwrite(&aux, sizeof(TpPizza), 1, ptrnovo);
-			
-					fread(&aux, sizeof(TpPizza), 1, ptr);//ve se nao ï¿½ EOF
-				}
-				
-				//fecha e renomeia os arquivos
-					fclose(ptr);
-					fclose(ptrnovo);
-					remove("Pizzas.dat");
-					rename("novo.dat", "Pizzas.dat");
-					printf("\nExclusao realizada com sucesso!\n");
 
-			} else{
-				printf("\nExclusao nao realizada\n");
-				fclose(ptr);
-			}
+		flag = verificaCodPedido(ptr, auxcod);
+		
+		if(flag == 1) {
+			if(auxcod > 0){
+				fseek(ptr, flag, 0); //vai para a pos encontrada
+				fread(&aux, sizeof(TpPizza), 1, ptr);
+				printf("---> Dados da PIZZA <---\n");
+				printf("Codigo: %d\n", aux.codigo);
+				printf("Descricao: %s\n", aux.descricao);
+				printf("Valor: %.2f\n", aux.valor);
+				
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				
+				if(toupper(getche()) == 'Y'){
+					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo ï¿½ zerado
+					fseek(ptr, 0, 0);
+					fread(&aux, sizeof(TpPizza), 1, ptr);
+						
+					while(!feof(ptr)){ //enquanto o arquivo p essoa nï¿½o chegar no fim
+						if( aux.codigo != auxcod)
+							fwrite(&aux, sizeof(TpPizza), 1, ptrnovo);
+				
+						fread(&aux, sizeof(TpPizza), 1, ptr);//ve se nao ï¿½ EOF
+					}
+					
+					//fecha e renomeia os arquivos
+						fclose(ptr);
+						fclose(ptrnovo);
+						remove("Pizzas.dat");
+						rename("novo.dat", "Pizzas.dat");
+						printf("\nExclusao realizada com sucesso!\n");
+
+				} else{
+					printf("\nExclusao nao realizada\n");
+					fclose(ptr);
+				}
+			}			
+		} else {
+			printf("Pizza cadastrada com pedido ativo!\nExclusao nao realizada\n");
 		}
+		
 		fclose(ptr);
 		getch();
 		clrscr();	
@@ -1760,7 +1889,7 @@ int buscaBinariaCodigo(FILE *ptr, int cod){
 	
 	fseek(ptr, meio * sizeof(TpPizza), 0);
 	fread(&aux, sizeof(TpPizza), 1, ptr);
-	while(inicio < fim && aux.codigo != cod){
+	while(inicio < fim && (aux.codigo != cod || aux.status != 'A')){
 		
 		if(cod > aux.codigo)
 			inicio = meio + 1;
@@ -1773,7 +1902,7 @@ int buscaBinariaCodigo(FILE *ptr, int cod){
 		fread(&aux, sizeof(TpPizza), 1, ptr);
 	}
 	
-	if(aux.codigo == cod && aux.status != 'I')
+	if(aux.codigo == cod && aux.status == 'A')
 		return ftell(ptr) - sizeof(TpPizza);
 	else
 		return -1;
@@ -1853,7 +1982,7 @@ void cadastrarPedido(void) {
 			}	
 		}
 		
-		printf("Insira o NUMERO do Pedido:\n");
+		printf("\nInsira o NUMERO do Pedido:\n");
 		fflush(stdin);
 		scanf("%d", &aux.numero);
 		
