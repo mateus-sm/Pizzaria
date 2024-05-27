@@ -63,7 +63,13 @@ void alterarMotoqueiro(void);
 void alterarPizza(void);
 void alterarPedido(void);
 
-//ExclusÃ£o
+//Exclusão Lógica
+void exclusaoLogicaCliente(void);
+void exclusaoLogicaMotoqueiro(void);
+void exclusaoLogicaPizza(void);
+void exclusaoLogicaPedido(void);
+
+//ExclusÃ£o Física
 void exclusaoFisicaCliente(void);
 void exclusaoFisicaMotoqueiro(void);
 void exclusaoFisicaPizza(void);
@@ -73,6 +79,7 @@ void exclusaoFisicaPedido(void);
 int buscaBinariaCodigo(FILE *ptr, int cod);
 int buscaCPF(FILE *ptr, char texto[50]);
 int buscaSentinelaTelefone(FILE *ptr, char nome[30]);
+int buscaSeqIndexadaPedido(FILE *ptr, int num);
 int buscaPedido(FILE *ptr, int pedido);
 
 //Metodos de OrdenaÃ§Ã£o
@@ -98,6 +105,7 @@ char menuNum(void);
 char menuCad(void);
 char menuExib(void);
 char menuAlt(void);
+char menuExclLF(void);
 char menuExcl(void);
 char menuRel(void);
 
@@ -181,24 +189,50 @@ int main(void){
 			break;
 
 			case '4':
-				op = menuExcl();
+				op = menuExclLF();
 
 				switch (op) {
 					case '1':
-						exclusaoFisicaCliente();
-						break;
+						op = menuExcl();
 						
+						switch(op){
+							case '1':
+								exclusaoFisicaCliente();
+								break;
+							
+							case '2':
+								exclusaoFisicaMotoqueiro();
+								break;
+							
+							case '3':
+								exclusaoFisicaPizza();
+								break;
+							
+							case '4':
+								exclusaoFisicaPedido();
+								break;
+						}
+								
 					case '2':
-						exclusaoFisicaMotoqueiro();
-						break;
+						op = menuExcl();
 						
-					case '3':
-						exclusaoFisicaPizza();
-						break;
-						
-					case '4':
-						exclusaoFisicaPedido();
-						break;
+						switch(op){
+							case '1':
+								exclusaoLogicaCliente();
+								break;
+							
+							case '2':
+								exclusaoLogicaMotoqueiro();
+								break;
+							
+							case '3':
+								exclusaoLogicaPizza();
+								break;
+							
+							case '4':
+								exclusaoLogicaPedido();
+								break;		
+						}
 				}
 
 			break;
@@ -221,6 +255,211 @@ int main(void){
 		}
 
 	} while(op != 27);
+}
+
+void exclusaoLogicaPedido(void){
+	TpPedido aux;
+	int num, flag;
+	
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("\nDigite o NUMERO DO PEDIDO que deseja excluir: \n");
+		fflush(stdin);
+		scanf("%d",&num);
+		
+		flag = buscaSeqIndexadaPedido(ptr, num);
+		
+		while (flag == -1 && num > 0){
+			printf("Insira um numero do pedido CADASTRADO: \n");
+			fflush(stdin);
+			scanf("%d",&num);
+		
+			flag = buscaSeqIndexadaPedido(ptr, num);
+		}
+		
+		if(num > 0){
+			fseek(ptr, flag, 0);
+			fread(&aux,sizeof(TpPedido), 1, ptr);
+			fseek(ptr, flag, 0);	
+
+			printf("---> Dados do PEDIDO <---\n");
+			printf("Numero: %d\n", aux.numero);
+			printf("Telefone: %s\n", aux.telefone);
+			printf("Codigo da pizza: %d\n", aux.codigo);
+			printf("CPF: %s\n", aux.cpf);
+			printf("Situacao: %s\n", aux.situacao);
+			printf("Data do pedido: %d/%d/%d \n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			printf("STATUS: %c\n", aux.status);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			if(toupper(getche()) == 'Y'){
+				aux.status = 'I';
+				fwrite(&aux,sizeof(TpPedido), 1, ptr);
+				printf("\nCliente excluido com sucesso\n");
+			} else
+				printf("\nExclusao nao realizada\n");
+		}
+		
+		fclose(ptr);
+		getch();
+		clrscr();
+	}
+}
+
+void exclusaoLogicaPizza(void){
+	TpPizza aux;
+	int cod, flag;
+	
+	FILE *ptr = fopen("Pizzas.dat", "rb+");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("\nDigite o CODIGO DA PIZZA que deseja excluir: \n");
+		fflush(stdin);
+		scanf("%d",&cod);
+		
+		flag = buscaBinariaCodigo(ptr, cod);
+		
+		while (flag == -1 && cod > 0){
+			printf("Insira um codigo da pizza CADASTRADO: \n");
+			fflush(stdin);
+			scanf("%d",&cod);
+		
+			flag = buscaBinariaCodigo(ptr, cod);
+		}
+		
+		if(cod > 0){
+			fseek(ptr, flag, 0);
+			fread(&aux,sizeof(TpPizza), 1, ptr);
+			fseek(ptr, flag, 0);	
+
+			printf("---> Dados da PIZZA <---\n");
+			printf("CODIGO: %d\n", aux.codigo);
+			printf("DESCRICAO: %s\n", aux.descricao);
+			printf("VALOR: %.2f\n", aux.valor);
+			printf("STATUS: %c\n", aux.status);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			if(toupper(getche()) == 'Y'){
+				aux.status = 'I';
+				fwrite(&aux,sizeof(TpPizza), 1, ptr);
+				printf("\nCliente excluido com sucesso\n");
+			} else
+				printf("\nExclusao nao realizada\n");
+		}
+		
+		fclose(ptr);
+		getch();
+		clrscr();
+	}
+}
+
+void exclusaoLogicaMotoqueiro(void){
+	TpMotoqueiro aux;
+	char cpf[30];
+	int flag;
+	
+	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("\nDigite o CPF do cliente que deseja excluir: \n");
+		fflush(stdin);
+		gets(cpf);
+		
+		flag = buscaSentinelaTelefone(ptr, cpf);
+		
+		while (flag == -1 && strlen(cpf) > 0){
+			printf("Insira um CPF CADASTRADO: \n");
+			fflush(stdin);
+			gets(cpf);
+		
+			flag = buscaSentinelaTelefone(ptr, cpf);
+		}
+		
+		if(strlen(cpf) > 0){
+			fseek(ptr, flag, 0);
+			fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
+			fseek(ptr, flag, 0);	
+
+			printf("---> Dados do MOTOQUEIRO <---\n");
+			printf("CPF: %s\n", aux.cpf);
+			printf("NOME: %s\n", aux.nome);
+			printf("ENDERECO: %s\n", aux.endereco);
+			printf("TELEFONE: %s\n", aux.telefone);
+			printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+			printf("STATUS: %c\n", aux.status);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			if(toupper(getche()) == 'Y'){
+				aux.status = 'I';
+				fwrite(&aux,sizeof(TpMotoqueiro), 1, ptr);
+				printf("\nCliente excluido com sucesso\n");
+			} else
+				printf("\nExclusao nao realizada\n");
+		}
+		
+		fclose(ptr);
+		getch();
+		clrscr();
+	}
+}
+
+void exclusaoLogicaCliente(void){
+	TpCliente aux;
+	char tel[30];
+	int flag;
+	
+	FILE *ptr = fopen("Clientes.dat", "rb+");
+	
+	if(ptr == NULL)
+		printf("ERRO de abertura\n");
+	else{
+		printf("\nDigite o TELEFONE do cliente que deseja excluir: \n");
+		fflush(stdin);
+		gets(tel);
+		
+		flag = buscaSentinelaTelefone(ptr, tel);
+		
+		while (flag == -1 && strlen(tel) > 0){
+			printf("Insira um telefone CADASTRADO: \n");
+			fflush(stdin);
+			gets(tel);
+		
+			flag = buscaSentinelaTelefone(ptr, tel);
+		}
+		
+		if(strlen(tel) > 0){
+			fseek(ptr, flag, 0);
+			fread(&aux,sizeof(TpCliente), 1, ptr);
+			fseek(ptr, flag, 0);	
+
+			printf("---> Dados do CLIENTE <---\n");
+			printf("TELEFONE: %s\n", aux.telefone);
+			printf("NOME: %s\n", aux.nome);
+			printf("CIDADE: %s\n", aux.cidade);
+			printf("ENDERECO: %s\n", aux.endereco);
+			printf("CEP: %s\n", aux.cep);
+			printf("STATUS: %c\n", aux.status);
+			
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			if(toupper(getche()) == 'Y'){
+				aux.status = 'I';
+				fwrite(&aux,sizeof(TpCliente), 1, ptr);
+				printf("\nCliente excluido com sucesso\n");
+			} else
+				printf("\nExclusao nao realizada\n");
+		}
+		
+		fclose(ptr);
+		getch();
+		clrscr();
+	}
 }
 
 void relatorioCliente(void) {
@@ -754,14 +993,14 @@ void exclusaoFisicaPedido(void){
 		fflush(stdin);
 		scanf("%d", &auxnum);
 		
-		flag = buscaPedido(ptr, auxnum);
+		flag = buscaSeqIndexadaPedido(ptr, auxnum);
 		
 		while (flag == -1 && auxnum > 0){
 			printf("Insira um numero do pedido CADASTRADO: \n");
 			fflush(stdin);
 			scanf("%d", &auxnum);
 		
-			flag = buscaPedido(ptr, auxnum);
+			flag = buscaSeqIndexadaPedido(ptr, auxnum);
 		}
 		
 		if(auxnum > 0){
@@ -815,23 +1054,6 @@ void exclusaoFisicaCliente(void){
 
 	FILE *ptr = fopen("Clientes.dat", "rb");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Digite o TELEFONE do cliente que deseja excluir: \n");
-		fflush(stdin);
-		gets(tel);
-		
-		flag = buscaSentinelaTelefone(ptr, tel);
-		
-		while (flag == -1 && strlen(tel) > 0){
-			printf("Insira um telefone CADASTRADO: \n");
-			fflush(stdin);
-			gets(tel);
-		
-			flag = buscaSentinelaTelefone(ptr, tel);
-		}
-		
 		if(strlen(tel) > 0){
 			fseek(ptr, flag, 0); //vai para a pos encontrada
 			fread(&aux, sizeof(TpCliente), 1, ptr);
@@ -871,7 +1093,7 @@ void exclusaoFisicaCliente(void){
 		fclose(ptr);
 		getch();
 		clrscr();	
-	}
+	
 }
 
 void exclusaoFisicaMotoqueiro(void){
@@ -1023,14 +1245,14 @@ void alterarPedido(void){
 		fflush(stdin);
 		scanf("%d",&aux.numero);
 		
-		flag = buscaPedido(ptrpedido, aux.numero);
+		flag = buscaSeqIndexadaPedido(ptrpedido, aux.numero);
 		
 		while (flag == -1 && aux.numero > 0){
 			printf("Insira um NUMERO do pedido cadastrado: \n");
 			fflush(stdin);
 			scanf("%d",&aux.numero);
 			
-			flag = buscaPedido(ptrpedido, aux.numero);
+			flag = buscaSeqIndexadaPedido(ptrpedido, aux.numero);
 		}
 		
 		if(aux.numero > 0){
@@ -1435,23 +1657,23 @@ void alterarCliente(void){
 		
 }
 
-int buscaSeqIndexadaPedidos(FILE *ptr, int num) {
+int buscaSeqIndexadaPedido(FILE *ptr, int num){
 	TpPedido aux;
 
-	fseek(ptr, 0, 2);
+	fseek(ptr, 0, 0);
 	fread(&aux, sizeof(TpPedido), 1, ptr);
-	while(aux.numero <= num)
+	
+	while(!feof(ptr) && (aux.numero < num || aux.status != 'A'))
 		fread(&aux, sizeof(TpPedido), 1, ptr);
 
-	if(aux.numero == num)
+	if(aux.numero == num && aux.status == 'A')
 		return ftell(ptr) - sizeof(TpPedido);
 	else	
 		return -1;
 }
 
-int buscaSentinelaTelefone(FILE *ptr, char tel[30]) {
+int buscaSentinelaTelefone(FILE *ptr, char tel[30]){
 	TpCliente aux;
-	int achou = 0;
 	int tam, cont = 0;
 	
 	// Colocar numa struct o que voce quer usar para pesquisar, e sinalizar ela como lixo
@@ -1467,18 +1689,15 @@ int buscaSentinelaTelefone(FILE *ptr, char tel[30]) {
 	// Voltar para o inicio e iniciar loop
     fseek(ptr, 0, 0);
     fread(&aux, sizeof(TpCliente), 1, ptr);
-    while(!achou) {
+    while(!feof(ptr) && (stricmp(aux.telefone, tel) != 0 || aux.status != 'A')){
     	//printf("Telefone atual: %s Telefone Procurado: %s\n", aux.telefone, tel);
     	//getch();
-    	if (strcmp(aux.telefone, tel) == 0 && aux.status == 'A')
-    		achou = 1;
-    	else {
-    		fread(&aux, sizeof(TpCliente), 1, ptr);
-    		cont++;
-    	}
+    	fread(&aux, sizeof(TpCliente), 1, ptr);
+    	cont++;
+    	
     }
     
-	if (cont < tam - 1)
+	if(stricmp(aux.telefone, tel) == 0 && aux.status == 'A')
         return ftell(ptr) - sizeof(TpCliente);
     else
         return -1;
@@ -1494,11 +1713,11 @@ int buscaPedido(FILE *ptr, int pedido){
 	}else {
 		fread(&aux, sizeof(TpPedido), 1, ptr);
 
-		while(!feof(ptr) && aux.numero != pedido) {
+		while(!feof(ptr) && (aux.numero != pedido || aux.status != 'A')) {
 			fread(&aux, sizeof(TpPedido), 1, ptr);
 		}
 
-		if (aux.numero == pedido && aux.status != 'I')
+		if (aux.numero == pedido && aux.status == 'A')
 			return ftell(ptr) - sizeof(TpPedido);
 		else 
 			return -1;
@@ -1518,7 +1737,7 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 	else
 		fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
 
-		while(!feof(ptr) && strcmp(texto, aux.cpf) != 0) {
+		while(!feof(ptr) && (strcmp(texto, aux.cpf) != 0 || aux.status != 'A')) {
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
 		}
 		
@@ -1844,7 +2063,8 @@ void exibirCliente(void) {
 				printf("NOME: %s\n", aux.nome);
 				printf("ENDERECO: %s\n", aux.endereco);
 				printf("CIDADE: %s\n", aux.cidade);
-				printf("CEP: %s\n\n", aux.cep);
+				printf("CEP: %s\n", aux.cep);
+				printf("STATUS: %c\n\n", aux.status);
 			}
 			fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		}
@@ -1871,7 +2091,9 @@ void exibirMotoqueiro(void) {
 				printf("NOME: %s\n", aux.nome);
 				printf("ENDERECO: %s\n", aux.endereco);
 				printf("TELEFONE: %s\n", aux.telefone);
-				printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+				printf("DATA DE ADMISSAO: %d/%d/%d\n", aux.data.d, aux.data.m, aux.data.a);
+				printf("STATUS: %c\n\n", aux.status);
+
 			}
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		}
@@ -1897,7 +2119,9 @@ void exibirPizza(void) {
 			if(aux.status != 'I'){
 				printf("CODIGO: %d\n", aux.codigo);
 				printf("DESCRICAO: %s\n", aux.descricao);
-				printf("VALOR: %.2f\n\n", aux.valor);
+				printf("VALOR: %.2f\n", aux.valor);
+				printf("STATUS: %c\n\n", aux.status);
+
 			}
 			fread(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		}
@@ -1926,7 +2150,9 @@ void exibirPedidos(void) {
 				printf("CODIGO: %d\n", aux.codigo);
 				printf("CPF: %s\n", aux.cpf);
 				printf("SITUACAO: %s\n", aux.situacao);
-				printf("DATA DO PEDIDO: %d/%d/%d\n\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+				printf("DATA DO PEDIDO: %d/%d/%d\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+				printf("STATUS: %c\n\n", aux.status);
+
 			}
 			fread(&aux, sizeof(TpPedido), 1, ptrarquivo);
 		}
@@ -2018,6 +2244,17 @@ char menuAlt(void) {
 	printf("[2] Alterar MOTOQUEIROS\n");
 	printf("[3] Alterar PIZZAS\n");
 	printf("[4] Alterar PEDIDOS\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuExclLF(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(5);
+	printf("[1] Excluir FISICAMENTE\n");
+	printf("[2] Excluir LOGICAMENTE\n");
 	textcolor(7);
 
 	return getche();
