@@ -95,6 +95,8 @@ void selecaoDiretaPizza(void);
 void estadoPizza(void);
 void filtrarLetra(void);
 void relatorioCliente(void);
+void pizzaMaisPedida(void);
+void pizzaMenosPedida(void);
 //Auxiliares de Relatorios
 void exibirFiltro(FILE *ptr, char letra);
 float buscaPreco(FILE *ptrpizza, int cod);
@@ -244,17 +246,167 @@ int main(void){
 					case '1':
 						estadoPizza();
 					break;
+
 					case '2':
 						filtrarLetra();
 					break;
+
 					case '3':
 						relatorioCliente();
+					break;
+
+					case '4':
+						pizzaMaisPedida();
+					break;
+
+					case '5':
+						pizzaMenosPedida();
 					break;
 				}
 			break;
 		}
 
 	} while(op != 27);
+}
+
+void pizzaMaisPedida(void) {
+	TpPedido aux;
+	TpPizza auxPizza;
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
+	int pos, TL;
+
+	//Colocar todas as pizzas em uma matriz
+	fseek(ptr, 0, 2);
+	int TF = ftell(ptr) / sizeof(TpPedido);
+
+	char listaPizzas[TF][30];
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	TL = 0;
+	while(!feof(ptr)) {
+		listaPizzas[TL][0] = aux.codigo;
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+		TL++;
+	}
+
+	//Debug de informaçoes
+	//printf("\nQuantidade de pedidos: %d\nValor de i: %d\n", TF, TL);
+	//printf("Pizzas pedidas:\n");
+	//for (int j = 0; j < TL; j++) {
+	//	pos = buscaBinariaCodigo(ptrPizza, listaPizzas[j][0]);
+	//	fseek(ptrPizza, pos, 0);
+	//	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	//	printf("Codigo: %d - %s\n", listaPizzas[j][0], auxPizza.descricao);
+	//}
+
+	//Ver quantas vezes cada pizza aparece
+	fseek(ptrPizza, 0, 2);
+	TF = fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	int atual, count, maior, vezes = 0;
+	fseek(ptrPizza, 0, 0);
+	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+	while (!feof(ptrPizza)) {
+		for (int j = 0; j < TL; j++) {
+			if (j == 0) {
+				atual = auxPizza.codigo;
+				count = 0;
+				if (listaPizzas[j][0] == atual) {
+					count++;
+				}
+			} else {
+				if (listaPizzas[j][0] == atual) {
+					count++;
+				}
+			}
+		}
+
+		if (count > vezes) {
+			maior = atual;
+			vezes = count;
+		}
+		
+		//Debug de informaçoes
+		//printf("\nPizza analisada: %s Apareceu %d vezes\nCod da Pizza que mais apareceu %d Vezes que ela apareceu %d", auxPizza.descricao, count, maior, vezes); getch();
+		fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+	}
+
+	pos = buscaBinariaCodigo(ptrPizza, maior);
+	fseek(ptrPizza, pos, 0);
+	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	printf("\nPizza mais pedida: %s - %d pedido(s)", auxPizza.descricao, vezes);	
+
+	getch();
+
+	fclose(ptr);
+	fclose(ptrPizza);
+}
+
+void pizzaMenosPedida(void) {
+	TpPedido aux;
+	TpPizza auxPizza;
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
+	int pos, TL;
+
+	//Colocar todas as pizzas em uma matriz
+	fseek(ptr, 0, 2);
+	int TF = ftell(ptr) / sizeof(TpPedido);
+
+	char listaPizzas[TF][30];
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	TL = 0;
+	while(!feof(ptr)) {
+		listaPizzas[TL][0] = aux.codigo;
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+		TL++;
+	}
+
+	//Ver quantas vezes cada pizza aparece
+	fseek(ptrPizza, 0, 2);
+	TF = fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	int atual, count, menor, vezes = 999;
+	fseek(ptrPizza, 0, 0);
+	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+	while (!feof(ptrPizza)) {
+		for (int j = 0; j < TL; j++) {
+			if (j == 0) {
+				atual = auxPizza.codigo;
+				count = 0;
+				if (listaPizzas[j][0] == atual) {
+					count++;
+				}
+			} else {
+				if (listaPizzas[j][0] == atual) {
+					count++;
+				}
+			}
+		}
+
+		if (count < vezes) {
+			menor = atual;
+			vezes = count;
+		}
+
+		//printf("\nPizza analisada: %s Apareceu %d vezes\nCod da Pizza que menos apareceu %d Vezes que ela apareceu %d", auxPizza.descricao, count, menor, vezes); getch();
+		fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+	}
+
+	pos = buscaBinariaCodigo(ptrPizza, menor);
+	fseek(ptrPizza, pos, 0);
+	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
+
+	printf("\nPizza menos pedida: %s - %d pedido(s)", auxPizza.descricao, vezes);	
+
+	getch();
+
+	fclose(ptr);
+	fclose(ptrPizza);
 }
 
 void exclusaoLogicaPedido(void){
@@ -2409,6 +2561,8 @@ char menuRel(void) {
 	printf("[1] Exibir Estado Pizza\n");
 	printf("[2] Filtrar por letra\n");
 	printf("[3] Relatorio de Clientes\n");
+	printf("[4] Relatorio de Pizza mais pedida\n");
+	printf("[5] Relatorio de Pizza menos pedida\n");
 	textcolor(7);
 
 	return getche();
