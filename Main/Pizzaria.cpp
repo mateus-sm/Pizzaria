@@ -98,6 +98,7 @@ void relatorioCliente(void);
 void pizzaMaisPedida(void);
 void pizzaMenosPedida(void);
 void clienteMaisConsome(void);
+void motoqueiroMenosExperiente(void);
 //Auxiliares de Relatorios
 void exibirFiltro(FILE *ptr, char letra);
 float buscaPreco(FILE *ptrpizza, int cod);
@@ -111,6 +112,7 @@ char menuAlt(void);
 char menuExclLF(void);
 char menuExcl(void);
 char menuRel(void);
+char menuEst(void);
 
 
 int main(void){
@@ -255,23 +257,114 @@ int main(void){
 					case '3':
 						relatorioCliente();
 					break;
+				}
+			break;
 
-					case '4':
+			case '6':
+				op = menuEst();
+					switch (op) {
+					case '1':
 						pizzaMaisPedida();
 					break;
 
-					case '5':
+					case '2':
 						pizzaMenosPedida();
 					break;
 
-					case '6':
+					case '3':
 						clienteMaisConsome();
+					break;
+
+					case '4':
+						motoqueiroMenosExperiente();
 					break;
 				}
 			break;
 		}
 
 	} while(op != 27);
+}
+
+void motoqueiroMenosExperiente(void) {
+	TpPedido aux;
+	TpMotoqueiro auxMotoqueiro;
+
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	FILE *ptrMotoqueiro = fopen("Motoqueiros.dat", "rb+");
+	int pos;
+
+	//Colocar todos os motoqueiros em uma matriz
+	fseek(ptr, 0, 2);
+	int TF = ftell(ptr) / sizeof(TpPedido);
+
+	char listaMotoqueiros[TF][30];
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	int TL = 0;
+	while(!feof(ptr)) {
+		if (aux.status == 'A' && strcmp(aux.situacao, "Entregue") == 0) {
+			strcpy(listaMotoqueiros[TL], aux.cpf);
+			TL++;
+		}
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+	}
+
+	//Debug de informaçoes
+	//printf("\nQuantidade de entregas: %d\nValor de i: %d\n", TF, TL);
+	//printf("Frequencia de motoqueiros:\n");
+	//for (int j = 0; j < TL; j++) {
+	//	pos = buscaCPF(ptrMotoqueiro, listaMotoqueiros[j]);
+	//	fseek(ptrMotoqueiro, pos, 0);
+	//	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+
+	//	printf("CPF: %s - %s\n", listaMotoqueiros[j], auxMotoqueiro.nome);
+	//}
+
+	//Pegar Motoqueiro por Motoqueiro e verificar
+	int count, vezes = 999;
+	char atual[30], menor[30];
+	fseek(ptrMotoqueiro, 0, 0);
+	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+	while (!feof(ptrMotoqueiro)) {
+		if (auxMotoqueiro.status == 'A') {
+			for (int j = 0; j < TL; j++) {
+				if (j == 0) {
+					strcpy(atual, auxMotoqueiro.cpf);
+					count = 0;
+					if (strcmp(listaMotoqueiros[j], atual) == 0) {
+						count++;
+					}
+				} else {
+					if (strcmp(listaMotoqueiros[j], atual) == 0) {
+						count++;
+					}
+				}
+			}
+
+			if (count < vezes) {
+				strcpy(menor, atual);
+				vezes = count;
+			}
+		}
+
+		//Debug de informaçoes
+		//printf("\nMotoqueiro analisado: %s - Apareceu %d vezes\nCPF que mais apareceu %s - Vezes que ele apareceu %d", auxMotoqueiro.nome, count, menor, vezes); getch();
+		fread(&auxMotoqueiro, sizeof(TpCliente), 1, ptrMotoqueiro);
+	}
+
+	//Mostrar os valores achados
+	pos = buscaCPF(ptrMotoqueiro, menor);
+	fseek(ptrMotoqueiro, pos, 0);
+	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+
+	if (vezes == 999) {
+		vezes = 0; //Gambiarra para caso o entregador que tiver menos entregas tiver 0
+	}
+	printf("\nMotoqueiro menos experiente: %s - %d entrega(s)", auxMotoqueiro.nome, vezes);
+
+	getch();
+	fclose(ptr);
+	fclose(ptrMotoqueiro);
 }
 
 void clienteMaisConsome(void) {
@@ -310,9 +403,6 @@ void clienteMaisConsome(void) {
 	//}
 
 	//Pegar Cliente por cliente e verificar
-	fseek(ptrCliente, 0, 2);
-	TF = fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
-
 	int count, vezes = 0;
 	char atual[30], maior[30];
 	fseek(ptrCliente, 0, 0);
@@ -391,9 +481,6 @@ void pizzaMaisPedida(void) {
 	//}
 
 	//Ver quantas vezes cada pizza aparece
-	fseek(ptrPizza, 0, 2);
-	TF = fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
-
 	int atual, count, maior, vezes = 0;
 	fseek(ptrPizza, 0, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
@@ -460,9 +547,6 @@ void pizzaMenosPedida(void) {
 	}
 
 	//Ver quantas vezes cada pizza aparece
-	fseek(ptrPizza, 0, 2);
-	TF = fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
-
 	int atual, count, menor, vezes = 999;
 	fseek(ptrPizza, 0, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
@@ -2581,6 +2665,8 @@ char menuNum(void) {
 	printf("[4] Excluir\n");
 	textcolor(8);
 	printf("[5] Relatorios\n");
+	textcolor(9);
+	printf("[6] Estatisticas\n");
 	textcolor(7);
 
 	return getche();
@@ -2656,9 +2742,19 @@ char menuRel(void) {
 	printf("[1] Exibir Estado Pizza\n");
 	printf("[2] Filtrar por letra\n");
 	printf("[3] Relatorio de Clientes\n");
-	printf("[4] Relatorio de Pizza mais pedida\n");
-	printf("[5] Relatorio de Pizza menos pedida\n");
-	printf("[6] Cliente que mais pede Pizza\n");
+	textcolor(7);
+
+	return getche();
+}
+
+char menuEst(void) {
+	clrscr();
+	printf("# # # # MENU # # # # \n");
+	textcolor(9);
+	printf("[1] Relatorio de Pizza mais pedida\n");
+	printf("[2] Relatorio de Pizza menos pedida\n");
+	printf("[3] Cliente que mais pede Pizza\n");
+	printf("[4] Motoqueiro menos experiente\n");
 	textcolor(7);
 
 	return getche();
