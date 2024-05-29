@@ -5,6 +5,9 @@
 #include <time.h>
 #include <stdlib.h>
 
+//ERROS
+//INSERCAO DIRETA CLIENTE
+//EXCLUIR ALGUEM // PEDIDO CADASTRADO COM A PESSOA
 struct TpData{
 	int d, m, a;
 };
@@ -643,6 +646,8 @@ void exclusaoLogicaPedido(void){
 int verificaCodPedido(FILE *ptr, int cod) {
 	TpPedido aux;
 
+	fseek(ptr, 0, 0);
+
 	fread(&aux, sizeof(TpPedido), 1, ptr);
 	while(!feof(ptr) && (aux.codigo != cod || aux.status != 'A')) 
 		fread(&aux, sizeof(TpPedido), 1, ptr);
@@ -710,6 +715,9 @@ void exclusaoLogicaPizza(void){
 
 int verificaCPFPedido(FILE *ptr, char cpf[30]) {
 	TpPedido aux;
+
+	fseek(ptr, 0, 0);
+
 
 	fread(&aux, sizeof(TpPedido), 1, ptr);
 	while(!feof(ptr) && (stricmp(aux.cpf, cpf) != 0 || aux.status != 'A')) 
@@ -782,6 +790,8 @@ void exclusaoLogicaMotoqueiro(void){
 
 int verificaTelPedido(FILE *ptr, char tel[30]) {
 	TpPedido aux;
+
+	fseek(ptr, 0, 0);
 
 	fread(&aux, sizeof(TpPedido), 1, ptr);
 	while(!feof(ptr) && (stricmp(aux.telefone, tel) != 0 || aux.status != 'A')) 
@@ -1696,7 +1706,7 @@ void alterarPedido(void){
 	FILE *ptrpedido = fopen("Pedidos.dat", "rb+");
 	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
-	FILE *ptrpizza = fopen("Motoqueiros.dat", "rb+");
+	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
 	
 	if(ptrpedido == NULL)
 		printf("ERRO de abertura \n");
@@ -1717,7 +1727,7 @@ void alterarPedido(void){
 		
 		if(aux.numero > 0){
 			fseek(ptrpedido, flag, 0);
-			fread(&aux,sizeof(TpCliente), 1, ptrpedido);
+			fread(&aux,sizeof(TpPedido), 1, ptrpedido);
 			fseek(ptrpedido, flag, 0);
 
 			printf("\n###Conteudo do Registro###\n");
