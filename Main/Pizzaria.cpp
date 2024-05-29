@@ -5,9 +5,6 @@
 #include <time.h>
 #include <stdlib.h>
 
-//ERROS
-//INSERCAO DIRETA CLIENTE
-//EXCLUIR ALGUEM // PEDIDO CADASTRADO COM A PESSOA
 struct TpData{
 	int d, m, a;
 };
@@ -801,7 +798,7 @@ int verificaTelPedido(FILE *ptr, char tel[30]) {
 		return 1;
 	else
 		return -1;
-	
+
 }
 
 void exclusaoLogicaCliente(void){
@@ -1494,7 +1491,6 @@ void exclusaoFisicaCliente(void){
 		gets(tel);
 		
 		flag = buscaSentinelaTelefone(ptr, tel);
-		
 		while (flag == -1 && strlen(tel) > 0){
 			printf("Insira um TELEFONE CADASTRADO: \n");
 			fflush(stdin);
@@ -1503,9 +1499,7 @@ void exclusaoFisicaCliente(void){
 			flag = buscaSentinelaTelefone(ptr, tel);
 		}
 
-		flag = verificaTelPedido(ptr, tel);
-
-		if (flag == 1) {
+		if (verificaTelPedido(ptr, tel)  == -1) {
 			if(strlen(tel) > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpCliente), 1, ptr);
@@ -1577,9 +1571,7 @@ void exclusaoFisicaMotoqueiro(void){
 			flag = buscaCPF(ptr, cpf);
 		}
 
-		flag = verificaCPFPedido(ptr, cpf);
-
-		if (flag == 1) {
+		if (verificaCPFPedido(ptr, cpf) == -1) {
 			if(strlen(cpf) > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
@@ -1650,9 +1642,7 @@ void exclusaoFisicaPizza(void){
 			flag = buscaBinariaCodigo(ptr, auxcod);
 		}
 
-		flag = verificaCodPedido(ptr, auxcod);
-		
-		if(flag == 1) {
+		if(verificaCodPedido(ptr, auxcod) == -1) {
 			if(auxcod > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpPizza), 1, ptr);
@@ -2431,13 +2421,30 @@ int validarInt(char str[11]){
 void cadastrarCliente(void) {
 	clrscr();
 	TpCliente aux;
-	FILE *ptrarquivo = fopen("Clientes.dat", "ab");
-	 
+	int flag;
+	
 	printf("Insira o TELEFONE do cliente que deseja cadastrar:\n");
 	fflush(stdin);
 	gets(aux.telefone);
+
+
+	FILE *ptr = fopen("Clientes.dat", "rb+");
+	flag = buscaSentinelaTelefone(ptr, aux.telefone);
+	fclose(ptr);
+
+	while(strcmp(aux.telefone, "\0") != 0 && flag != -1){
+		printf("Telefone CADASTRADO, insira outro:\n");
+		fflush(stdin);
+		gets(aux.telefone);
+
+		FILE *ptr = fopen("Clientes.dat", "rb+");
+		flag = buscaSentinelaTelefone(ptr, aux.telefone);
+		fclose(ptr);
+	}
 	
-	while (strcmp(aux.telefone, "\0") != 0) {
+	FILE *ptrarquivo = fopen("Clientes.dat", "ab");
+
+	while (strcmp(aux.telefone, "\0") != 0 && flag == -1) {
 		printf("Insira o NOME desse cliente:\n");
 		gets(aux.nome);
 		printf("Insira o ENDERECO desse cliente:\n");
@@ -2453,10 +2460,24 @@ void cadastrarCliente(void) {
 		fclose(ptrarquivo);
 		insercaoDiretaCliente();
 		FILE *ptrarquivo = fopen("Clientes.dat", "ab");
-		
+
 		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
 		fflush(stdin);
+
+		FILE *ptr = fopen("Clientes.dat", "rb+");
+		flag = buscaSentinelaTelefone(ptr, aux.telefone);
+		fclose(ptr);
+
+		while(strcmp(aux.telefone, "\0") != 0 && flag != -1){
+			printf("Telefone CADASTRADO, insira outro:\n");
+			fflush(stdin);
+			gets(aux.telefone);
+
+			FILE *ptr = fopen("Clientes.dat", "rb+");
+			flag = buscaSentinelaTelefone(ptr, aux.telefone);
+			fclose(ptr);
+		}
 	}
 	
 	clrscr();
