@@ -554,7 +554,7 @@ void relatorioCliente(void) {
 			fread (&aux, sizeof(TpPedido), 1, ptrpedido);		
 			while (!feof(ptrpedido) && !flag) {
 				
-				if (strcmp(telAtual, aux.telefone) != 0) {
+				if (strcmp(telAtual, aux.telefone) != 0 && aux.status == 'A') {
 					strcpy(telAtual, aux.telefone);
 
 					for (int j = 0; j < countLista; j++) { // Checar se o num atual ja foi o atual anteriormente
