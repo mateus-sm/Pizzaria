@@ -97,6 +97,7 @@ void filtrarLetra(void);
 void relatorioCliente(void);
 void pizzaMaisPedida(void);
 void pizzaMenosPedida(void);
+void clienteMaisConsome(void);
 //Auxiliares de Relatorios
 void exibirFiltro(FILE *ptr, char letra);
 float buscaPreco(FILE *ptrpizza, int cod);
@@ -262,11 +263,97 @@ int main(void){
 					case '5':
 						pizzaMenosPedida();
 					break;
+
+					case '6':
+						clienteMaisConsome();
+					break;
 				}
 			break;
 		}
 
 	} while(op != 27);
+}
+
+void clienteMaisConsome(void) {
+	TpPedido aux;
+	TpCliente auxCliente;
+
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	FILE *ptrCliente = fopen("Clientes.dat", "rb+");
+	int pos;
+
+	//Colocar todos os clientes em uma matriz
+	fseek(ptr, 0, 2);
+	int TF = ftell(ptr) / sizeof(TpPedido);
+
+	char listaClientes[TF][30];
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	int TL = 0;
+	while(!feof(ptr)) {
+		if (aux.status == 'A') {
+			strcpy(listaClientes[TL], aux.telefone);
+			TL++;
+		}
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+	}
+
+	//Debug de informaçoes
+	//printf("\nQuantidade de pedidos: %d\nValor de i: %d\n", TF, TL);
+	//printf("Frequencia de clientres:\n");
+	//for (int j = 0; j < TL; j++) {
+	//	pos = buscaSentinelaTelefone(ptrCliente, listaClientes[j]);
+	//	fseek(ptrCliente, pos, 0);
+	//	fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+
+	//	printf("Tel: %s - %s\n", listaClientes[j], auxCliente.nome);
+	//}
+
+	//Pegar Cliente por cliente e verificar
+	fseek(ptrCliente, 0, 2);
+	TF = fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+
+	int count, vezes = 0;
+	char atual[30], maior[30];
+	fseek(ptrCliente, 0, 0);
+	fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+	while (!feof(ptrCliente)) {
+		if (auxCliente.status == 'A') {
+			for (int j = 0; j < TL; j++) {
+				if (j == 0) {
+					strcpy(atual, auxCliente.telefone);
+					count = 0;
+					if (strcmp(listaClientes[j], atual) == 0) {
+						count++;
+					}
+				} else {
+					if (strcmp(listaClientes[j], atual) == 0) {
+						count++;
+					}
+				}
+			}
+
+			if (count > vezes) {
+				strcpy(maior, atual);
+				vezes = count;
+			}
+		}
+
+		//Debug de informaçoes
+		//printf("\nCliente analisado: %s Apareceu %d vezes\nTEL que mais apareceu %s Vezes que ele apareceu %d", auxCliente.nome, count, maior, vezes); getch();
+		fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+	}
+
+	//Mostrar os valores achados
+	pos = buscaSentinelaTelefone(ptrCliente, maior);
+	fseek(ptrCliente, pos, 0);
+	fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+
+	printf("\nCliente que mais pediu: %s - %d pedido(s)", auxCliente.nome, vezes);
+
+	getch();
+	fclose(ptr);
+	fclose(ptrCliente);
 }
 
 void pizzaMaisPedida(void) {
@@ -2571,6 +2658,7 @@ char menuRel(void) {
 	printf("[3] Relatorio de Clientes\n");
 	printf("[4] Relatorio de Pizza mais pedida\n");
 	printf("[5] Relatorio de Pizza menos pedida\n");
+	printf("[6] Cliente que mais pede Pizza\n");
 	textcolor(7);
 
 	return getche();
