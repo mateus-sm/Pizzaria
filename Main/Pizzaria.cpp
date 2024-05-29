@@ -280,14 +280,16 @@ void pizzaMaisPedida(void) {
 	fseek(ptr, 0, 2);
 	int TF = ftell(ptr) / sizeof(TpPedido);
 
-	char listaPizzas[TF][30];
+	char listaPizzas[TF][1];
 	fseek(ptr, 0, 0);
 	fread(&aux, sizeof(TpPedido), 1, ptr);
 	TL = 0;
 	while(!feof(ptr)) {
-		listaPizzas[TL][0] = aux.codigo;
+		if (aux.status == 'A') {
+			listaPizzas[TL][0] = aux.codigo;
+			TL++;
+		}
 		fread(&aux, sizeof(TpPedido), 1, ptr);
-		TL++;
 	}
 
 	//Debug de informaçoes
@@ -309,25 +311,27 @@ void pizzaMaisPedida(void) {
 	fseek(ptrPizza, 0, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 	while (!feof(ptrPizza)) {
-		for (int j = 0; j < TL; j++) {
-			if (j == 0) {
-				atual = auxPizza.codigo;
-				count = 0;
-				if (listaPizzas[j][0] == atual) {
-					count++;
+		if (auxPizza.status == 'A') {
+			for (int j = 0; j < TL; j++) {
+				if (j == 0) {
+					atual = auxPizza.codigo;
+					count = 0;
+					if (listaPizzas[j][0] == atual) {
+						count++;
+					}
+				} else {
+					if (listaPizzas[j][0] == atual) {
+						count++;
+					}
 				}
-			} else {
-				if (listaPizzas[j][0] == atual) {
-					count++;
-				}
+			}
+
+			if (count > vezes) {
+				maior = atual;
+				vezes = count;
 			}
 		}
 
-		if (count > vezes) {
-			maior = atual;
-			vezes = count;
-		}
-		
 		//Debug de informaçoes
 		//printf("\nPizza analisada: %s Apareceu %d vezes\nCod da Pizza que mais apareceu %d Vezes que ela apareceu %d", auxPizza.descricao, count, maior, vezes); getch();
 		fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
@@ -356,14 +360,16 @@ void pizzaMenosPedida(void) {
 	fseek(ptr, 0, 2);
 	int TF = ftell(ptr) / sizeof(TpPedido);
 
-	char listaPizzas[TF][30];
+	char listaPizzas[TF][1];
 	fseek(ptr, 0, 0);
 	fread(&aux, sizeof(TpPedido), 1, ptr);
 	TL = 0;
 	while(!feof(ptr)) {
-		listaPizzas[TL][0] = aux.codigo;
+		if (aux.status == 'A') {
+			listaPizzas[TL][0] = aux.codigo;
+			TL++;
+		}
 		fread(&aux, sizeof(TpPedido), 1, ptr);
-		TL++;
 	}
 
 	//Ver quantas vezes cada pizza aparece
@@ -374,23 +380,25 @@ void pizzaMenosPedida(void) {
 	fseek(ptrPizza, 0, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 	while (!feof(ptrPizza)) {
-		for (int j = 0; j < TL; j++) {
-			if (j == 0) {
-				atual = auxPizza.codigo;
-				count = 0;
-				if (listaPizzas[j][0] == atual) {
-					count++;
-				}
-			} else {
-				if (listaPizzas[j][0] == atual) {
-					count++;
+		if (auxPizza.status == 'A') {
+			for (int j = 0; j < TL; j++) {
+				if (j == 0) {
+					atual = auxPizza.codigo;
+					count = 0;
+					if (listaPizzas[j][0] == atual) {
+						count++;
+					}
+				} else {
+					if (listaPizzas[j][0] == atual) {
+						count++;
+					}
 				}
 			}
-		}
 
-		if (count < vezes) {
-			menor = atual;
-			vezes = count;
+			if (count < vezes) {
+				menor = atual;
+				vezes = count;
+			}			
 		}
 
 		//printf("\nPizza analisada: %s Apareceu %d vezes\nCod da Pizza que menos apareceu %d Vezes que ela apareceu %d", auxPizza.descricao, count, menor, vezes); getch();
