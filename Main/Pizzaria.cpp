@@ -285,6 +285,63 @@ int main(void){
 	} while(op != 27);
 }
 
+int validarNumTelefone(char telefone[30]){
+	int digito;
+	//numero de telefone deve conter entre 10 e 11 digitos
+	if(strlen(telefone) - 1 < 10 || strlen(telefone) - 1 > 11)
+		return -1;
+	//validacao dos DDS // varia de 11 ate 99 // seguindo a sequencia 11 ate 19 // 21 ate 29 // 31 ate 29
+	digito = telefone[0] - 48;
+	if(digito < 1 || digito > 9)
+		return -1;
+
+	digito = telefone[1] - 48;	
+	if(digito < 1 || digito > 9)
+		return -1;  
+
+	return 1;
+}
+
+int verificaClienteCadastrado(char tel[30]){
+	int flag;
+	FILE *ptr = fopen("Clientes.dat", "rb+");
+	
+	flag = buscaSentinelaTelefone(ptr, tel);
+
+	fclose(ptr);
+	return flag;
+}
+
+int verificaMotoqueiroCadastrado(char cpf[30]){
+	int flag;
+	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
+	
+	flag = buscaCPF(ptr, cpf);
+
+	fclose(ptr);
+	return flag;
+}
+
+int verificaCodPizzaCadastrado(int cod){
+	int flag;
+	FILE *ptr = fopen("Pizzas.dat", "rb+");
+	
+	flag = buscaBinariaCodigo(ptr, cod);
+
+	fclose(ptr);
+	return flag;
+}
+
+int verificaNumPedidoCadastrado(int num){
+	int flag;
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	
+	flag = buscaPedido(ptr, num);
+
+	fclose(ptr);
+	return flag;
+}
+
 void motoqueiroMenosExperiente(void) {
 	TpPedido aux;
 	TpMotoqueiro auxMotoqueiro;
@@ -736,7 +793,7 @@ void exclusaoLogicaMotoqueiro(void){
 	if(ptr == NULL)
 		printf("ERRO de abertura\n");
 	else{
-		printf("\nDigite o CPF do cliente que deseja excluir: \n");
+		printf("\nDigite o CPF do motoqueiro que deseja excluir: \n");
 		fflush(stdin);
 		gets(cpf);
 		
@@ -2209,7 +2266,6 @@ int buscaCPF(FILE *ptr, char texto[50]) {
 }
 
 int buscaBinariaCodigo(FILE *ptr, int cod){
-	
 	TpPizza aux;
 	int inicio = 0, fim, meio;
 	
@@ -2241,11 +2297,12 @@ int buscaBinariaCodigo(FILE *ptr, int cod){
 
 }
 
-void cadastrarPedido(void) {
+void cadastrarPedido(void){
 	clrscr();
 	TpPedido aux;
 	int flag;
-	FILE *ptrpedido = fopen("Pedidos.dat", "ab");
+
+	FILE *ptrpedido;
 	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
@@ -2254,14 +2311,23 @@ void cadastrarPedido(void) {
 	fflush(stdin);
 	scanf("%d", &aux.numero);
 	
-	while(aux.numero > 0) {
+	flag = verificaNumPedidoCadastrado(aux.numero);
+	while(aux.numero > 0 && flag != -1){
+		printf("Numero de pedido ja CADASTRADO, insira outro:\n");
+		fflush(stdin);
+		scanf("%d", &aux.numero);
+
+		flag = verificaNumPedidoCadastrado(aux.numero);
+	}
+
+	while(aux.numero > 0 && flag == -1) { //pedido existe
+		ptrpedido = fopen("Pedidos.dat", "ab");
+
 		printf("Insira o TELEFONE do Cliente:\n");
 		fflush(stdin);
 		gets(aux.telefone);
 		
-		flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
-		//printf("\nBusca terminou flag vale: %d\n", flag);
-		
+		flag = buscaSentinelaTelefone(ptrcliente, aux.telefone); //busca telefone ate encontrar
 		while (flag == -1 && strlen(aux.telefone) > 0) {
 			printf("Insira um telefone do cliente CADASTRADO:\n");
 			fflush(stdin);
@@ -2270,7 +2336,8 @@ void cadastrarPedido(void) {
 			flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 		}
 
-		if (strlen(aux.telefone) > 0) {
+		//entra se telefone > 0
+		if(strlen(aux.telefone) > 0) {
 			printf("Insira o CODIGO dessa Pizza:\n");
 			scanf("%d", &aux.codigo);
 
@@ -2282,11 +2349,11 @@ void cadastrarPedido(void) {
 				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			}
 
-			if (aux.codigo > 0) {
+			if(aux.codigo > 0){ // entra se o codigo > 0 e telefone > 0
 				printf("Digite o CPF do Motoqueiro\n");
 				fflush(stdin);
 				gets(aux.cpf);
-				
+					
 				flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				while (flag == -1 && strlen(aux.cpf) > 0) {
 					printf("Digite um CPF do motoqueiro CADASTRADO\n");
@@ -2296,46 +2363,64 @@ void cadastrarPedido(void) {
 					flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				}
 
-				if (strlen(aux.cpf) > 0) {
+				if(strlen(aux.cpf) > 0){ // entra se o cpf > 0 e codigo > 0 e telefone > 0
 					strcpy(aux.situacao, "Em preparacao"); 				
-					
+						
 					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
-					
+						
 					aux.status = 'A';
 
 					fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
-
-					fclose(ptrpedido);
+					fclose(ptrpedido);					
 					bubbleSortPedido();
-					FILE *ptrpedido = fopen("Pedidos.dat", "ab");
-				}
-			}	
-		}
-		
-		printf("\nInsira o NUMERO do Pedido:\n");
-		fflush(stdin);
-		scanf("%d", &aux.numero);
-		
+
+					printf("\nInsira o NUMERO do Pedido:\n");
+					fflush(stdin);
+					scanf("%d", &aux.numero);
+
+					flag = verificaNumPedidoCadastrado(aux.numero);
+					while(aux.numero > 0 && flag != -1){
+						printf("Numero de pedido ja CADASTRADO, insira outro:\n");
+						fflush(stdin);
+						scanf("%d", &aux.numero);
+
+						flag = verificaNumPedidoCadastrado(aux.numero);
+					}
+				}else
+					flag = 0;;	
+			}else
+				flag = 0;
+		}else	 
+			flag = 0;
 	}
-	
 	clrscr();
-	fclose(ptrpedido);
 	fclose(ptrpizza);
 	fclose(ptrcliente);
 	fclose(ptrmotoqueiro);
 }
-
+	
 void cadastrarPizza(void) {
 	clrscr();
 	TpPizza aux;
-	FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
+	FILE *ptrarquivo;
+	int flag;
 	 
 	printf("Insira o CODIGO da Pizza:\n");
 	fflush(stdin);
 	scanf("%d", &aux.codigo);
 	
+	flag = verificaCodPizzaCadastrado(aux.codigo);
+	while(aux.codigo > 0 && flag != -1){
+		printf("Codigo de pizza ja CADASTRADO, insira outro:\n");
+		fflush(stdin);
+		scanf("%d", &aux.codigo);
+
+		flag = verificaCodPizzaCadastrado(aux.codigo);
+	}
+
 	while (aux.codigo > 0) {
+		ptrarquivo = fopen("Pizzas.dat", "ab");
 		printf("Insira a DESCRICAO dessa Pizza:\n");
 		fflush(stdin);
 		gets(aux.descricao);
@@ -2347,16 +2432,22 @@ void cadastrarPizza(void) {
 		fwrite(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		fclose(ptrarquivo);
 		selecaoDiretaPizza();
-		FILE *ptrarquivo = fopen("Pizzas.dat", "ab");
-		//ordenacaoExaustivaPizza(); //busca ordenada
-		
+
 		printf("\nInsira o CODIGO da Pizza:\n");
 		fflush(stdin);
 		scanf("%d", &aux.codigo);
+
+		flag = verificaCodPizzaCadastrado(aux.codigo);
+		while(aux.codigo > 0 && flag != -1){
+			printf("Codigo de pizza ja CADASTRADO, insira outro:\n");
+			fflush(stdin);
+			scanf("%d", &aux.codigo);
+
+			flag = verificaCodPizzaCadastrado(aux.codigo);
+		}
+
 	}
-	
 	clrscr();
-	fclose(ptrarquivo);
 }
 
 int validarCPF(char ncpf[15]) {
@@ -2417,34 +2508,29 @@ int validarInt(char str[11]){
 	return 1;
 }
 
-//ainda tenho que fazer a valida��o do n� telefone
 void cadastrarCliente(void) {
 	clrscr();
 	TpCliente aux;
-	int flag;
+	FILE *ptrarquivo;
+	int flag, verif;
 	
 	printf("Insira o TELEFONE do cliente que deseja cadastrar:\n");
 	fflush(stdin);
 	gets(aux.telefone);
 
-
-	FILE *ptr = fopen("Clientes.dat", "rb+");
-	flag = buscaSentinelaTelefone(ptr, aux.telefone);
-	fclose(ptr);
-
-	while(strcmp(aux.telefone, "\0") != 0 && flag != -1){
-		printf("Telefone CADASTRADO, insira outro:\n");
+	flag = validarNumTelefone(aux.telefone);
+	verif = verificaClienteCadastrado(aux.telefone);
+	while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
+		printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
 		fflush(stdin);
 		gets(aux.telefone);
-
-		FILE *ptr = fopen("Clientes.dat", "rb+");
-		flag = buscaSentinelaTelefone(ptr, aux.telefone);
-		fclose(ptr);
+		flag = validarNumTelefone(aux.telefone);
+		verif = verificaClienteCadastrado(aux.telefone);
 	}
 	
-	FILE *ptrarquivo = fopen("Clientes.dat", "ab");
+	while (strcmp(aux.telefone, "\0") != 0 && verif == -1) {
+		ptrarquivo = fopen("Clientes.dat", "ab");
 
-	while (strcmp(aux.telefone, "\0") != 0 && flag == -1) {
 		printf("Insira o NOME desse cliente:\n");
 		gets(aux.nome);
 		printf("Insira o ENDERECO desse cliente:\n");
@@ -2459,52 +2545,47 @@ void cadastrarCliente(void) {
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		fclose(ptrarquivo);
 		insercaoDiretaCliente();
-		FILE *ptrarquivo = fopen("Clientes.dat", "ab");
 
 		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
 		gets(aux.telefone);
 		fflush(stdin);
 
-		FILE *ptr = fopen("Clientes.dat", "rb+");
-		flag = buscaSentinelaTelefone(ptr, aux.telefone);
-		fclose(ptr);
-
-		while(strcmp(aux.telefone, "\0") != 0 && flag != -1){
-			printf("Telefone CADASTRADO, insira outro:\n");
+		flag = validarNumTelefone(aux.telefone);
+		verif = verificaClienteCadastrado(aux.telefone);
+		while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
+			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
 			fflush(stdin);
 			gets(aux.telefone);
-
-			FILE *ptr = fopen("Clientes.dat", "rb+");
-			flag = buscaSentinelaTelefone(ptr, aux.telefone);
-			fclose(ptr);
+			flag = validarNumTelefone(aux.telefone);
+			verif = verificaClienteCadastrado(aux.telefone);
 		}
 	}
-	
 	clrscr();
-	fclose(ptrarquivo);
 }
 
 void cadastrarMotoqueiro(void) {
 	clrscr();
 	TpMotoqueiro aux;
-	int flag;
-	
-	FILE *ptrarquivo = fopen("Motoqueiros.dat", "ab");
-	 
+	FILE *ptrarquivo;
+	int flag, verif;
+		 
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
 	fflush(stdin);
 	gets(aux.cpf);
+
 	flag = validarCPF(aux.cpf);
-	
-	//validacao do CPF
-	while(flag != 1 && strlen(aux.cpf) > 0) {
-		printf("CPF invalido, insira um CPF valido:\n");
+	verif = verificaMotoqueiroCadastrado(aux.cpf);
+	while((flag != 1 || verif != -1)  && strlen(aux.cpf) > 0) {
+		printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
 		fflush(stdin);
 		gets(aux.cpf);
 		flag = validarCPF(aux.cpf);
+		verif = verificaMotoqueiroCadastrado(aux.cpf);
 	}
 	
-	while(strlen(aux.cpf) > 0) {
+	while(strlen(aux.cpf) > 0 && verif == -1) {
+		ptrarquivo = fopen("Motoqueiros.dat", "ab");
+
 		printf("Insira o NOME desse motoqueiro:\n");
 		fflush(stdin);
 		gets(aux.nome);
@@ -2512,30 +2593,41 @@ void cadastrarMotoqueiro(void) {
 		gets(aux.endereco);
 		printf("Insira o TELEFONE desse motoqueiro:\n");
 		gets(aux.telefone);
-		printf("Insira a DATA DE ADMISSAO desse motoqueiro: [dd mm aaaa]\n");
-		scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
-		
-		aux.status = 'A';
+		flag = validarNumTelefone(aux.telefone);
+		while(flag != 1 && strlen(aux.telefone) > 0){
+			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+			fflush(stdin);
+			gets(aux.telefone);
+			flag = validarNumTelefone(aux.telefone);
+		}
+		if(strlen(aux.telefone) > 0){
+			printf("Insira a DATA DE ADMISSAO desse motoqueiro: [dd mm aaaa]\n");
+			scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
+			
+			aux.status = 'A';
 
-		fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
-		
-		printf("\nInsira o CPF do motoqueiro que deseja cadastrar:\n");
-		fflush(stdin);
-		gets(aux.cpf);
-		flag = validarCPF(aux.cpf);
+			fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
+			fclose(ptrarquivo);
 
-		//validacao do CPF
-		while (flag != 1 && strlen(aux.cpf) > 0) {
-			printf("CPF invalido, insira um CPF valido:\n");
+			printf("\nInsira o CPF do motoqueiro que deseja cadastrar:\n");
 			fflush(stdin);
 			gets(aux.cpf);
+
 			flag = validarCPF(aux.cpf);
-		}
+			verif = verificaMotoqueiroCadastrado(aux.cpf);
+			while((flag != 1 || verif != -1)  && strlen(aux.cpf) > 0) {
+				printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+				fflush(stdin);
+				gets(aux.cpf);
+				flag = validarCPF(aux.cpf);
+				verif = verificaMotoqueiroCadastrado(aux.cpf);
+			}
+
+		} else
+			verif = 0;
 	}
-	
 	ordenacaoExaustivaMotoqueiro();
 	clrscr();
-	fclose(ptrarquivo);
 }
 
 void exibirCliente(void) {
