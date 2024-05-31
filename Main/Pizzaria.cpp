@@ -99,6 +99,7 @@ void pizzaMaisPedida(void);
 void pizzaMenosPedida(void);
 void clienteMaisConsome(void);
 void motoqueiroMenosExperiente(void);
+void motoqueiroPorData(void);
 //Auxiliares de Relatorios
 void exibirFiltro(FILE *ptr, char letra);
 float buscaPreco(FILE *ptrpizza, int cod);
@@ -257,6 +258,10 @@ int main(void){
 					case '3':
 						relatorioCliente();
 					break;
+
+					case '4':
+						motoqueiroPorData();
+					break;
 				}
 			break;
 
@@ -285,6 +290,88 @@ int main(void){
 	} while(op != 27);
 }
 
+int verificaIntervaloData(int diai, int mesi, int anoi, int diaf, int mesf, int anof, int diafiltro, int mesfiltro, int anofiltro){
+	if(anofiltro >= anoi && anofiltro <= anof){											//verifica se esta dentro do ano
+		if(mesfiltro >= mesi && mesfiltro <= mesf){										//verifica se esta dentro do mes
+			if(diafiltro >= diai && diafiltro <= diaf)									//verifica se esta dentro do dia
+				return 1;
+			else if(diafiltro < diai && (mesfiltro > mesi || anofiltro > anoi))
+				return 1;
+			else if(diafiltro > diaf && (mesfiltro < mesf || anofiltro < anof))			//se o dia for maior que final, verifica se o mes
+				return 1;
+		}else if(mesfiltro < mesi && anofiltro > anoi){									//se o mes for menor que o inicial, verifica se o ano é maior ao inicial
+			if(diafiltro >= diai && diafiltro <= diaf)									//verifica se esta dentro do dia
+				return 1;
+			else if(diafiltro < diai && (mesfiltro > mesi || anofiltro > anoi))
+				return 1;
+			else if(diafiltro > diaf && (mesfiltro < mesf || anofiltro < anof))			//se o dia for maior que final, verifica se o mes é menor que final ou se o ano é menor que o final
+				return 1;
+		}else if(mesfiltro > mesf && anofiltro < anof){									//se o mes for menor que o final, verifica se o ano é menor ao final
+			if(diafiltro >= diai && diafiltro <= diaf)									//verifica se esta dentro do dia
+				return 1;
+			else if(diafiltro < diai && (mesfiltro > mesi || anofiltro > anoi))
+				return 1;
+			else if(diafiltro > diaf && (mesfiltro < mesf || anofiltro < anof))
+				return 1;
+		}	
+	}
+	return -1;
+}
+
+int qtdEntregas(char cpf[30], int diai, int mesi, int anoi, int diaf, int mesf, int anof, int diafiltro, int mesfiltro, int anofiltro){
+	TpPedido aux;
+	int cont;
+
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+
+	if(ptr == NULL)
+		printf("ERRO DE ABERTURA\n");
+	else{
+		fseek(ptr, 0 , 0);
+		cont = 0;
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+		while(!feof(ptr)){
+			if(verificaIntervaloData(diai, mesi, anoi, diaf, mesf, anof, diafiltro, mesfiltro, anofiltro) != -1)
+				if(stricmp(aux.cpf, cpf) == 0 && stricmp(aux.situacao, "Entregue") == 0)
+					cont++;
+			fread(&aux, sizeof(TpPedido), 1, ptr);
+		}
+
+		fclose(ptr);
+		return cont; 
+	}
+}
+
+void motoqueiroPorData(void){
+	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
+	TpMotoqueiro aux;
+	TpData datai, dataf;
+	int entregas;
+
+	if(ptr == NULL)
+		printf("Erro de abertura\n");
+	else {
+		printf("\nInsira a data inicial:\n");
+		scanf("%d %d %d", &datai.d,&datai.m,&datai.a);
+		printf("Insira a data final:\n");
+		scanf("%d %d %d", &dataf.d,&dataf.m,&dataf.a);
+
+		fseek(ptr, 0 , 0);
+		fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
+		while(!feof(ptr)){
+			if(verificaIntervaloData(datai.d, datai.m, datai.a, dataf.d, dataf.m, dataf.a, aux.data.d, aux.data.m, aux.data.a) != -1){
+				printf("\nMOTOQUEIRO: %s\n", aux.nome);
+				entregas = qtdEntregas(aux.cpf,datai.d, datai.m, datai.a, dataf.d, dataf.m, dataf.a, aux.data.d, aux.data.m, aux.data.a);
+            	printf("ENTREGAS REALIZDAS:%d\n", entregas);
+			}
+			fread(&aux, sizeof(TpMotoqueiro), 1, ptr);	
+		}
+
+		fclose(ptr);
+	}	
+	getch();
+}
+
 int validarNumTelefone(char telefone[30]){
 	int digito;
 	//numero de telefone deve conter entre 10 e 11 digitos
@@ -305,9 +392,11 @@ int validarNumTelefone(char telefone[30]){
 int verificaClienteCadastrado(char tel[30]){
 	int flag;
 	FILE *ptr = fopen("Clientes.dat", "rb+");
+	if(ptr != NULL)
+		flag = buscaSentinelaTelefone(ptr, tel);
+	else
+		flag = -1;
 	
-	flag = buscaSentinelaTelefone(ptr, tel);
-
 	fclose(ptr);
 	return flag;
 }
@@ -315,8 +404,10 @@ int verificaClienteCadastrado(char tel[30]){
 int verificaMotoqueiroCadastrado(char cpf[30]){
 	int flag;
 	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
-	
-	flag = buscaCPF(ptr, cpf);
+	if(ptr != NULL)
+		flag = buscaCPF(ptr, cpf);
+	else
+		flag = -1;
 
 	fclose(ptr);
 	return flag;
@@ -325,8 +416,10 @@ int verificaMotoqueiroCadastrado(char cpf[30]){
 int verificaCodPizzaCadastrado(int cod){
 	int flag;
 	FILE *ptr = fopen("Pizzas.dat", "rb+");
-	
-	flag = buscaBinariaCodigo(ptr, cod);
+	if(ptr != NULL)
+		flag = buscaBinariaCodigo(ptr, cod);
+	else
+		flag = -1;
 
 	fclose(ptr);
 	return flag;
@@ -335,8 +428,10 @@ int verificaCodPizzaCadastrado(int cod){
 int verificaNumPedidoCadastrado(int num){
 	int flag;
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
-	
-	flag = buscaPedido(ptr, num);
+	if(ptr != NULL)
+		flag = buscaSeqIndexadaPedido(ptr, num);
+	else
+		flag = -1;
 
 	fclose(ptr);
 	return flag;
@@ -2865,6 +2960,7 @@ char menuRel(void) {
 	printf("[1] Exibir Estado Pizza\n");
 	printf("[2] Filtrar por letra\n");
 	printf("[3] Relatorio de Clientes\n");
+	printf("[4] Filtrar MOTOQUEIROS e SUAS ENTREGAS por DATA\n");
 	textcolor(7);
 
 	return getche();
