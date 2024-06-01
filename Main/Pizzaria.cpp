@@ -118,10 +118,12 @@ char menuExcl(void);
 char menuRel(void);
 char menuEst(void);
 
+//Interface
+void molde(void);
+void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 
 int main(void){
 	char op;
-	
 	do {
 		op = menuNum();
 		clrscr();
@@ -295,6 +297,56 @@ int main(void){
 		}
 
 	} while(op != 27);
+}
+
+void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
+	textcolor(frente);
+	textbackground(fundo);
+	
+	gotoxy(colunai, linhai); 
+	printf("%c", 201); //canto superior esquerdo
+	gotoxy(colunaf, linhai); 
+	printf("%c", 187);//canto superior direito
+	gotoxy(colunai, linhaf); 
+	printf("%c", 200); //canto inferior esquerdo
+	gotoxy(colunaf, linhaf); 
+	printf("%c", 188);//canto inferior direito
+	
+	
+	for(int a = colunai + 1; a < colunaf; a++){ 
+		gotoxy(a, linhai); printf("%c", 205); 			
+		gotoxy(a, linhaf); printf("%c", 205);
+	}
+
+	for(int b = linhai + 1; b < linhaf; b++){
+		gotoxy(colunai, b); printf("%c", 186);
+		gotoxy(colunaf, b); printf("%c", 186);
+	}
+	
+	
+	//voltar cores de texto e fundo padrão
+	textcolor(7);
+	textbackground(0);
+	
+}
+
+void molde(void){
+	//system("cls");
+	
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(12,10,28,14,7,6); //ITEM 1 
+	moldura(34,10,51,14,7,6); //ITEM 2 
+	moldura(57,10,73,14,7,6); //ITEM 3 
+
+	moldura(12,17,28,21,7,6); //ITEM 4 
+	moldura(34,17,51,21,7,6); //ITEM 5 
+	moldura(57,17,73,21,7,6); //ITEM 6 
+
+	gotoxy(36, 7); 
+	printf("* * * PIZZARIA * * *");
+			
 }
 
 void rankPizzas(void) {
@@ -3003,19 +3055,28 @@ char menu(void) {
 char menuNum(void) {
 	//clrscr();
 	system("cls");
-	printf("# # # # MENU # # # # \n");
-	textcolor(1);
-	printf("[1] Cadastrar\n");
-	textcolor(2);
-	printf("[2] Exibir\n");
-	textcolor(3);
-	printf("[3] Alterar\n");
-	textcolor(5);
-	printf("[4] Excluir\n");
-	textcolor(8);
-	printf("[5] Relatorios\n");
-	textcolor(9);
-	printf("[6] Estatisticas\n");
+	molde();
+
+	textcolor(7);
+
+	gotoxy(13,12);
+	printf("[1]Cadastrar");
+
+	gotoxy(35,12);
+	printf("[2]Exibir");
+
+	gotoxy(58,12);
+	printf("[3]Alterar");
+
+	gotoxy(13,19);
+	printf("[4]Excluir");
+
+	gotoxy(35,19);
+	printf("[5]Relatorios");
+
+	gotoxy(58,19);
+	printf("[6]Estatisticas\n");
+
 	textcolor(7);
 
 	return getche();
