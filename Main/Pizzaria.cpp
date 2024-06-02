@@ -318,6 +318,7 @@ void pizzaMaisConsumida(void) {
 	TpPizza aux;
 	TpPedido auxPedido;
 	TpCliente auxCliente;
+
 	FILE *ptr = fopen("Pizzas.dat", "rb+");
 	FILE *ptrPedido = fopen("Pedidos.dat", "rb+");
 	FILE *ptrCliente = fopen("Clientes.dat", "rb+");
@@ -927,6 +928,13 @@ void motoqueiroMenosExperiente(void) {
 	FILE *ptrMotoqueiro = fopen("Motoqueiros.dat", "rb+");
 	int pos;
 
+	if (ptr == NULL || ptrMotoqueiro == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (ptr != NULL) fclose(ptr);
+        if (ptrMotoqueiro != NULL) fclose(ptrMotoqueiro);
+        return;
+    }
+
 	//Colocar todos os motoqueiros em uma matriz
 	fseek(ptr, 0, 2);
 	int TF = ftell(ptr) / sizeof(TpPedido);
@@ -1007,7 +1015,15 @@ void clienteMaisConsome(void) {
 
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrCliente = fopen("Clientes.dat", "rb+");
+
 	int pos;
+
+	if (ptr == NULL || ptrCliente == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (ptr != NULL) fclose(ptr);
+		if (ptrCliente != NULL) fclose(ptrCliente);
+        return;
+    }
 
 	//Colocar todos os clientes em uma matriz
 	fseek(ptr, 0, 2);
@@ -1087,6 +1103,13 @@ void pizzaMaisPedida(void) {
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
 	int pos, TL;
 
+	if (ptr == NULL || ptrPizza == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (ptr != NULL) fclose(ptr);
+        if (ptrPizza != NULL) fclose(ptrPizza);
+        return;
+    }
+
 	//Colocar todas as pizzas em uma matriz
 	fseek(ptr, 0, 2);
 	int TF = ftell(ptr) / sizeof(TpPedido);
@@ -1160,9 +1183,18 @@ void pizzaMaisPedida(void) {
 void pizzaMenosPedida(void) {
 	TpPedido aux;
 	TpPizza auxPizza;
+
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
+
 	int pos, TL;
+
+		if (ptr == NULL || ptrPizza == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (ptr != NULL) fclose(ptr);
+        if (ptrPizza != NULL) fclose(ptrPizza);
+        return;
+    }
 
 	//Colocar todas as pizzas em uma matriz
 	fseek(ptr, 0, 2);
