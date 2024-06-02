@@ -1,3 +1,4 @@
+//TRABALHO Pizzaria.cpp // KAIKY TREVISAN FERNANDES, MATEUS SILVA MACIEL
 #include <stdio.h>
 #include <string.h>
 #include <conio2.h>
@@ -121,12 +122,14 @@ char menuRel(void);
 char menuEst(void);
 
 //Interface
+void limparquadro(void);
 void moldeMenuInicial(void);
 void moldeMenuCadastro(void);
 void moldeMenuExibir(void);
 void moldeMenuAlterar(void);
 void moldeMenuTipoExclusao(void);
 void moldeMenuExcluir(void);
+void moldeCadastrar(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 
 int main(void){
@@ -314,6 +317,16 @@ int main(void){
 	} while(op != 27);
 }
 
+void limparquadro(void){
+	int l = 12, c = 9;
+	
+	while(c <= 22){
+		gotoxy(l,c);
+		printf("                                                              ");
+		c++;
+	}
+}
+
 void pizzaMaisConsumida(void) {
 	TpPizza aux;
 	TpPedido auxPedido;
@@ -458,6 +471,17 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 	textcolor(7);
 	textbackground(0);
 	
+}
+
+void moldeCadastrar(void){
+	//system("cls");
+	
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	gotoxy(36, 7); 
+	printf("* * * PIZZARIA * * *");
+			
 }
 
 void moldeMenuTipoExclusao(void){
@@ -1261,22 +1285,37 @@ void pizzaMenosPedida(void) {
 void exclusaoLogicaPedido(void){
 	TpPedido aux;
 	int num, flag;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
+
+	limparquadro();
+	moldeCadastrar();
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("\nDigite o NUMERO DO PEDIDO que deseja excluir: \n");
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o NUMERO DO PEDIDO que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d",&num);
+		c++;
 		
 		flag = buscaSeqIndexadaPedido(ptr, num);
 		
 		while (flag == -1 && num > 0){
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
 			printf("Insira um numero do pedido CADASTRADO: \n");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d",&num);
+			c++;
 		
 			flag = buscaSeqIndexadaPedido(ptr, num);
 		}
@@ -1286,22 +1325,44 @@ void exclusaoLogicaPedido(void){
 			fread(&aux,sizeof(TpPedido), 1, ptr);
 			fseek(ptr, flag, 0);	
 
-			printf("---> Dados do PEDIDO <---\n");
-			printf("Numero: %d\n", aux.numero);
-			printf("Telefone: %s\n", aux.telefone);
-			printf("Codigo da pizza: %d\n", aux.codigo);
-			printf("CPF: %s\n", aux.cpf);
-			printf("Situacao: %s\n", aux.situacao);
-			printf("Data do pedido: %d/%d/%d \n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
-			printf("STATUS: %c\n", aux.status);
-			
+			l = 30, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("---> Dados do PEDIDO <---");
+			c++;
+			gotoxy(l, c);
+			printf("Numero: %d", aux.numero);
+			c++;
+			gotoxy(l, c);
+			printf("Telefone: %s", aux.telefone);
+			c++;
+			gotoxy(l, c);
+			printf("Codigo da pizza: %d", aux.codigo);
+			c++;
+			gotoxy(l, c);
+			printf("CPF: %s", aux.cpf);
+			c++;
+			gotoxy(l, c);
+			printf("Situacao: %s", aux.situacao);
+			c++;
+			gotoxy(l, c);
+			printf("Data do pedido: %d/%d/%d", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			c++;
+			gotoxy(l, c);
+			printf("STATUS: %c", aux.status);
+			c++;
+			gotoxy(l, c);
 			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+			c++;
 			if(toupper(getche()) == 'Y'){
 				aux.status = 'I';
 				fwrite(&aux,sizeof(TpPedido), 1, ptr);
-				printf("\nPedido excluido com sucesso\n");
-			} else
-				printf("\nExclusao nao realizada\n");
+				gotoxy(l, c);
+				printf("Pedido excluido com sucesso");
+			} else{
+				gotoxy(l, c);
+				printf("Exclusao nao realizada");
+			}
 		}
 		
 		fclose(ptr);
@@ -1328,22 +1389,37 @@ int verificaCodPedido(FILE *ptr, int cod) {
 void exclusaoLogicaPizza(void){
 	TpPizza aux;
 	int cod, flag;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Pizzas.dat", "rb+");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("\nDigite o CODIGO DA PIZZA que deseja excluir: \n");
+	limparquadro();
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o CODIGO DA PIZZA que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d",&cod);
-		
+		c++;
+
 		flag = buscaBinariaCodigo(ptr, cod);
 		
 		while (flag == -1 && cod > 0){
-			printf("Insira um codigo da pizza CADASTRADO: \n");
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um codigo da pizza CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d",&cod);
+			c++;
 		
 			flag = buscaBinariaCodigo(ptr, cod);
 		}
@@ -1356,22 +1432,40 @@ void exclusaoLogicaPizza(void){
 				fread(&aux,sizeof(TpPizza), 1, ptr);
 				fseek(ptr, flag, 0);	
 
-				printf("---> Dados da PIZZA <---\n");
-				printf("CODIGO: %d\n", aux.codigo);
-				printf("DESCRICAO: %s\n", aux.descricao);
-				printf("VALOR: %.2f\n", aux.valor);
-				printf("STATUS: %c\n", aux.status);
-				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				l = 30, c = 10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados da PIZZA <---");
+				c++;
+				gotoxy(l, c);
+				printf("CODIGO: %d", aux.codigo);
+				c++;
+				gotoxy(l, c);
+				printf("DESCRICAO: %s", aux.descricao);
+				c++;
+				gotoxy(l, c);
+				printf("VALOR: %.2f", aux.valor);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
 				if(toupper(getche()) == 'Y'){
 					aux.status = 'I';
 					fwrite(&aux,sizeof(TpPizza), 1, ptr);
-					printf("\nPizza excluida com sucesso\n");
-				} else
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Pizza excluida com sucesso");
+				} else{
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
+				}
 			}			
 		} else {
-			printf("Pizza cadastrada com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Pizza cadastrada com pedido ativo!Exclusao nao realizada");
 		}
 		
 		fclose(ptr);
@@ -1400,22 +1494,37 @@ void exclusaoLogicaMotoqueiro(void){
 	TpMotoqueiro aux;
 	char cpf[30];
 	int flag;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("\nDigite o CPF do motoqueiro que deseja excluir: \n");
+	limparquadro();
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o CPF do motoqueiro que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(cpf);
+		c++;
 		
 		flag = buscaCPF(ptr, cpf);
 		
 		while (flag == -1 && strlen(cpf) > 0){
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
 			printf("Insira um CPF CADASTRADO: \n");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(cpf);
+			c++;
 		
 			flag = buscaCPF(ptr, cpf);
 		}
@@ -1428,27 +1537,48 @@ void exclusaoLogicaMotoqueiro(void){
 				fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
 				fseek(ptr, flag, 0);	
 
-				printf("---> Dados do MOTOQUEIRO <---\n");
-				printf("CPF: %s\n", aux.cpf);
-				printf("NOME: %s\n", aux.nome);
-				printf("ENDERECO: %s\n", aux.endereco);
-				printf("TELEFONE: %s\n", aux.telefone);
-				printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
-				printf("STATUS: %c\n", aux.status);
-				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				l = 30, c =10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados do MOTOQUEIRO <---");
+				c++;
+				gotoxy(l, c);
+				printf("CPF: %s", aux.cpf);
+				c++;
+				gotoxy(l, c);
+				printf("NOME: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("ENDERECO: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("TELEFONE: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("DATA DE ADMISSAO: %d/%d/%d", aux.data.d, aux.data.m, aux.data.a);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
 				if(toupper(getche()) == 'Y'){
 					aux.status = 'I';
 					fwrite(&aux,sizeof(TpMotoqueiro), 1, ptr);
-					printf("\nMotoqueiro excluido com sucesso\n");
-				} else
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Motoqueiro excluido com sucesso");
+				} else{
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
+				}
 			}			
 		} else {
-			printf("Motoqueiro cadastrado com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
 		}
 
-		
 		fclose(ptr);
 		getch();
 		clrscr();
@@ -1475,22 +1605,37 @@ void exclusaoLogicaCliente(void){
 	TpCliente aux;
 	char tel[30];
 	int flag;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Clientes.dat", "rb+");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("\nDigite o TELEFONE do cliente que deseja excluir: \n");
+	limparquadro();
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o TELEFONE do cliente que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(tel);
+		c++;
 		
 		flag = buscaSentinelaTelefone(ptr, tel);
 		
 		while (flag == -1 && strlen(tel) > 0){
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
 			printf("Insira um telefone CADASTRADO: \n");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(tel);
+			c++;
 		
 			flag = buscaSentinelaTelefone(ptr, tel);
 		}
@@ -1503,24 +1648,47 @@ void exclusaoLogicaCliente(void){
 				fread(&aux,sizeof(TpCliente), 1, ptr);
 				fseek(ptr, flag, 0);	
 
-				printf("---> Dados do CLIENTE <---\n");
-				printf("TELEFONE: %s\n", aux.telefone);
-				printf("NOME: %s\n", aux.nome);
-				printf("CIDADE: %s\n", aux.cidade);
-				printf("ENDERECO: %s\n", aux.endereco);
-				printf("CEP: %s\n", aux.cep);
-				printf("STATUS: %c\n", aux.status);
-				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
+				l = 30, c =10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados do CLIENTE <---");
+				c++;
+				gotoxy(l, c);
+				printf("TELEFONE: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("NOME: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("CIDADE: %s", aux.cidade);
+				c++;
+				gotoxy(l, c);
+				printf("ENDERECO: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("CEP: %s", aux.cep);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
+
 				if(toupper(getche()) == 'Y'){
 					aux.status = 'I';
 					fwrite(&aux,sizeof(TpCliente), 1, ptr);
-					printf("\nTelefone excluido com sucesso\n");
-				} else
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Telefone excluido com sucesso");
+				} else{
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
+				}
 			}
 		} else {
-			printf("Cliente cadastrado com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
 		}
 
 		fclose(ptr);
@@ -2050,22 +2218,35 @@ void exclusaoFisicaPedido(void){
 	clrscr();
 	TpPedido aux;
 	int flag, auxnum;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Pedidos.dat", "rb");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Digite o NUMERO do pedido que deseja excluir: \n");
+	limparquadro();
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o NUMERO do pedido que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d", &auxnum);
+		c++;
 		
 		flag = buscaSeqIndexadaPedido(ptr, auxnum);
 		
 		while (flag == -1 && auxnum > 0){
-			printf("Insira um numero do pedido CADASTRADO: \n");
+			gotoxy(l, c);
+			printf("Insira um numero do pedido CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d", &auxnum);
+			c++;
 		
 			flag = buscaSeqIndexadaPedido(ptr, auxnum);
 		}
@@ -2073,16 +2254,33 @@ void exclusaoFisicaPedido(void){
 		if(auxnum > 0){
 			fseek(ptr, flag, 0); //vai para a pos encontrada
 			fread(&aux, sizeof(TpPedido), 1, ptr);
-			printf("---> Dados do PEDIDO <---\n");
-			printf("Numero: %d\n", aux.numero);
-			printf("Telefone: %s\n", aux.telefone);
-			printf("Codigo da pizza: %d\n", aux.codigo);
-			printf("CPF: %s\n", aux.cpf);
-			printf("Situacao: %s\n", aux.situacao);
-			printf("Data do pedido: %d/%d/%d \n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
-			
-			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-			
+
+			l = 30, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("---> Dados do PEDIDO <---");
+			c++;
+			gotoxy(l, c);
+			printf("Numero: %d", aux.numero);
+			c++;
+			gotoxy(l, c);
+			printf("Telefone: %s", aux.telefone);
+			c++;
+			gotoxy(l, c);
+			printf("Codigo da pizza: %d", aux.codigo);
+			c++;
+			gotoxy(l, c);
+			printf("CPF: %s", aux.cpf);
+			c++;
+			gotoxy(l, c);
+			printf("Situacao: %s", aux.situacao);
+			c++;
+			gotoxy(l, c);
+			printf("Data do pedido: %d/%d/%d", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			c++;
+			gotoxy(l, c);
+			printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+			c++;
 			if(toupper(getche()) == 'Y'){
 				FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 				fseek(ptr, 0, 0);
@@ -2100,10 +2298,13 @@ void exclusaoFisicaPedido(void){
 					fclose(ptrnovo);
 					remove("Pedidos.dat");
 					rename("novo.dat", "Pedidos.dat");
-					printf("\nExclusao realizada com sucesso!\n");
+					gotoxy(l, c);
+					printf("Exclusao realizada com sucesso!");
 
 			} else{
-				printf("\nExclusao nao realizada\n");
+				gotoxy(l, c);
+				printf("Exclusao nao realizada");
+				c++;
 				fclose(ptr);
 			}
 		}
@@ -2116,9 +2317,10 @@ void exclusaoFisicaPedido(void){
 void excluirClienteInativo(void) {
 	TpCliente aux;
 	FILE *ptr = fopen("Clientes.dat", "rb");
-
+	int l = 16, c = 10;
 	if (ptr == NULL){
-		printf("Erro de abertura\n");
+		gotoxy(l, c);
+		printf("Erro de abertura");
 	} else {
 		FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 		fseek(ptr, 0, 0);
@@ -2136,7 +2338,8 @@ void excluirClienteInativo(void) {
 		fclose(ptrnovo);
 		remove("Clientes.dat");
 		rename("novo.dat", "Clientes.dat");
-		printf("\nExclusao de inativos realizada com sucesso!\n");	
+		gotoxy(l, c);
+		printf("Exclusao de inativos realizada com sucesso!");	
 	}
 }
 
@@ -2145,26 +2348,40 @@ void exclusaoFisicaCliente(void){
 	TpCliente aux;
 	int flag;
 	char tel[30];
+	int l = 16, c = 10;
 
 	FILE *ptr = fopen("Clientes.dat", "rb");
 	
+	limparquadro();
+	moldeCadastrar();
+
 	if (ptr == NULL) {
+		gotoxy(l, c);
 		printf("Erro de abertura\n");
 	} else {
 
 		fclose(ptr);
 		excluirClienteInativo();
 		FILE *ptr = fopen("Clientes.dat", "rb");
-
+		gotoxy(l, c);
 		printf("Digite o TELEFONE do cliente que deseja excluir: \n");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(tel);
+		c++;
 		
 		flag = buscaSentinelaTelefone(ptr, tel);
 		while (flag == -1 && strlen(tel) > 0){
-			printf("Insira um TELEFONE CADASTRADO: \n");
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um TELEFONE CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(tel);
+			c++;
 		
 			flag = buscaSentinelaTelefone(ptr, tel);
 		}
@@ -2173,15 +2390,30 @@ void exclusaoFisicaCliente(void){
 			if(strlen(tel) > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpCliente), 1, ptr);
-				printf("---> Dados do CLIENTE <---\n");
-				printf("Telefone: %s\n", aux.telefone);
-				printf("Nome: %s\n", aux.nome);
-				printf("Endereco: %s\n", aux.endereco);
-				printf("Cidade: %s\n", aux.cidade);
-				printf("Cep: %s\n", aux.cep);
-				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-				
+
+				l = 30, c = 10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados do CLIENTE <---");
+				c++;
+				gotoxy(l, c);
+				printf("Telefone: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("Nome: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("Endereco: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("Cidade: %s", aux.cidade);
+				c++;
+				gotoxy(l, c);
+				printf("Cep: %s", aux.cep);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
 				if(toupper(getche()) == 'Y'){
 					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 					fseek(ptr, 0, 0);
@@ -2199,15 +2431,19 @@ void exclusaoFisicaCliente(void){
 						fclose(ptrnovo);
 						remove("Clientes.dat");
 						rename("novo.dat", "Clientes.dat");
-						printf("\nExclusao realizada com sucesso!\n");
+						gotoxy(l, c);
+						printf("Exclusao realizada com sucesso!");
 
 				} else{
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
 					fclose(ptr);
 				}
 			}
 		} else {
-			printf("Cliente cadastrado com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
 		}
 
 		fclose(ptr);
@@ -2221,22 +2457,37 @@ void exclusaoFisicaMotoqueiro(void){
 	TpMotoqueiro aux;
 	int flag;
 	char cpf[30];
+	int l = 16, c = 10;
 
 	FILE *ptr = fopen("Motoqueiros.dat", "rb");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Digite o CPF do motoqueiro que deseja excluir: \n");
+	limparquadro();
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		printf("ERRO de abertura");
+		gotoxy(l, c);
+	}else{
+		gotoxy(l, c);
+		printf("Digite o CPF do motoqueiro que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(cpf);
+		c++;
 		
 		flag = buscaCPF(ptr, cpf);
 		
 		while (flag == -1 && strlen(cpf) > 0){
-			printf("Insira um CPF CADASTRADO: \n");
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um CPF CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(cpf);
+			c++;
 		
 			flag = buscaCPF(ptr, cpf);
 		}
@@ -2245,15 +2496,30 @@ void exclusaoFisicaMotoqueiro(void){
 			if(strlen(cpf) > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
-				printf("---> Dados do MOTOQUEIRO <---\n");
-				printf("CPF: %s\n", aux.cpf);
-				printf("Nome: %s\n", aux.nome);
-				printf("Endereco: %s\n", aux.endereco);
-				printf("Telefone: %s\n", aux.telefone);
-				printf("Data de admissao: %d/%d/%d \n", aux.data.d, aux.data.m, aux.data.a);
 				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-				
+				l = 30, c = 10;	
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados do MOTOQUEIRO <---");
+				c++;
+				gotoxy(l, c);
+				printf("CPF: %s", aux.cpf);
+				c++;
+				gotoxy(l, c);
+				printf("Nome: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("Endereco: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("Telefone: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("Data de admissao: %d/%d/%d", aux.data.d, aux.data.m, aux.data.a);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
 				if(toupper(getche()) == 'Y'){
 					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 					fseek(ptr, 0, 0);
@@ -2271,15 +2537,19 @@ void exclusaoFisicaMotoqueiro(void){
 						fclose(ptrnovo);
 						remove("Motoqueiros.dat");
 						rename("novo.dat", "Motoqueiros.dat");
-						printf("\nExclusao realizada com sucesso!\n");
+						gotoxy(l, c);
+						printf("\nExclusao realizada com sucesso!");
 
 				} else{
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
 					fclose(ptr);
 				}
 			}			
 		} else {
-			printf("Motoqueiro cadastrado com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
 		}
 	
 		fclose(ptr);
@@ -2292,22 +2562,37 @@ void exclusaoFisicaPizza(void){
 	clrscr();
 	TpPizza aux;
 	int flag, auxcod;
+	int l = 16, c = 10;
 
 	FILE *ptr = fopen("Pizzas.dat", "rb");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Digite o CODIGO DA PIZZA que deseja excluir: \n");
+	limparquadro();
+	cadastrarCliente();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Digite o CODIGO DA PIZZA que deseja excluir:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d",&auxcod);
-		
+		c++;
+
 		flag = buscaBinariaCodigo(ptr, auxcod);
 		
 		while (flag == -1 && auxcod > 0){
-			printf("Insira um codigo da pizza CADASTRADO: \n");
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um codigo da pizza CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d",&auxcod);
+			c++;
 			
 			flag = buscaBinariaCodigo(ptr, auxcod);
 		}
@@ -2316,13 +2601,24 @@ void exclusaoFisicaPizza(void){
 			if(auxcod > 0){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpPizza), 1, ptr);
-				printf("---> Dados da PIZZA <---\n");
-				printf("Codigo: %d\n", aux.codigo);
-				printf("Descricao: %s\n", aux.descricao);
-				printf("Valor: %.2f\n", aux.valor);
-				
-				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)\n");
-				
+
+				l = 30, c = 10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("---> Dados da PIZZA <---");
+				c++;
+				gotoxy(l, c);
+				printf("Codigo: %d", aux.codigo);
+				c++;
+				gotoxy(l, c);
+				printf("Descricao: %s", aux.descricao);
+				c++;
+				gotoxy(l, c);
+				printf("Valor: %.2f", aux.valor);
+				c++;
+				gotoxy(l, c);
+				printf("Deseja prosseguir com a exclusao? (Y-Yes/N-No)");
+				c++;
 				if(toupper(getche()) == 'Y'){
 					FILE *ptrnovo = fopen("novo.dat", "wb"); //wb permite criar o arquivo //se ja estiver criado o arquivo � zerado
 					fseek(ptr, 0, 0);
@@ -2340,15 +2636,19 @@ void exclusaoFisicaPizza(void){
 						fclose(ptrnovo);
 						remove("Pizzas.dat");
 						rename("novo.dat", "Pizzas.dat");
-						printf("\nExclusao realizada com sucesso!\n");
+						gotoxy(l, c);
+						printf("Exclusao realizada com sucesso!");
 
 				} else{
-					printf("\nExclusao nao realizada\n");
+					gotoxy(l, c);
+					printf("Exclusao nao realizada");
+					c++;
 					fclose(ptr);
 				}
 			}			
 		} else {
-			printf("Pizza cadastrada com pedido ativo!\nExclusao nao realizada\n");
+			gotoxy(l, c);
+			printf("Pizza cadastrada com pedido ativo!Exclusao nao realizada");
 		}
 		
 		fclose(ptr);
@@ -2362,25 +2662,39 @@ void alterarPedido(void){
 	TpPedido aux;
 	int flag;
 	char op;
-	
+	int l = 16, c = 10;
+
 	FILE *ptrpedido = fopen("Pedidos.dat", "rb+");
 	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
 	
-	if(ptrpedido == NULL)
-		printf("ERRO de abertura \n");
-	else{
+	moldeCadastrar();
+
+	if(ptrpedido == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
 		printf("Insira o NUMERO do Pedido que desja ALTERAR: \n");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d",&aux.numero);
+		c++;
 		
 		flag = buscaSeqIndexadaPedido(ptrpedido, aux.numero);
 		
 		while (flag == -1 && aux.numero > 0){
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
 			printf("Insira um NUMERO do pedido cadastrado: \n");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d",&aux.numero);
+			c++;
 			
 			flag = buscaSeqIndexadaPedido(ptrpedido, aux.numero);
 		}
@@ -2390,80 +2704,160 @@ void alterarPedido(void){
 			fread(&aux,sizeof(TpPedido), 1, ptrpedido);
 			fseek(ptrpedido, flag, 0);
 
-			printf("\n###Conteudo do Registro###\n");
-			printf("NUMERO: %d\n", aux.numero);
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("CODIGO: %d\n", aux.codigo);
-			printf("CPF: %s\n", aux.cpf);
-			printf("SITUACAO: %s\n", aux.situacao);
-			printf("DATA DO PEDIDO: %d/%d/%d\n\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("###Conteudo do Registro###");
+			c++;
+			gotoxy(l, c);
+			printf("NUMERO: %d", aux.numero);
+			c++;
+			gotoxy(l, c);
+			printf("TELEFONE: %s", aux.telefone);
+			c++;
+			gotoxy(l, c);
+			printf("CODIGO: %d", aux.codigo);
+			c++;
+			gotoxy(l, c);
+			printf("CPF: %s", aux.cpf);
+			c++;
+			gotoxy(l, c);
+			printf("SITUACAO: %s", aux.situacao);
+			c++;
+			gotoxy(l, c);
+			printf("DATA DO PEDIDO: %d/%d/%d", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
 
-			printf("O que deseja ALTERAR?\n");
-			printf("[A] NUMERO\n");
-			printf("[B] TELEFONE\n");
-			printf("[C] CODIGO DA PIZZA\n");
-			printf("[D] CPF DO MOTOQUEIRO\n");
-			printf("[E] SITUACAO\n");
-			printf("[F] DATA DO PEDIDO\n");
-			
+			gotoxy(49, 22);
+			printf("ENTER para continuar");
+			getch();
+
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("O que deseja ALTERAR?");
+			c++;
+			gotoxy(l, c);
+			printf("[A] NUMERO");
+			c++;
+			gotoxy(l, c);
+			printf("[B] TELEFONE");
+			c++;
+			gotoxy(l, c);
+			printf("[C] CODIGO DA PIZZA");
+			c++;
+			gotoxy(l, c);
+			printf("[D] CPF DO MOTOQUEIRO");
+			c++;
+			gotoxy(l, c);
+			printf("[E] SITUACAO");
+			c++;
+			gotoxy(l, c);
+			printf("[F] DATA DO PEDIDO");
+			c++;
+
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("\nInsira o novo NUMERO do pedido: \n");
+				gotoxy(l, c);
+				printf("Insira o novo NUMERO do pedido: ");
+				c++;				
+				gotoxy(l, c);
 				scanf("%d", &aux.numero);
+				c++;
 				
 				while(aux.numero <= 0){
-					printf("Insira um numero VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um numero VALIDO:");
+					c++;
+					gotoxy(l, c);
 					scanf("%d", &aux.numero);
+					c++;
 				}
 				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'B'){
-				printf("\nInsira o novo TELEFONE do pedido: \n");
+				gotoxy(l, c);
+				printf("Insira o novo TELEFONE do pedido:");
+				c++;
 				fflush(stdin);
+				gotoxy(l, c);
 				gets(aux.telefone);
+				c++;
 				flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 				
 				while(strlen(aux.telefone) <= 0 || flag == -1){
-					printf("Insira um telefone CADASTRADO: \n");
+					gotoxy(l, c);
+					printf("Insira um telefone CADASTRADO:");
+					c++;
 					fflush(stdin);
+					gotoxy(l, c);
 					gets(aux.telefone);
+					c++;
 					flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'C'){
-				printf("\nInsira o novo CODIGO DA PIZZA do pedido \n");
+				gotoxy(l, c);
+				printf("Insira o novo CODIGO DA PIZZA do pedido");
+				c++;
+				gotoxy(l, c);
 				scanf("%d", &aux.codigo);
+				c++;
 				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 				
 				while(aux.codigo < 0 || flag == -1){
-					printf("Insira um codigo da pizza CADASTRADO \n");
+					gotoxy(l, c);
+					printf("Insira um codigo da pizza CADASTRADO");
+					c++;
+					gotoxy(l, c);
 					scanf("%d", &aux.codigo);
+					c++;
 					flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'D'){
-				printf("\nInsira o novo CPF DO MOTOQUEIRO do pedido \n");
+				gotoxy(l, c);
+				printf("Insira o novo CPF DO MOTOQUEIRO do pedido");
+				c++;
 				fflush(stdin);
+				gotoxy(l, c);
 				gets(aux.cpf);
+				c++;
 				flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				
 				while(strlen(aux.cpf) <= 0 || flag == -1){
-					printf("Insira um cpf CADASTRADO: \n");
+					gotoxy(l, c);
+					printf("Insira um cpf CADASTRADO:");
+					c++;
 					fflush(stdin);
+					gotoxy(l, c);
 					gets(aux.cpf);
+					c++;
 					flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			} else if(op == 'E'){
-				printf("\nPara qual SITUACAO do pedido voce deseja alterar: \n");
-				printf("[A] Em preparacao \n");
-				printf("[B] Em rota de entrega \n");
-				printf("[C] Entregue \n");
-				printf("[D] Cancelado \n");
+				l = 30, c =10;
+				limparquadro();
+				gotoxy(l, c);
+				printf("Para qual SITUACAO do pedido voce deseja alterar:");
+				c++;
+				gotoxy(l, c);
+				printf("[A] Em preparacao");
+				c++;
+				gotoxy(l, c);
+				printf("[B] Em rota de entrega");
+				c++;
+				gotoxy(l, c);
+				printf("[C] Entregue");
+				c++;
+				gotoxy(l, c);
+				printf("[D] Cancelado");
+				c++;
 				
 				op = toupper(getche());
 				
@@ -2476,20 +2870,30 @@ void alterarPedido(void){
 				else
 					strcpy(aux.situacao,"Cancelado");
 				
-				printf("\nDados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'F'){
-				printf("\nInsira a nova DATA DO PEDIDP: [dd mm aaaa]\n");
+				gotoxy(l, c);
+				printf("Insira a nova DATA DO PEDIDP: [dd mm aaaa]");
+				c++;
+				gotoxy(l, c);
 				scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
-				
+				c++;
+
 				while(aux.dataPedido.d > 31 || aux.dataPedido.d < 1 || aux.dataPedido.m > 12 || aux.dataPedido.m < 1 || aux.dataPedido.a > 2024 || aux.dataPedido.a < 1){
-					printf("Insira uma data VALIDA\n");
+					gotoxy(l, c);
+					printf("Insira uma data VALIDA");
+					c++;
+					gotoxy(l, c);
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
+					c++;
 				}
-				
-				printf("\nDados ALTERADOS\n");
-			}else
-				printf("Alteracao de dados CANCELADA\n");
-				
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
+			}else{
+				gotoxy(l, c);
+				printf("Alteracao de dados CANCELADA");
+			}	
 			fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
 
 		}
@@ -2509,21 +2913,35 @@ void alterarPizza(void){
 	TpPizza aux;
 	int flag;
 	char op;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Pizzas.dat", "rb+");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura \n");
-	else{
-		printf("Insira o CODIGO da Pizza que desja ALTERAR: \n");
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Insira o CODIGO da Pizza que desja ALTERAR:");
+		c++;
 		fflush(stdin);
-		scanf("%d",&aux.codigo);	
+		gotoxy(l, c);
+		scanf("%d",&aux.codigo);
+		c++;	
 		flag = buscaBinariaCodigo(ptr, aux.codigo);
 		
 		while (flag == -1 && aux.codigo > 0){
-			printf("Insira um CODIGO cadastrado: \n");
+			l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um CODIGO cadastrado:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d",&aux.codigo);
+			c++;
 			flag = buscaBinariaCodigo(ptr, aux.codigo);
 
 		}
@@ -2533,52 +2951,100 @@ void alterarPizza(void){
 			fread(&aux,sizeof(TpPizza), 1, ptr);
 			fseek(ptr, flag, 0);
 
-			printf("\n###Conteudo do Registro###\n");
-			printf("CODIGO: %d\n", aux.codigo);
-			printf("DESCRICAO: %s\n", aux.descricao);
-			printf("VALOR: %.2f\n\n", aux.valor);
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("###Conteudo do Registro###");
+			c++;
+			gotoxy(l, c);
+			printf("CODIGO: %d", aux.codigo);
+			c++;
+			gotoxy(l, c);
+			printf("DESCRICAO: %s", aux.descricao);
+			c++;
+			gotoxy(l, c);
+			printf("VALOR: %.2f", aux.valor);
 
-			printf("O que deseja ALTERAR?\n");
-			printf("[A] CODIGO\n");
-			printf("[B] DESCRICAO\n");
-			printf("[C] VALOR\n");
+			gotoxy(49, 22);
+			printf("ENTER para continuar");
+			getch();
+
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("O que deseja ALTERAR?");
+			c++;
+			gotoxy(l, c);
+			printf("[A] CODIGO");
+			c++;
+			gotoxy(l, c);
+			printf("[B] DESCRICAO");
+			c++;
+			gotoxy(l, c);
+			printf("[C] VALOR");
+			c++;
 			
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("\nInsira o novo CODIGO: \n");
+				gotoxy(l, c);
+				printf("Insira o novo CODIGO:");
+				c++;
+				gotoxy(l, c);
 				scanf("%d", &aux.codigo);
+				c++;;
 				
 				while(aux.codigo <= 0){
-					printf("Insira um codigo VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um codigo VALIDO:");
+					c++;
+					gotoxy(l, c);
 					scanf("%d", &aux.codigo);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'B'){
-				printf("\nInsira a nova DESCRICAO: \n");
+				gotoxy(l, c);
+				printf("Insira a nova DESCRICAO: ");
+				c++;
 				fflush(stdin);
+				gotoxy(l, c);
 				gets(aux.descricao);
+				c++;
 				
 				while(strlen(aux.descricao) <= 0){
-					printf("Insira uma descricao VALIDA: \n");
+					gotoxy(l, c);
+					printf("Insira uma descricao VALIDA:");
+					c++;
+					gotoxy(l, c);
 					gets(aux.descricao);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'C'){
-				printf("\nInsira o novo VALOR: \n");
+				gotoxy(l, c);
+				printf("Insira o novo VALOR:");
+				c++;
+				gotoxy(l, c);
 				scanf("%f", &aux.valor);
+				c++;
 				
 				while(aux.valor <= 0){
-					printf("Insira um valor VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um valor VALIDO:");
+					c++;
+					gotoxy(l, c);
 					scanf("%f", &aux.valor);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
-			}else
-				printf("\nAlteracao de dados CANCELADA\n");
-			
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
+			}else{
+				gotoxy(l, c);
+				printf("Alteracao de dados CANCELADA");
+			}
 			fwrite(&aux, sizeof(TpPizza), 1, ptr);
 
 		}
@@ -2595,20 +3061,33 @@ void alterarMotoqueiro(void){
 	TpMotoqueiro aux;
 	int flag;
 	char op;
+	int l = 16, c = 10;
 	
 	FILE *ptr = fopen("Motoqueiros.dat", "rb+");
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Insira o CPF do Motoqueiro que desja ALTERAR:\n");
+	moldeCadastrar();
+
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Insira o CPF do Motoqueiro que desja ALTERAR:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.cpf);
+		c++;
 		flag = buscaCPF(ptr, aux.cpf);
 		
 		while (flag == -1 && strlen(aux.cpf) > 0) {
+			int l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
 			printf("Insira um CPF cadastrado:\n");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(aux.cpf);
 	
 			flag = buscaCPF(ptr, aux.cpf);
@@ -2620,77 +3099,147 @@ void alterarMotoqueiro(void){
 			fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
 			fseek(ptr, flag, 0);	
 
-			printf("\n###Conteudo do Registro###\n");
-			printf("CPF: %s\n", aux.cpf);
-			printf("NOME: %s\n", aux.nome);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("DATA DE ADMISSAO: %d/%d/%d\n\n", aux.data.d, aux.data.m, aux.data.a);
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("###Conteudo do Registro###");
+			c++;
+			gotoxy(l, c);
+			printf("CPF: %s", aux.cpf);
+			c++;
+			gotoxy(l, c);
+			printf("NOME: %s", aux.nome);
+			c++;
+			gotoxy(l, c);
+			printf("ENDERECO: %s", aux.endereco);
+			c++;
+			gotoxy(l, c);
+			printf("TELEFONE: %s", aux.telefone);
+			c++;
+			gotoxy(l, c);
+			printf("DATA DE ADMISSAO: %d/%d/%d", aux.data.d, aux.data.m, aux.data.a);
 
-			printf("O que deseja ALTERAR?\n");
-			printf("[A] CPF\n");
-			printf("[B] NOME\n");
-			printf("[C] ENDERECO\n");
-			printf("[D] TELEFONE\n");
-			printf("[E] DATA DE ADMISSAO\n");
+			gotoxy(49, 22);
+			printf("ENTER para continuar");
+			getch();
+
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("O que deseja ALTERAR?");
+			c++;
+			gotoxy(l, c);
+			printf("[A] CPF");
+			c++;
+			gotoxy(l, c);
+			printf("[B] NOME");
+			c++;
+			gotoxy(l, c);
+			printf("[C] ENDERECO");
+			c++;
+			gotoxy(l, c);
+			printf("[D] TELEFONE");
+			c++;
+			gotoxy(l, c);
+			printf("[E] DATA DE ADMISSAO");
+			c++;
 			
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("\nInsira o novo CPF: \n");
+				gotoxy(l, c);
+				printf("Insira o novo CPF:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.cpf);
+				c++;
+
 				flag = validarCPF(aux.cpf);
-				
 				while(strlen(aux.cpf) <= 0 || flag != 1){
-					printf("Insira um cpf VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um cpf VALIDO:");
+					c++;
+					gotoxy(l, c);
 					gets(aux.cpf);
+					c++;
 					flag = validarCPF(aux.cpf);
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'B'){
-				printf("\nInsira o novo NOME: \n");
+				printf("Insira o novo NOME:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.nome);
-				
+				c++;
 				while(strlen(aux.nome) <= 0){
-					printf("Insira um nome VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um nome VALIDO:");
+					c++;
+					gotoxy(l, c);
 					gets(aux.nome);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'C'){
-				printf("\nInsira o novo ENDERECO: \n");
+				gotoxy(l, c);
+				printf("Insira o novo ENDERECO:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.endereco);
-				
+				c++;
+
 				while(strlen(aux.endereco) <= 0){
-					printf("Insira um endereco VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um endereco VALIDO:");
+					c++;
+					gotoxy(l, c);
 					gets(aux.endereco);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'D'){
-				printf("\nInsira o novo TELEFONE: \n");
+				gotoxy(l, c);
+				printf("Insira o novo TELEFONE: ");
+				c++;
+				gotoxy(l, c);
 				gets(aux.telefone);
+				c++;
 				
 				while(strlen(aux.telefone) <= 0){
-					printf("Insira um telefone VALIDO: \n");
+					gotoxy(l, c);
+					printf("Insira um telefone VALIDO:");
+					c++;
+					gotoxy(l, c);
 					gets(aux.telefone);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'E'){
-				printf("\nInsira a nova DATA DE ADMISSAO: [dd mm aaaa]\n");
+				gotoxy(l, c);
+				printf("Insira a nova DATA DE ADMISSAO: [dd mm aaaa]");
+				c++;
+				gotoxy(l, c);
 				scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
+				c++;
 				
 				while(aux.data.d > 31 || aux.data.d < 1 || aux.data.m > 12 || aux.data.m < 1 || aux.data.a > 2024 || aux.data.a < 1){
-					printf("Insira uma data VALIDA\n");
+					gotoxy(l, c);
+					printf("Insira uma data VALIDA");
+					c++;
+					gotoxy(l, c);
 					scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
+					c++;
 				}
-				
-				printf("Dados ALTERADOS\n");
-			}else
-				printf("\nAlteracao de dados CANCELADA\n");
-				
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
+			}else{
+				gotoxy(l, c);
+				printf("Alteracao de dados CANCELADA");
+			}	
 			fwrite(&aux, sizeof(TpMotoqueiro), 1, ptr);
 
 		}
@@ -2707,20 +3256,34 @@ void alterarCliente(void){
 	TpCliente aux;
 	int flag;
 	char op;
-	
+	int l = 16, c = 10;
+
 	FILE *ptr = fopen("Clientes.dat", "rb+");
+
+	limparquadro();
+	moldeCadastrar();
 	
-	if(ptr == NULL)
-		printf("ERRO de abertura\n");
-	else{
-		printf("Insira o TELEFONE do Cliente que desja ALTERAR:\n");
+	if(ptr == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
+		gotoxy(l, c);
+		printf("Insira o TELEFONE do Cliente que desja ALTERAR:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.telefone);
+		c++;
 		flag = buscaSentinelaTelefone(ptr, aux.telefone);
 		
 		while (flag == -1 && strlen(aux.telefone) > 0) {
-			printf("Insira um TELEFONE cadastrado:\n");
+			int l = 16, c = 10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("Insira um TELEFONE cadastrado:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(aux.telefone);
 	
 			flag = buscaSentinelaTelefone(ptr, aux.telefone);
@@ -2732,50 +3295,145 @@ void alterarCliente(void){
 			fread(&aux,sizeof(TpCliente), 1, ptr);
 			fseek(ptr, flag, 0);
 
-			printf("\n###Conteudo do Registro###\n");
-			printf("TELEFONE: %s\n", aux.telefone);
-			printf("NOME: %s\n", aux.nome);
-			printf("ENDERECO: %s\n", aux.endereco);
-			printf("CIDADE: %s\n", aux.cidade);
-			printf("CEP: %s\n", aux.cep);
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("###Conteudo do Registro###");
+			c++;
+			gotoxy(l, c);
+			printf("TELEFONE: %s", aux.telefone);
+			c++;
+			gotoxy(l, c);
+			printf("NOME: %s", aux.nome);
+			c++;
+			gotoxy(l, c);
+			printf("ENDERECO: %s", aux.endereco);
+			c++;
+			gotoxy(l, c);
+			printf("CIDADE: %s", aux.cidade);
+			c++;
+			gotoxy(l, c);
+			printf("CEP: %s", aux.cep);
 
-			printf("\nO que deseja ALTERAR?\n");
-			printf("[A] TELEFONE\n");
-			printf("[B] NOME\n");
-			printf("[C] ENDERECO\n");
-			printf("[D] CIDADE\n");
-			printf("[E] CEP\n");
+			gotoxy(49, 22);
+			printf("ENTER para continuar");
+			getch();
+
+			l = 30, c =10;
+			limparquadro();
+			gotoxy(l, c);
+			printf("O que deseja ALTERAR?");
+			c++;
+			gotoxy(l, c);
+			printf("[A] TELEFONE");
+			c++;
+			gotoxy(l, c);
+			printf("[B] NOME");
+			c++;
+			gotoxy(l, c);
+			printf("[C] ENDERECO");
+			c++;
+			gotoxy(l, c);
+			printf("[D] CIDADE");
+			c++;
+			gotoxy(l, c);
+			printf("[E] CEP");
+			c++;
 			
 			op = toupper(getche());
 			
 			if(op == 'A'){
-				printf("\nInsira o novo TELEFONE: \n");
+				gotoxy(l, c);
+				printf("Insira o novo TELEFONE: ");
+				c++;
+				gotoxy(l, c);
 				gets(aux.telefone);
+				c++;
 				
-				printf("Dados ALTERADOS\n");
+				while(strlen(aux.telefone) <= 0){
+					gotoxy(l, c);
+					printf("Insira um telefone VALIDO:");
+					c++;
+					gotoxy(l, c);
+					gets(aux.telefone);
+					c++;
+				}
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'B'){
-				printf("\nInsira o novo NOME: \n");
+				printf("Insira o novo NOME:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.nome);
-				
-				printf("Dados ALTERADOS\n");
+				c++;
+				while(strlen(aux.nome) <= 0){
+					gotoxy(l, c);
+					printf("Insira um nome VALIDO:");
+					c++;
+					gotoxy(l, c);
+					gets(aux.nome);
+					c++;
+				}
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'C'){
-				printf("\nInsira o novo ENDERECO: \n");
+				gotoxy(l, c);
+				printf("Insira o novo ENDERECO:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.endereco);
-				
-				printf("Dados ALTERADOS\n");
+				c++;
+
+				while(strlen(aux.endereco) <= 0){
+					gotoxy(l, c);
+					printf("Insira um endereco VALIDO:");
+					c++;
+					gotoxy(l, c);
+					gets(aux.endereco);
+					c++;
+				}
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'D'){
-				printf("\nInsira a nova CIDADE: \n");
+				gotoxy(l, c);
+				printf("Insira o novo ENDERECO:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.cidade);
-				
-				printf("Dados ALTERADOS\n");
+				c++;
+
+				while(strlen(aux.cidade) <= 0){
+					gotoxy(l, c);
+					printf("Insira um endereco VALIDO:");
+					c++;
+					gotoxy(l, c);
+					gets(aux.cidade);
+					c++;
+				}
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
 			}else if(op == 'E'){
-				printf("\nInsira o novo CEP: \n");
+				gotoxy(l, c);
+				printf("Insira o novo ENDERECO:");
+				c++;
+				gotoxy(l, c);
 				gets(aux.cep);
-				
-				printf("Dados ALTERADOS\n");
-			}else
-				printf("\nAlteracao de dados CANCELADA\n");
-				
+				c++;
+
+				while(strlen(aux.cep) <= 0){
+					gotoxy(l, c);
+					printf("Insira um endereco VALIDO:");
+					c++;
+					gotoxy(l, c);
+					gets(aux.cep);
+					c++;
+				}
+				gotoxy(l, c);
+				printf("Dados ALTERADOS");
+			}else{
+				gotoxy(l, c);
+				printf("Alteracao de dados CANCELADA");
+			}	
 			fwrite(&aux, sizeof(TpCliente), 1, ptr);
 			
 		}
@@ -2913,20 +3571,32 @@ void cadastrarPedido(void){
 	clrscr();
 	TpPedido aux;
 	int flag;
-
+	int l = 25, c = 10;
+	
 	FILE *ptrpedido;
 	FILE *ptrcliente = fopen("Clientes.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
-	 
-	printf("Insira o NUMERO do Pedido:\n");
+	
+	moldeMenuCadastro();
+	limparquadro();
+	gotoxy(l, c);
+	printf("Insira o NUMERO do Pedido:");
+	c++;
 	fflush(stdin);
+	gotoxy(l, c);
 	scanf("%d", &aux.numero);
+	c++;
 	
 	flag = verificaNumPedidoCadastrado(aux.numero);
 	while(aux.numero > 0 && flag != -1){
-		printf("Numero de pedido ja CADASTRADO, insira outro:\n");
+		limparquadro();
+		l = 25, c = 10;
+		gotoxy(l,c);
+		printf("Numero de pedido ja CADASTRADO, insira outro:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d", &aux.numero);
 
 		flag = verificaNumPedidoCadastrado(aux.numero);
@@ -2935,51 +3605,84 @@ void cadastrarPedido(void){
 	while(aux.numero > 0 && flag == -1) { //pedido existe
 		ptrpedido = fopen("Pedidos.dat", "ab");
 
-		printf("Insira o TELEFONE do Cliente:\n");
+		gotoxy(l, c);
+		printf("Insira o TELEFONE do Cliente:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.telefone);
+		c++;
 		
 		flag = buscaSentinelaTelefone(ptrcliente, aux.telefone); //busca telefone ate encontrar
 		while (flag == -1 && strlen(aux.telefone) > 0) {
-			printf("Insira um telefone do cliente CADASTRADO:\n");
+			limparquadro();
+			l = 25, c = 10;
+			gotoxy(l,c);
+			printf("Insira um telefone do cliente CADASTRADO:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(aux.telefone);
+			c++;
 
 			flag = buscaSentinelaTelefone(ptrcliente, aux.telefone);
 		}
 
 		//entra se telefone > 0
 		if(strlen(aux.telefone) > 0) {
-			printf("Insira o CODIGO dessa Pizza:\n");
+			gotoxy(l, c);
+			printf("Insira o CODIGO dessa Pizza:");
+			c++;
+			gotoxy(l, c);
 			scanf("%d", &aux.codigo);
+			c++;
 
 			flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			while (flag == -1 && aux.codigo > 0) {
-				printf("Insira um codigo CADASTRADO:\n");
+				limparquadro();
+				l = 25, c = 10;
+				gotoxy(l,c);
+				printf("Insira um codigo CADASTRADO:");
+				c++;
+				gotoxy(l, c);
 				scanf("%d", &aux.codigo);
+				c++;
 
 				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			}
 
 			if(aux.codigo > 0){ // entra se o codigo > 0 e telefone > 0
-				printf("Digite o CPF do Motoqueiro\n");
+				gotoxy(l, c);
+				printf("Digite o CPF do Motoqueiro");
+				c++;
 				fflush(stdin);
+				gotoxy(l, c);
 				gets(aux.cpf);
+				c++;
 					
 				flag = buscaCPF(ptrmotoqueiro, aux.cpf);
-				while (flag == -1 && strlen(aux.cpf) > 0) {
-					printf("Digite um CPF do motoqueiro CADASTRADO\n");
+				while (flag == -1 && strlen(aux.cpf) > 0){
+					limparquadro();
+					l = 25, c = 10;
+					gotoxy(l,c);
+					printf("Digite um CPF do motoqueiro CADASTRADO");
+					c++;
 					fflush(stdin);
+					gotoxy(l, c);
 					gets(aux.cpf);
+					c++;
 
 					flag = buscaCPF(ptrmotoqueiro, aux.cpf);
 				}
 
 				if(strlen(aux.cpf) > 0){ // entra se o cpf > 0 e codigo > 0 e telefone > 0
 					strcpy(aux.situacao, "Em preparacao"); 				
-						
-					printf("Insira a DATA do Pedido: [dd mm aaaa]\n");
+					gotoxy(l, c);	
+					printf("Insira a DATA do Pedido: [dd mm aaaa]");
+					c++;
+					gotoxy(l, c);
 					scanf("%d %d %d", &aux.dataPedido.d, &aux.dataPedido.m, &aux.dataPedido.a);
+					c++;
 						
 					aux.status = 'A';
 
@@ -2987,15 +3690,27 @@ void cadastrarPedido(void){
 					fclose(ptrpedido);					
 					bubbleSortPedido();
 
-					printf("\nInsira o NUMERO do Pedido:\n");
+					limparquadro();
+					l = 25, c = 10;
+					gotoxy(l,c);
+					printf("Insira o NUMERO do Pedido:");
+					c++;
 					fflush(stdin);
+					gotoxy(l,c);
 					scanf("%d", &aux.numero);
+					c++;
 
 					flag = verificaNumPedidoCadastrado(aux.numero);
 					while(aux.numero > 0 && flag != -1){
-						printf("Numero de pedido ja CADASTRADO, insira outro:\n");
+						limparquadro();
+						l = 25, c = 10;
+						gotoxy(l,c);
+						printf("Numero de pedido ja CADASTRADO, insira outro:");
+						c++;
 						fflush(stdin);
+						gotoxy(l, c);
 						scanf("%d", &aux.numero);
+						c++;
 
 						flag = verificaNumPedidoCadastrado(aux.numero);
 					}
@@ -3017,26 +3732,47 @@ void cadastrarPizza(void) {
 	TpPizza aux;
 	FILE *ptrarquivo;
 	int flag;
-	 
-	printf("Insira o CODIGO da Pizza:\n");
+	int l = 25, c = 10;
+	
+	moldeCadastrar();
+	limparquadro();
+	gotoxy(l,c);
+	printf("Insira o CODIGO da Pizza:");
+	c++;
 	fflush(stdin);
+	gotoxy(l,c);
 	scanf("%d", &aux.codigo);
+	c++;
 	
 	flag = verificaCodPizzaCadastrado(aux.codigo);
 	while(aux.codigo > 0 && flag != -1){
-		printf("Codigo de pizza ja CADASTRADO, insira outro:\n");
+		limparquadro();
+		l = 25, c = 10;
+		gotoxy(l,c);
+		printf("Codigo de pizza ja CADASTRADO, insira outro:");
+		c++;
 		fflush(stdin);
+		gotoxy(l,c);
 		scanf("%d", &aux.codigo);
+		c++;
 
 		flag = verificaCodPizzaCadastrado(aux.codigo);
 	}
 
 	while (aux.codigo > 0) {
 		ptrarquivo = fopen("Pizzas.dat", "ab");
-		printf("Insira a DESCRICAO dessa Pizza:\n");
+
+		gotoxy(l, c);
+		printf("Insira a DESCRICAO dessa Pizza:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.descricao);
-		printf("Insira o VALOR dessa Pizza:\n");
+		c++;
+		gotoxy(l, c);
+		printf("Insira o VALOR dessa Pizza:");
+		c++;
+		gotoxy(l, c);
 		scanf("%f", &aux.valor);
 		
 		aux.status = 'A';
@@ -3045,14 +3781,25 @@ void cadastrarPizza(void) {
 		fclose(ptrarquivo);
 		selecaoDiretaPizza();
 
-		printf("\nInsira o CODIGO da Pizza:\n");
+		limparquadro();
+		l = 25, c = 10;
+		gotoxy(l,c);
+		printf("Insira o CODIGO da Pizza:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		scanf("%d", &aux.codigo);
+		c++;
 
 		flag = verificaCodPizzaCadastrado(aux.codigo);
 		while(aux.codigo > 0 && flag != -1){
-			printf("Codigo de pizza ja CADASTRADO, insira outro:\n");
+			limparquadro();
+			l = 25, c = 10;
+			gotoxy(l,c);
+			printf("Codigo de pizza ja CADASTRADO, insira outro:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			scanf("%d", &aux.codigo);
 
 			flag = verificaCodPizzaCadastrado(aux.codigo);
@@ -3125,49 +3872,91 @@ void cadastrarCliente(void) {
 	TpCliente aux;
 	FILE *ptrarquivo;
 	int flag, verif;
+	int l = 16, c = 10;
+
+	limparquadro();
+	moldeCadastrar();
 	
-	printf("Insira o TELEFONE do cliente que deseja cadastrar:\n");
+	gotoxy(l,c);
+	printf("Insira o TELEFONE do cliente que deseja cadastrar:");
+	c++;
 	fflush(stdin);
+	gotoxy(l,c);
 	gets(aux.telefone);
+	c++;
 
 	flag = validarNumTelefone(aux.telefone);
 	verif = verificaClienteCadastrado(aux.telefone);
 	while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
-		printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+		limparquadro();
+		l = 16, c = 10;
+		gotoxy(l,c);
+		printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
+		c++;
 		fflush(stdin);
+		gotoxy(l,c);
 		gets(aux.telefone);
+		c++;
 		flag = validarNumTelefone(aux.telefone);
 		verif = verificaClienteCadastrado(aux.telefone);
 	}
 	
 	while (strcmp(aux.telefone, "\0") != 0 && verif == -1) {
 		ptrarquivo = fopen("Clientes.dat", "ab");
-
-		printf("Insira o NOME desse cliente:\n");
+		
+		gotoxy(l,c);
+		printf("Insira o NOME desse cliente:");
+		c++;
+		gotoxy(l,c);
 		gets(aux.nome);
-		printf("Insira o ENDERECO desse cliente:\n");
+		c++;
+		gotoxy(l,c);
+		printf("Insira o ENDERECO desse cliente:");
+		c++;
+		gotoxy(l,c);
 		gets(aux.endereco);
-		printf("Insira a CIDADE desse cliente:\n");
+		c++;
+		gotoxy(l,c);
+		printf("Insira a CIDADE desse cliente:");
+		c++;
+		gotoxy(l,c);
 		gets(aux.cidade);
-		printf("Insira o CEP desse cliente:\n");
+		c++;
+		gotoxy(l,c);
+		printf("Insira o CEP desse cliente:");
+		c++;
+		gotoxy(l,c);
 		gets(aux.cep);
+		c++;
 		
 		aux.status = 'A';
 		
 		fwrite(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		fclose(ptrarquivo);
 		insercaoDiretaCliente();
-
-		printf("\nInsira o TELEFONE do cliente que deseja cadastrar:\n");
-		gets(aux.telefone);
+		
+		limparquadro();
+		l = 16, c = 10;
+		gotoxy(l,c);
+		printf("Insira o TELEFONE do cliente que deseja cadastrar:");
+		c++;
 		fflush(stdin);
-
+		gotoxy(l,c);
+		gets(aux.telefone);
+		c++;
+		
 		flag = validarNumTelefone(aux.telefone);
 		verif = verificaClienteCadastrado(aux.telefone);
 		while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
-			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+			limparquadro();
+			l = 16, c = 10;
+			gotoxy(l,c);
+			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
+			c++;
 			fflush(stdin);
+			gotoxy(l,c);
 			gets(aux.telefone);
+			c++;
 			flag = validarNumTelefone(aux.telefone);
 			verif = verificaClienteCadastrado(aux.telefone);
 		}
@@ -3180,17 +3969,31 @@ void cadastrarMotoqueiro(void) {
 	TpMotoqueiro aux;
 	FILE *ptrarquivo;
 	int flag, verif;
-		 
-	printf("Insira o CPF do motoqueiro que deseja cadastrar:\n");
+	int l = 16, c = 10;
+
+	limparquadro();
+	moldeCadastrar();
+	
+	gotoxy(l,c);
+	printf("Insira o CPF do motoqueiro que deseja cadastrar:");
+	c++;
 	fflush(stdin);
+	gotoxy(l, c);
 	gets(aux.cpf);
+	c++;
 
 	flag = validarCPF(aux.cpf);
 	verif = verificaMotoqueiroCadastrado(aux.cpf);
 	while((flag != 1 || verif != -1)  && strlen(aux.cpf) > 0) {
-		printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+		l = 16, c = 10;
+		limparquadro();
+		gotoxy(l,c);
+		printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.cpf);
+		c++;
 		flag = validarCPF(aux.cpf);
 		verif = verificaMotoqueiroCadastrado(aux.cpf);
 	}
@@ -3198,37 +4001,64 @@ void cadastrarMotoqueiro(void) {
 	while(strlen(aux.cpf) > 0 && verif == -1) {
 		ptrarquivo = fopen("Motoqueiros.dat", "ab");
 
-		printf("Insira o NOME desse motoqueiro:\n");
+		gotoxy(l, c);
+		printf("Insira o NOME desse motoqueiro:");
+		c++;
 		fflush(stdin);
+		gotoxy(l, c);
 		gets(aux.nome);
-		printf("Insira o ENDERECO desse motoqueiro:\n");
+		c++;
+		gotoxy(l, c);
+		printf("Insira o ENDERECO desse motoqueiro:");
+		c++;
+		gotoxy(l, c);
 		gets(aux.endereco);
-		printf("Insira o TELEFONE desse motoqueiro:\n");
+		c++;
+		gotoxy(l, c);
+		printf("Insira o TELEFONE desse motoqueiro:");
+		c++;
+		gotoxy(l, c);
 		gets(aux.telefone);
+		c++;
+
 		flag = validarNumTelefone(aux.telefone);
 		while(flag != 1 && strlen(aux.telefone) > 0){
-			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+			limparquadro();
+			l = 16, c = 10;
+			gotoxy(l,c);
+			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(aux.telefone);
+			c++;
 			flag = validarNumTelefone(aux.telefone);
 		}
 		if(strlen(aux.telefone) > 0){
-			printf("Insira a DATA DE ADMISSAO desse motoqueiro: [dd mm aaaa]\n");
+			gotoxy(l, c);
+			printf("Insira a DATA DE ADMISSAO desse motoqueiro: [dd mm aaaa]");
+			c++;
+			gotoxy(l, c);
 			scanf("%d %d %d", &aux.data.d, &aux.data.m, &aux.data.a);
 			
 			aux.status = 'A';
 
 			fwrite(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 			fclose(ptrarquivo);
-
-			printf("\nInsira o CPF do motoqueiro que deseja cadastrar:\n");
+			
+			limparquadro();
+			l = 16, c = 10;
+			gotoxy(l,c);
+			printf("Insira o CPF do motoqueiro que deseja cadastrar:");
+			c++;
 			fflush(stdin);
+			gotoxy(l, c);
 			gets(aux.cpf);
 
 			flag = validarCPF(aux.cpf);
 			verif = verificaMotoqueiroCadastrado(aux.cpf);
 			while((flag != 1 || verif != -1)  && strlen(aux.cpf) > 0) {
-				printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:\n");
+				printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:");
 				fflush(stdin);
 				gets(aux.cpf);
 				flag = validarCPF(aux.cpf);
@@ -3245,21 +4075,44 @@ void cadastrarMotoqueiro(void) {
 void exibirCliente(void) {
 	clrscr();
 	TpCliente aux;
+	int l = 30, c = 10;
+		
 	FILE *ptrarquivo = fopen("Clientes.dat", "rb");
-	
-	if (ptrarquivo == NULL)
-		printf("ERRO de abertura\n");
-	else{
+
+	moldeCadastrar();
+		
+	if (ptrarquivo == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else{
 		fread (&aux, sizeof(TpCliente), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
 			if(aux.status != 'I'){
-				printf("TELEFONE: %s\n", aux.telefone);
-				printf("NOME: %s\n", aux.nome);
-				printf("ENDERECO: %s\n", aux.endereco);
-				printf("CIDADE: %s\n", aux.cidade);
-				printf("CEP: %s\n", aux.cep);
-				printf("STATUS: %c\n\n", aux.status);
+				limparquadro();
+				l = 30, c = 10;
+				gotoxy(l, c);
+				printf("TELEFONE: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("NOME: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("ENDERECO: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("CIDADE: %s", aux.cidade);
+				c++;
+				gotoxy(l, c);
+				printf("CEP: %s", aux.cep);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
+
+				gotoxy(49, 22);
+				printf("ENTER para proxima pagina");
+				getch();
+				
 			}
 			fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		}
@@ -3274,20 +4127,42 @@ void exibirCliente(void) {
 void exibirMotoqueiro(void) {
 	clrscr();
 	TpMotoqueiro aux;
+	int l = 30, c = 10;
+
 	FILE *ptrarquivo = fopen("Motoqueiros.dat", "rb");
 	
-	if (ptrarquivo == NULL)
-		printf("ERRO de abertura\n");
-	else {
+	moldeCadastrar();
+	
+	if (ptrarquivo == NULL){
+		gotoxy(l, c);
+		printf("ERRO de abertura");
+	}else {
 		fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		while (!feof(ptrarquivo)){
 			if(aux.status != 'I'){
-				printf("CPF: %s\n", aux.cpf);
-				printf("NOME: %s\n", aux.nome);
-				printf("ENDERECO: %s\n", aux.endereco);
-				printf("TELEFONE: %s\n", aux.telefone);
-				printf("DATA DE ADMISSAO: %d/%d/%d\n", aux.data.d, aux.data.m, aux.data.a);
-				printf("STATUS: %c\n\n", aux.status);
+				limparquadro();
+				l = 30, c = 10;
+				gotoxy(l, c);
+				printf("CPF: %s", aux.cpf);
+				c++;
+				gotoxy(l, c);
+				printf("NOME: %s", aux.nome);
+				c++;
+				gotoxy(l, c);
+				printf("ENDERECO: %s", aux.endereco);
+				c++;
+				gotoxy(l, c);
+				printf("TELEFONE: %s", aux.telefone);
+				c++;
+				gotoxy(l, c);
+				printf("DATA DE ADMISSAO: %d/%d/%d", aux.data.d, aux.data.m, aux.data.a);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
+
+				gotoxy(49, 22);
+				printf("ENTER para proxima pagina");
+				getch();
 
 			}
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
@@ -3303,20 +4178,37 @@ void exibirMotoqueiro(void) {
 void exibirPizza(void) {
 	clrscr();
 	TpPizza aux;
+	int l = 30, c = 10;
+
 	FILE *ptrarquivo = fopen("Pizzas.dat", "rb");
 	
-	if (ptrarquivo == NULL)
+	moldeCadastrar();
+
+	if (ptrarquivo == NULL){
+		gotoxy(l, c);
 		printf("ERRO de abertura\n");
-	else{
+	}else{
 		fread (&aux, sizeof(TpPizza), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
 			if(aux.status != 'I'){
-				printf("CODIGO: %d\n", aux.codigo);
-				printf("DESCRICAO: %s\n", aux.descricao);
-				printf("VALOR: %.2f\n", aux.valor);
-				printf("STATUS: %c\n\n", aux.status);
+				limparquadro();
+				l = 30, c = 10;
+				gotoxy(l, c);
+				printf("CODIGO: %d", aux.codigo);
+				c++;
+				gotoxy(l, c);
+				printf("DESCRICAO: %s", aux.descricao);
+				c++;
+				gotoxy(l, c);
+				printf("VALOR: %.2f", aux.valor);
+				c++;
+				gotoxy(l, c);
+				printf("STATUS: %c", aux.status);
 
+				gotoxy(49, 22);
+				printf("ENTER para proxima pagina");
+				getch();
 			}
 			fread(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		}
@@ -3328,26 +4220,49 @@ void exibirPizza(void) {
 	clrscr();
 }
 
-void exibirPedidos(void) {
+void exibirPedidos(void){
 	clrscr();
 	TpPedido aux;
+	int l = 30, c = 10;
+
 	FILE *ptrarquivo = fopen("Pedidos.dat", "rb");
 	
-	if (ptrarquivo == NULL)
+	moldeCadastrar();
+	
+	if (ptrarquivo == NULL){
+		gotoxy(l, c);
 		printf("ERRO de abertura\n");
-	else{
+	}else{
 		fread (&aux, sizeof(TpPedido), 1, ptrarquivo);
 
 		while (!feof(ptrarquivo)) {
 			if(aux.status != 'I'){
+				limparquadro();
+				l = 30, c = 10;
+				gotoxy(l, c);
 				printf("NUMERO: %d\n", aux.numero);
+				c++;
+				gotoxy(l, c);
 				printf("TELEFONE: %s\n", aux.telefone);
+				c++;
+				gotoxy(l, c);
 				printf("CODIGO: %d\n", aux.codigo);
+				c++;
+				gotoxy(l, c);
 				printf("CPF: %s\n", aux.cpf);
+				c++;
+				gotoxy(l, c);
 				printf("SITUACAO: %s\n", aux.situacao);
+				c++;
+				gotoxy(l, c);
 				printf("DATA DO PEDIDO: %d/%d/%d\n", aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
+				c++;
+				gotoxy(l, c);
 				printf("STATUS: %c\n\n", aux.status);
 
+				gotoxy(49, 22);
+				printf("ENTER para proxima pagina");
+				getch();
 			}
 			fread(&aux, sizeof(TpPedido), 1, ptrarquivo);
 		}
@@ -3390,8 +4305,6 @@ char menuNum(void) {
 	clrscr();
 	moldeMenuInicial();
 
-	textcolor(7);
-
 	gotoxy(13,12);
 	printf("[1]Cadastrar");
 
@@ -3409,8 +4322,6 @@ char menuNum(void) {
 
 	gotoxy(58,19);
 	printf("[6]Estatisticas\n");
-
-	textcolor(7);
 
 	return getche();
 }
