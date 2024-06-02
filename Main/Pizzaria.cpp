@@ -21,7 +21,6 @@ struct TpMotoqueiro{
 	char cpf[20]; //Chave primaria
 	char telefone[20], nome[50], endereco[50];
 	char status;
-
 };
 
 struct TpPizza{
@@ -29,7 +28,6 @@ struct TpPizza{
     float valor;
 	char descricao[30];
 	char status;
-
 };
 
 struct TpPedido{
@@ -40,7 +38,6 @@ struct TpPedido{
     char cpf[20];
 	char situacao[30];
 	char status;
-
 };
 
 //Cadastro
@@ -130,6 +127,8 @@ void moldeMenuAlterar(void);
 void moldeMenuTipoExclusao(void);
 void moldeMenuExcluir(void);
 void moldeCadastrar(void);
+void moldeMenuRelatorio(void);
+void moldeMenuEstatisticas(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 
 int main(void){
@@ -474,12 +473,12 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 }
 
 void moldeCadastrar(void){
-	//system("cls");
+	//clrscr();
 	
 	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
 	moldura(11, 6, 74, 8, 7, 12); //titulo
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * PIZZARIA * * *");
 			
 }
@@ -491,7 +490,7 @@ void moldeMenuTipoExclusao(void){
 	moldura(19,13,37,17,7,5); //ITEM 1 
 	moldura(50,13,68,17,7,5); //ITEM 2
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * EXCLUIR * * *");
 }
 
@@ -505,7 +504,7 @@ void moldeMenuExcluir(void){
 	moldura(18,17,36,21,7,5); //ITEM 3 
 	moldura(49,17,67,21,7,5); //ITEM 4  
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * EXCLUIR * * *");
 }
 
@@ -519,7 +518,7 @@ void moldeMenuAlterar(void){
 	moldura(18,17,36,21,7,3); //ITEM 3 
 	moldura(49,17,67,21,7,3); //ITEM 4  
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * ALTERAR * * *");
 }
 
@@ -533,7 +532,7 @@ void moldeMenuExibir(void){
 	moldura(18,17,36,21,7,1); //ITEM 3 
 	moldura(49,17,67,21,7,1); //ITEM 4  
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * EXIBIR * * *");
 }
 
@@ -547,12 +546,12 @@ void moldeMenuCadastro(void){
 	moldura(18,17,36,21,7,2); //ITEM 3 
 	moldura(49,17,67,21,7,2); //ITEM 4  
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * CADASTRAR * * *");
 }
 
 void moldeMenuInicial(void){
-	//system("cls");
+	//clrscr();
 	
 	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
 	moldura(11, 6, 74, 8, 7, 12); //titulo
@@ -565,9 +564,45 @@ void moldeMenuInicial(void){
 	moldura(34,17,51,21,7,6); //ITEM 5 
 	moldura(57,17,73,21,7,6); //ITEM 6 
 
-	gotoxy(36, 7); 
+	gotoxy(33, 7); 
 	printf("* * * PIZZARIA * * *");
 			
+}
+
+void moldeMenuRelatorio(void) {
+	//clrscr();
+	
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(12,10,28,14,13,14); //ITEM 1 
+	moldura(34,10,51,14,13,14); //ITEM 2 
+	moldura(57,10,73,14,13,14); //ITEM 3 
+
+	moldura(12,17,28,21,13,14); //ITEM 4 
+	moldura(34,17,51,21,13,14); //ITEM 5 
+	moldura(57,17,73,21,13,14); //ITEM 6 
+
+	gotoxy(33, 7); 
+	printf("* * * PIZZARIA * * *");
+}
+
+void moldeMenuEstatisticas(void) {
+	//clrscr();
+	
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(12,10,28,14,17,18); //ITEM 1 
+	moldura(34,10,51,14,17,18); //ITEM 2 
+	moldura(57,10,73,14,17,18); //ITEM 3 
+
+	moldura(12,17,28,21,17,18); //ITEM 4 
+	moldura(34,17,51,21,17,18); //ITEM 5 
+	moldura(57,17,73,21,17,18); //ITEM 6 
+
+	gotoxy(33, 7); 
+	printf("* * * PIZZARIA * * *");
 }
 
 int pizzasPorDia(FILE *ptr, char cpf[30], int dia, int mes, int ano){
@@ -4305,19 +4340,19 @@ char menuNum(void) {
 	clrscr();
 	moldeMenuInicial();
 
-	gotoxy(13,12);
+	gotoxy(14,12);
 	printf("[1]Cadastrar");
 
-	gotoxy(35,12);
+	gotoxy(38,12);
 	printf("[2]Exibir");
 
-	gotoxy(58,12);
+	gotoxy(60,12);
 	printf("[3]Alterar");
 
-	gotoxy(13,19);
+	gotoxy(15,19);
 	printf("[4]Excluir");
 
-	gotoxy(35,19);
+	gotoxy(36,19);
 	printf("[5]Relatorios");
 
 	gotoxy(58,19);
@@ -4330,16 +4365,16 @@ char menuCad(void) {
 	clrscr();
 	moldeMenuCadastro();
 	
-	gotoxy(19,12);
+	gotoxy(22,12);
 	printf("[1]CLIENTES\n");
 
-	gotoxy(50,12);
+	gotoxy(51,12);
 	printf("[2]MOTOQUEIROS\n");
 
-	gotoxy(19,19);
+	gotoxy(23,19);
 	printf("[3]PIZZAS\n");
 	
-	gotoxy(50,19);
+	gotoxy(53,19);
 	printf("[4]PEDIDOS\n");
 
 	return getche();
@@ -4349,16 +4384,16 @@ char menuExib(void) {
 	clrscr();
 	moldeMenuExibir();
 	
-	gotoxy(19,12);
+	gotoxy(22,12);
 	printf("[1]CLIENTES\n");
 
-	gotoxy(50,12);
+	gotoxy(51,12);
 	printf("[2]MOTOQUEIROS\n");
 
-	gotoxy(19,19);
+	gotoxy(23,19);
 	printf("[3]PIZZAS\n");
 	
-	gotoxy(50,19);
+	gotoxy(53,19);
 	printf("[4]PEDIDOS\n");
 
 	return getche();
@@ -4368,16 +4403,16 @@ char menuAlt(void) {
 	clrscr();
 	moldeMenuAlterar();
 	
-	gotoxy(19,12);
+	gotoxy(22,12);
 	printf("[1]CLIENTES\n");
 
-	gotoxy(50,12);
+	gotoxy(51,12);
 	printf("[2]MOTOQUEIROS\n");
 
-	gotoxy(19,19);
+	gotoxy(23,19);
 	printf("[3]PIZZAS\n");
 	
-	gotoxy(50,19);
+	gotoxy(53,19);
 	printf("[4]PEDIDOS\n");
 
 	return getche();
@@ -4387,10 +4422,10 @@ char menuExclLF(void) {
 	clrscr();
 	moldeMenuTipoExclusao();
 
-	gotoxy(20,15);
+	gotoxy(23,15);
 	printf("[1] FISICA\n");
 	
-	gotoxy(51,15);
+	gotoxy(54,15);
 	printf("[2] LOGICA\n");
 
 	return getche();
@@ -4400,16 +4435,16 @@ char menuExcl(void) {
 	clrscr();
 	moldeMenuExcluir();
 	
-	gotoxy(19,12);
+	gotoxy(22,12);
 	printf("[1]CLIENTES\n");
 
-	gotoxy(50,12);
+	gotoxy(51,12);
 	printf("[2]MOTOQUEIROS\n");
 
-	gotoxy(19,19);
+	gotoxy(23,19);
 	printf("[3]PIZZAS\n");
 	
-	gotoxy(50,19);
+	gotoxy(53,19);
 	printf("[4]PEDIDOS\n");
 
 	return getche();
@@ -4417,29 +4452,58 @@ char menuExcl(void) {
 
 char menuRel(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(8);
-	printf("[1] Exibir Estado Pizza\n");
-	printf("[2] Filtrar por letra\n");
-	printf("[3] Relatorio de Clientes\n");
-	printf("[4] Filtrar MOTOQUEIROS e PIZZAS ENTREGUES por DATA\n");
-	printf("[5] Rank de Pizzas\n");
-	textcolor(7);
+	moldeMenuRelatorio();
+
+	gotoxy(17,11); printf("Exibir");
+	gotoxy(13,12); printf("[1] Estado");
+	gotoxy(17,13); printf("Pizza");
+
+	gotoxy(40,11); printf("Filtrar");
+	gotoxy(35,12); printf("[2]  Cliente");
+	gotoxy(39,13); printf("por inicial");
+
+	gotoxy(62,11); printf("Relatorio");
+	gotoxy(58,12); printf("[3]    de");
+	gotoxy(62,13); printf("Clientes");
+	
+	gotoxy(17,18); printf("Motoqueiro");
+	gotoxy(13,19); printf("[4] com maior");
+	gotoxy(17,20); printf("entrega");
+
+	gotoxy(41,18); printf("Rank");
+	gotoxy(35,19); printf("[5]    de");
+	gotoxy(40,20); printf("Pizzas");
 
 	return getche();
 }
 
 char menuEst(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(9);
-	printf("[1] Relatorio de Pizza mais pedida\n");
-	printf("[2] Relatorio de Pizza menos pedida\n");
-	printf("[3] Cliente que mais pede Pizza\n");
-	printf("[4] Motoqueiro menos experiente\n");
-	printf("[5] FILTRAR MOTOQUEIRO com MAIS ENTREGAS por DATA\n");
-	printf("[6] Qual cliente mais consumiu determinada pizza\n");
-	textcolor(7);
+	moldeMenuEstatisticas();
 
+	gotoxy(16,11); printf("Relatorio");
+	gotoxy(13,12); printf("[1]  Pizza");
+	gotoxy(16,13); printf("mais pedida");
+
+	gotoxy(38,11); printf("Relatorio");
+	gotoxy(35,12); printf("[2]  Pizza");
+	gotoxy(38,13); printf("menos pedida");
+
+	gotoxy(60,11); printf("Cliente que");
+	gotoxy(58,12); printf("[3] mais pede");
+	gotoxy(64,13); printf("Pizza");
+	
+	gotoxy(16,18); printf("Motoqueiro");
+	gotoxy(13,19); printf("[4]  menos");
+	gotoxy(16,20); printf("experiente");
+
+	gotoxy(36,18); printf("Motoqueiro com");
+	gotoxy(35,19); printf("[5]mais entregas");
+	gotoxy(40,20); printf("no dia");
+
+	gotoxy(59,18); printf("Maior consumo");
+	gotoxy(58,19); printf("[6] de pizza");
+	gotoxy(60,20);printf("determinada");
+	
 	return getche();
 }
