@@ -106,6 +106,7 @@ void pizzaMaisPedida(void);
 void pizzaMenosPedida(void);
 void clienteMaisConsome(void);
 void motoqueiroMenosExperiente(void);
+void entregasPorDia(void);
 
 //Menus
 char menu(void);
@@ -292,6 +293,10 @@ int main(void){
 					case '4':
 						motoqueiroMenosExperiente();
 					break;
+
+					case '5':
+						entregasPorDia();
+					break;
 				}
 			break;
 		}
@@ -347,6 +352,113 @@ void molde(void){
 	gotoxy(36, 7); 
 	printf("* * * PIZZARIA * * *");
 			
+}
+
+int pizzasPorDia(FILE *ptr, char cpf[30], int dia, int mes, int ano){
+	TpPedido aux;
+	int cont = 0;
+	fseek(ptr, 0, 0);
+	fread(&aux, sizeof(TpPedido), 1, ptr);
+	while(!feof(ptr)){
+		if(aux.dataPedido.d == dia && aux.dataPedido.m == mes && aux.dataPedido.a == ano)
+			if(strcmp(aux.cpf, cpf) == 0)
+				cont++;
+		fread(&aux, sizeof(TpPedido), 1, ptr);	
+	}
+
+	return cont;
+}
+
+void entregasPorDia(void){
+	TpPedido aux;
+	TpMotoqueiro motoqueiro;
+	TpData data;
+
+	char nome[30];
+
+	char cpf[50][30];
+	int pizzaentregue[30];
+
+	int i, j;
+	int pos, posanterior;
+	int flag;
+
+	char cpfmaior[30];
+	int maior;
+
+	FILE *ptr = fopen("Pedidos.dat", "rb+");
+	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
+
+	if(ptrmotoqueiro == NULL || ptr == NULL)
+		printf("ERRO DE ABERTURA\n");
+	else{
+		fseek(ptr, 0 , 2);
+		
+		printf("\nInsira a data que deseja verificar:\n");
+		scanf("%d %d %d", &data.d,&data.m,&data.a);
+		
+		fseek(ptr, 0 , 0);
+		fread(&aux, sizeof(TpPedido), 1, ptr);
+		i = 0;
+		while(!feof(ptr)){
+			flag = 0;
+
+			//verificar se o cpf buscado já apareceu
+			for(j = 0; j < i ; j++){
+				if(strcmp(aux.cpf, cpf[i]) == 0){
+					flag = -1;
+					j = i; //quebra do loop
+				}
+			}
+
+			if(flag != -1){
+				//coloca o cpf buscado na estrutura
+				strcpy(cpf[i],aux.cpf);
+
+				posanterior = ftell(ptr);
+				pos = buscaCPF(ptrmotoqueiro, aux.cpf);
+				if(pos != -1){
+					fseek(ptrmotoqueiro, pos, 0);
+					fread(&motoqueiro, sizeof(TpMotoqueiro), 1, ptrmotoqueiro);
+					pizzaentregue[i] = pizzasPorDia(ptr, aux.cpf, data.d, data.m, data.a);
+					i++;
+				}
+				fseek(ptr, posanterior, 0);
+			}					
+			fread(&aux, sizeof(TpPedido), 1, ptr);
+		}
+
+		//procurando maior quantidade de entregas
+		maior = pizzaentregue[0];
+		strcpy(cpfmaior, cpf[0]);
+		for(j = 0; j < i; j++){
+			if(pizzaentregue[j] > maior){
+				maior = pizzaentregue[j];
+				strcpy(cpfmaior, cpf[j]);
+			}	
+		}
+
+		//buscando o nome daquela pos
+		fseek(ptrmotoqueiro, 0, 0);
+		fread(&motoqueiro, sizeof(TpMotoqueiro), 1, ptrmotoqueiro);
+		while(!feof(ptrmotoqueiro)){
+			if(strcmp(motoqueiro.cpf, cpfmaior) == 0)
+				strcpy(nome, motoqueiro.nome);
+			fread(&motoqueiro, sizeof(TpMotoqueiro), 1, ptrmotoqueiro);
+		}
+		
+		if(maior != 0){
+			printf("MOTOQUEIRO COM MAIS ENTREGAS:\n");
+			printf("DATA: %d %d %d\n", data.d, data.m, data.a);
+			printf("NOME: %s\n", nome);
+			printf("ENTREGAS REALIZADAS: %d\n", maior);
+		}else
+			printf("NAO HOUVE ENTREGAS NESSA DATA\n");
+		
+		fclose(ptr);
+		fclose(ptrmotoqueiro);
+		getch();
+	}
 }
 
 void rankPizzas(void) {
@@ -500,17 +612,16 @@ void qtdEntregas(void){
 	char nome[30];
 	char cpfbuscado[50][30];
 
-	int pizzas, tamanho, pos, posanterior, loopcpf;
+	int pizzas, pos, posanterior, loopcpf;
 	int flag;
 
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 
-	if(ptr == NULL)
+	if(ptr == NULL || ptrmotoqueiro == NULL)
 		printf("ERRO DE ABERTURA\n");
 	else{
 		fseek(ptr, 0 , 2);
-		tamanho = ftell(ptr)/sizeof(TpPedido);
 
 		printf("\nInsira a data inicial:\n");
 		scanf("%d %d %d", &datai.d,&datai.m,&datai.a);
@@ -3167,6 +3278,7 @@ char menuEst(void) {
 	printf("[2] Relatorio de Pizza menos pedida\n");
 	printf("[3] Cliente que mais pede Pizza\n");
 	printf("[4] Motoqueiro menos experiente\n");
+	printf("[5] FILTRAR MOTOQUEIRO com MAIS ENTREGAS por DATA\n");
 	textcolor(7);
 
 	return getche();
