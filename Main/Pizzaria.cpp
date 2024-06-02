@@ -415,8 +415,12 @@ void pizzaMaisConsumida(void) {
 		fseek(ptr, pos, 0);
 		fread(&aux, sizeof(TpPizza), 1, ptr);
 
-		printf("\nCliente que mais pediu %s: %s - %d pedido(s)", aux.descricao, auxCliente.nome, vezes);
-
+		if (vezes == 0) {
+			printf("%s nao foi pedida nenhuma vez\n", aux.descricao);
+		} else {
+			printf("Cliente que mais pediu %s: %s - %d pedido(s)\n", aux.descricao, auxCliente.nome, vezes);
+		}
+		
 	}
 	
 	fclose(ptr);
