@@ -107,6 +107,7 @@ void pizzaMenosPedida(void);
 void clienteMaisConsome(void);
 void motoqueiroMenosExperiente(void);
 void entregasPorDia(void);
+void pizzaMaisConsumida(void);
 
 //Menus
 char menu(void);
@@ -302,11 +303,125 @@ int main(void){
 					case '5':
 						entregasPorDia();
 					break;
+
+					case '6':
+						pizzaMaisConsumida();
+					break;
 				}
 			break;
 		}
 
 	} while(op != 27);
+}
+
+void pizzaMaisConsumida(void) {
+	TpPizza aux;
+	TpPedido auxPedido;
+	TpCliente auxCliente;
+	FILE *ptr = fopen("Pizzas.dat", "rb+");
+	FILE *ptrPedido = fopen("Pedidos.dat", "rb+");
+	FILE *ptrCliente = fopen("Clientes.dat", "rb+");
+
+	int cod, flag;
+
+	if (ptr == NULL || ptrPedido == NULL || ptrCliente == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (ptr != NULL) fclose(ptr);
+        if (ptrPedido != NULL) fclose(ptrPedido);
+		if (ptrCliente != NULL) fclose(ptrCliente);
+        return;
+    }
+
+	//Obter a pizza que sera trabalhada
+	printf("Digite o codigo da pizza que o cliente mais consome: \n");
+	scanf("%d", &cod);
+	flag = buscaBinariaCodigo(ptr, cod);
+	while (flag == -1 && cod > 0) {
+		printf("Insira um codigo de pizza CADASTRADO:\n");
+		scanf("%d", &cod);
+		flag = buscaBinariaCodigo(ptr, cod);
+	}
+
+	if (cod > 0) {
+		//Colocar todas os cliente que pediram essa pizza em uma matriz
+		fseek(ptrPedido, 0, 2);
+		int TF = ftell(ptrPedido) / sizeof(TpPedido);
+		int TL;
+
+		char listaClientes[TF][30];
+		fseek(ptrPedido, 0, 0);
+		fread(&auxPedido, sizeof(TpPedido), 1, ptrPedido);
+		TL = 0;
+		
+		while(!feof(ptrPedido)) {
+			if (auxPedido.status == 'A' && auxPedido.codigo == cod) {
+				strcpy(listaClientes[TL], auxPedido.telefone);
+				TL++;
+			}
+			fread(&auxPedido, sizeof(TpPedido), 1, ptrPedido);
+		}
+		
+		//Debug de informaçoes
+		/*
+		int pos;
+		printf("\nQuantidade de pedidos: %d\nValor de i: %d\n", TF, TL);
+		printf("Clientes que pediram a Pizza especificada:\n");
+		for (int j = 0; j < TL; j++) {
+			printf("Cliente: %s\n", listaClientes[j]);
+		}
+		*/
+
+		//Pegar Cliente por cliente e verificar
+		int count, vezes = 0;
+		char atual[30], maior[30];
+		fseek(ptrCliente, 0, 0);
+		fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+		while (!feof(ptrCliente)) {
+			if (auxCliente.status == 'A') {
+				for (int j = 0; j < TL; j++) {
+					if (j == 0) {
+						strcpy(atual, auxCliente.telefone);
+						count = 0;
+						if (strcmp(listaClientes[j], atual) == 0) {
+							count++;
+						}
+					} else {
+						if (strcmp(listaClientes[j], atual) == 0) {
+							count++;
+						}
+					}
+				}
+
+				if (count > vezes) {
+					strcpy(maior, atual);
+					vezes = count;
+				}
+
+				//Debug de informaçoes
+				//printf("\nCliente analisado: %s Apareceu %d vezes\nTEL que mais apareceu %s Vezes que ele apareceu %d", auxCliente.nome, count, maior, vezes); getch();				
+			}
+
+			fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+		}
+
+		//Mostrar os valores achados
+		int pos;
+		pos = buscaSentinelaTelefone(ptrCliente, maior);
+		fseek(ptrCliente, pos, 0);
+		fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
+
+		pos = buscaBinariaCodigo(ptr, cod);
+		fseek(ptr, pos, 0);
+		fread(&aux, sizeof(TpPizza), 1, ptr);
+
+		printf("\nCliente que mais pediu %s: %s - %d pedido(s)", aux.descricao, auxCliente.nome, vezes);
+
+	}
+	
+	fclose(ptr);
+	fclose(ptrPedido);
+	fclose(ptrCliente);
+	getch();
 }
 
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
@@ -3376,6 +3491,7 @@ char menuEst(void) {
 	printf("[3] Cliente que mais pede Pizza\n");
 	printf("[4] Motoqueiro menos experiente\n");
 	printf("[5] FILTRAR MOTOQUEIRO com MAIS ENTREGAS por DATA\n");
+	printf("[6] Qual cliente mais consumiu determinada pizza\n");
 	textcolor(7);
 
 	return getche();
