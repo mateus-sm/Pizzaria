@@ -120,7 +120,12 @@ char menuRel(void);
 char menuEst(void);
 
 //Interface
-void molde(void);
+void moldeMenuInicial(void);
+void moldeMenuCadastro(void);
+void moldeMenuExibir(void);
+void moldeMenuAlterar(void);
+void moldeMenuTipoExclusao(void);
+void moldeMenuExcluir(void);
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo);
 
 int main(void){
@@ -335,7 +340,74 @@ void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int f
 	
 }
 
-void molde(void){
+void moldeMenuTipoExclusao(void){
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(19,13,37,17,7,5); //ITEM 1 
+	moldura(50,13,68,17,7,5); //ITEM 2
+
+	gotoxy(36, 7); 
+	printf("* * * EXCLUIR * * *");
+}
+
+void moldeMenuExcluir(void){
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(18,10,36,14,7,5); //ITEM 1 
+	moldura(49,10,67,14,7,5); //ITEM 2
+
+	moldura(18,17,36,21,7,5); //ITEM 3 
+	moldura(49,17,67,21,7,5); //ITEM 4  
+
+	gotoxy(36, 7); 
+	printf("* * * EXCLUIR * * *");
+}
+
+void moldeMenuAlterar(void){
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(18,10,36,14,7,3); //ITEM 1 
+	moldura(49,10,67,14,7,3); //ITEM 2
+
+	moldura(18,17,36,21,7,3); //ITEM 3 
+	moldura(49,17,67,21,7,3); //ITEM 4  
+
+	gotoxy(36, 7); 
+	printf("* * * ALTERAR * * *");
+}
+
+void moldeMenuExibir(void){
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(18,10,36,14,7,1); //ITEM 1 
+	moldura(49,10,67,14,7,1); //ITEM 2
+
+	moldura(18,17,36,21,7,1); //ITEM 3 
+	moldura(49,17,67,21,7,1); //ITEM 4  
+
+	gotoxy(36, 7); 
+	printf("* * * EXIBIR * * *");
+}
+
+void moldeMenuCadastro(void){
+	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
+	moldura(11, 6, 74, 8, 7, 12); //titulo
+
+	moldura(18,10,36,14,7,2); //ITEM 1 
+	moldura(49,10,67,14,7,2); //ITEM 2
+
+	moldura(18,17,36,21,7,2); //ITEM 3 
+	moldura(49,17,67,21,7,2); //ITEM 4  
+
+	gotoxy(36, 7); 
+	printf("* * * CADASTRAR * * *");
+}
+
+void moldeMenuInicial(void){
 	//system("cls");
 	
 	moldura(10, 5, 75, 23, 7, 4); //borda externa //64
@@ -3164,9 +3236,8 @@ char menu(void) {
 }
 
 char menuNum(void) {
-	//clrscr();
-	system("cls");
-	molde();
+	clrscr();
+	moldeMenuInicial();
 
 	textcolor(7);
 
@@ -3195,63 +3266,89 @@ char menuNum(void) {
 
 char menuCad(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(1);
-	printf("[1] Cadastrar CLIENTES\n");
-	printf("[2] Cadastrar MOTOQUEIROS\n");
-	printf("[3] Cadastrar PIZZAS\n");
-	printf("[4] Cadastrar PEDIDOS\n");
-	textcolor(7);
+	moldeMenuCadastro();
+	
+	gotoxy(19,12);
+	printf("[1]CLIENTES\n");
+
+	gotoxy(50,12);
+	printf("[2]MOTOQUEIROS\n");
+
+	gotoxy(19,19);
+	printf("[3]PIZZAS\n");
+	
+	gotoxy(50,19);
+	printf("[4]PEDIDOS\n");
 
 	return getche();
 }
 
 char menuExib(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(2);
-	printf("[1] Exibir CLIENTES\n");
-	printf("[2] Exibir MOTOQUEIROS\n");
-	printf("[3] Exibir PIZZAS\n");
-	printf("[4] Exibir PEDIDOS\n");
-	textcolor(7);
+	moldeMenuExibir();
+	
+	gotoxy(19,12);
+	printf("[1]CLIENTES\n");
+
+	gotoxy(50,12);
+	printf("[2]MOTOQUEIROS\n");
+
+	gotoxy(19,19);
+	printf("[3]PIZZAS\n");
+	
+	gotoxy(50,19);
+	printf("[4]PEDIDOS\n");
 
 	return getche();
 }
 
 char menuAlt(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(3);
-	printf("[1] Alterar CLIENTES\n");
-	printf("[2] Alterar MOTOQUEIROS\n");
-	printf("[3] Alterar PIZZAS\n");
-	printf("[4] Alterar PEDIDOS\n");
-	textcolor(7);
+	moldeMenuAlterar();
+	
+	gotoxy(19,12);
+	printf("[1]CLIENTES\n");
+
+	gotoxy(50,12);
+	printf("[2]MOTOQUEIROS\n");
+
+	gotoxy(19,19);
+	printf("[3]PIZZAS\n");
+	
+	gotoxy(50,19);
+	printf("[4]PEDIDOS\n");
 
 	return getche();
 }
 
 char menuExclLF(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(5);
-	printf("[1] Excluir FISICAMENTE\n");
-	printf("[2] Excluir LOGICAMENTE\n");
-	textcolor(7);
+	moldeMenuTipoExclusao();
+
+	gotoxy(20,15);
+	printf("[1] FISICA\n");
+	
+	gotoxy(51,15);
+	printf("[2] LOGICA\n");
 
 	return getche();
 }
 
 char menuExcl(void) {
 	clrscr();
-	printf("# # # # MENU # # # # \n");
-	textcolor(5);
-	printf("[1] Excluir CLIENTES\n");
-	printf("[2] Excluir MOTOQUEIROS\n");
-	printf("[3] Excluir PIZZAS\n");
-	printf("[4] Excluir PEDIDOS\n");
-	textcolor(7);
+	moldeMenuExcluir();
+	
+	gotoxy(19,12);
+	printf("[1]CLIENTES\n");
+
+	gotoxy(50,12);
+	printf("[2]MOTOQUEIROS\n");
+
+	gotoxy(19,19);
+	printf("[3]PIZZAS\n");
+	
+	gotoxy(50,19);
+	printf("[4]PEDIDOS\n");
 
 	return getche();
 }
