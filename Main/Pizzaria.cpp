@@ -2713,6 +2713,7 @@ void alterarPedido(void){
 		gotoxy(l, c);
 		printf("ERRO de abertura");
 	}else{
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Insira o NUMERO do Pedido que desja ALTERAR: \n");
 		c++;
@@ -2933,10 +2934,9 @@ void alterarPedido(void){
 				printf("Alteracao de dados CANCELADA");
 			}	
 			fwrite(&aux, sizeof(TpPedido), 1, ptrpedido);
-
+			getch();
 		}
 		
-		getch();
 		fclose(ptrpedido);
 		fclose(ptrpizza);
 		fclose(ptrcliente);
@@ -3085,10 +3085,9 @@ void alterarPizza(void){
 				printf("Alteracao de dados CANCELADA");
 			}
 			fwrite(&aux, sizeof(TpPizza), 1, ptr);
-
+			getch();
 		}
 		
-		getch();
 		fclose(ptr);
 		clrscr();
 	}
@@ -3931,7 +3930,7 @@ void cadastrarCliente(void) {
 	while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
 		limparquadro();
 		l = 16, c = 10;
-		gotoxy(l,c);
+		gotoxy(14,c);
 		printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
 		c++;
 		fflush(stdin);
@@ -3991,7 +3990,7 @@ void cadastrarCliente(void) {
 		while((flag != 1 || verif != -1)  && strlen(aux.telefone) > 0) {
 			limparquadro();
 			l = 16, c = 10;
-			gotoxy(l,c);
+			gotoxy(14,c);
 			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
 			c++;
 			fflush(stdin);
@@ -4015,11 +4014,11 @@ void cadastrarMotoqueiro(void) {
 	limparquadro();
 	moldeCadastrar();
 	
-	gotoxy(l,c);
+	gotoxy(19,c);
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:");
 	c++;
 	fflush(stdin);
-	gotoxy(l, c);
+	gotoxy(19, c);
 	gets(aux.cpf);
 	c++;
 
@@ -4066,7 +4065,7 @@ void cadastrarMotoqueiro(void) {
 		while(flag != 1 && strlen(aux.telefone) > 0){
 			limparquadro();
 			l = 16, c = 10;
-			gotoxy(l,c);
+			gotoxy(14,c);
 			printf("TELEFONE INVALIDO ou ja CADASTRADO, insira outro TELEFONE:");
 			c++;
 			fflush(stdin);
@@ -4089,11 +4088,11 @@ void cadastrarMotoqueiro(void) {
 			
 			limparquadro();
 			l = 16, c = 10;
-			gotoxy(l,c);
+			gotoxy(19,c);
 			printf("Insira o CPF do motoqueiro que deseja cadastrar:");
 			c++;
 			fflush(stdin);
-			gotoxy(l, c);
+			gotoxy(19, c);
 			gets(aux.cpf);
 
 			flag = validarCPF(aux.cpf);
