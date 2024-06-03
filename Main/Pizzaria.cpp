@@ -321,7 +321,7 @@ void limparquadro(void){
 	
 	while(c <= 22){
 		gotoxy(l,c);
-		printf("                                                              ");
+		printf("                                                               ");
 		c++;
 	}
 }
@@ -2243,7 +2243,7 @@ void estadoPizza(void) {
 		}
 
 		if (cont == 0) {
-			gotoxy(30, 11); printf("Nenhuma Pizza em rota de entrega");
+			gotoxy(29, 11); printf("Nenhuma Pizza em rota de entrega");
 		}
 
 		fclose(ptr);
@@ -2882,7 +2882,7 @@ void alterarPedido(void){
 			} else if(op == 'E'){
 				l = 30, c =10;
 				limparquadro();
-				gotoxy(l, c);
+				gotoxy(18, c);
 				printf("Para qual SITUACAO do pedido voce deseja alterar:");
 				c++;
 				gotoxy(l, c);
@@ -2898,7 +2898,7 @@ void alterarPedido(void){
 				printf("[D] Cancelado");
 				c++;
 				
-				op = toupper(getche());
+				op = toupper(getch());
 				
 				if(op == 'A')
 					strcpy(aux.situacao,"Em preparacao");
@@ -3631,6 +3631,7 @@ void cadastrarPedido(void){
 	while(aux.numero > 0 && flag != -1){
 		limparquadro();
 		l = 25, c = 10;
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l,c);
 		printf("Numero de pedido ja CADASTRADO, insira outro:");
 		c++;
@@ -3641,6 +3642,7 @@ void cadastrarPedido(void){
 		flag = verificaNumPedidoCadastrado(aux.numero);
 	}
 
+	gotoxy(57, 22); printf("                  ");
 	while(aux.numero > 0 && flag == -1) { //pedido existe
 		ptrpedido = fopen("Pedidos.dat", "ab");
 
@@ -3680,6 +3682,7 @@ void cadastrarPedido(void){
 			while (flag == -1 && aux.codigo > 0) {
 				limparquadro();
 				l = 25, c = 10;
+				gotoxy(57, 22); printf("Digite 0 para sair");
 				gotoxy(l,c);
 				printf("Insira um codigo CADASTRADO:");
 				c++;
@@ -3689,6 +3692,7 @@ void cadastrarPedido(void){
 
 				flag = buscaBinariaCodigo(ptrpizza, aux.codigo);
 			}
+			gotoxy(57, 22); printf("                  ");
 
 			if(aux.codigo > 0){ // entra se o codigo > 0 e telefone > 0
 				gotoxy(l, c);
@@ -3731,6 +3735,7 @@ void cadastrarPedido(void){
 
 					limparquadro();
 					l = 25, c = 10;
+					gotoxy(57, 22); printf("Digite 0 para sair");
 					gotoxy(l,c);
 					printf("Insira o NUMERO do Pedido:");
 					c++;
@@ -3743,6 +3748,7 @@ void cadastrarPedido(void){
 					while(aux.numero > 0 && flag != -1){
 						limparquadro();
 						l = 25, c = 10;
+						gotoxy(57, 22); printf("Digite 0 para sair");
 						gotoxy(l,c);
 						printf("Numero de pedido ja CADASTRADO, insira outro:");
 						c++;
@@ -3788,6 +3794,7 @@ void cadastrarPizza(void) {
 	while(aux.codigo > 0 && flag != -1){
 		limparquadro();
 		l = 25, c = 10;
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l,c);
 		printf("Codigo de pizza ja CADASTRADO, insira outro:");
 		c++;
@@ -3823,6 +3830,7 @@ void cadastrarPizza(void) {
 
 		limparquadro();
 		l = 25, c = 10;
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l,c);
 		printf("Insira o CODIGO da Pizza:");
 		c++;
@@ -3835,6 +3843,7 @@ void cadastrarPizza(void) {
 		while(aux.codigo > 0 && flag != -1){
 			limparquadro();
 			l = 25, c = 10;
+			gotoxy(57, 22); printf("Digite 0 para sair");
 			gotoxy(l,c);
 			printf("Codigo de pizza ja CADASTRADO, insira outro:");
 			c++;
@@ -4009,23 +4018,23 @@ void cadastrarMotoqueiro(void) {
 	TpMotoqueiro aux;
 	FILE *ptrarquivo;
 	int flag, verif;
-	int l = 16, c = 10;
+	int l = 19, c = 10;
 
 	limparquadro();
 	moldeCadastrar();
 	
-	gotoxy(19,c);
+	gotoxy(l,c);
 	printf("Insira o CPF do motoqueiro que deseja cadastrar:");
 	c++;
 	fflush(stdin);
-	gotoxy(19, c);
+	gotoxy(l, c);
 	gets(aux.cpf);
 	c++;
 
 	flag = validarCPF(aux.cpf);
 	verif = verificaMotoqueiroCadastrado(aux.cpf);
 	while((flag != 1 || verif != -1)  && strlen(aux.cpf) > 0) {
-		l = 16, c = 10;
+		l = 19, c = 10;
 		limparquadro();
 		gotoxy(l,c);
 		printf("CPF INVALIDO ou ja CADASTRADO, insira outro CPF:");
@@ -4364,7 +4373,7 @@ char menuNum(void) {
 	printf("[6]Estatisticas");
 	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuCad(void) {
@@ -4372,18 +4381,19 @@ char menuCad(void) {
 	moldeMenuCadastro();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES\n");
+	printf("[1]CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS\n");
+	printf("[2]MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS\n");
+	printf("[3]PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS\n");
+	printf("[4]PEDIDOS");
+	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuExib(void) {
@@ -4391,18 +4401,19 @@ char menuExib(void) {
 	moldeMenuExibir();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES\n");
+	printf("[1]CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS\n");
+	printf("[2]MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS\n");
+	printf("[3]PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS\n");
+	printf("[4]PEDIDOS");
+	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuAlt(void) {
@@ -4410,18 +4421,19 @@ char menuAlt(void) {
 	moldeMenuAlterar();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES\n");
+	printf("[1]CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS\n");
+	printf("[2]MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS\n");
+	printf("[3]PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS\n");
+	printf("[4]PEDIDOS");
+	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuExclLF(void) {
@@ -4429,12 +4441,13 @@ char menuExclLF(void) {
 	moldeMenuTipoExclusao();
 
 	gotoxy(23,15);
-	printf("[1] FISICA\n");
+	printf("[1] FISICA");
 	
 	gotoxy(54,15);
-	printf("[2] LOGICA\n");
+	printf("[2] LOGICA");
+	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuExcl(void) {
@@ -4442,16 +4455,17 @@ char menuExcl(void) {
 	moldeMenuExcluir();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES\n");
+	printf("[1]CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS\n");
+	printf("[2]MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS\n");
+	printf("[3]PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS\n");
+	printf("[4]PEDIDOS");
+	gotoxy(76,23);
 
 	return getche();
 }
@@ -4480,7 +4494,9 @@ char menuRel(void) {
 	gotoxy(35,19); printf("[5]    de");
 	gotoxy(40,20); printf("Pizzas");
 
-	return getche();
+	gotoxy(76,23);
+
+	return getch();
 }
 
 char menuEst(void) {
@@ -4509,7 +4525,9 @@ char menuEst(void) {
 
 	gotoxy(59,18); printf("Maior consumo");
 	gotoxy(58,19); printf("[6] de pizza");
-	gotoxy(60,20);printf("determinada");
+	gotoxy(60,20); printf("determinada");
+
+	gotoxy(76,23);
 	
-	return getche();
+	return getch();
 }
