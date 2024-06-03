@@ -4362,7 +4362,8 @@ char menuNum(void) {
 	printf("[5]Relatorios");
 
 	gotoxy(58,19);
-	printf("[6]Estatisticas\n");
+	printf("[6]Estatisticas");
+	gotoxy(76,23);
 
 	return getche();
 }
