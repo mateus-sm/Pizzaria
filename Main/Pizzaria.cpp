@@ -337,8 +337,9 @@ void pizzaMaisConsumida(void) {
 
 	int cod, flag;
 
+	limparquadro();
 	if (ptr == NULL || ptrPedido == NULL || ptrCliente == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
+        gotoxy(30, 10); printf("Erro ao abrir os arquivos.\n");
         if (ptr != NULL) fclose(ptr);
         if (ptrPedido != NULL) fclose(ptrPedido);
 		if (ptrCliente != NULL) fclose(ptrCliente);
@@ -346,11 +347,12 @@ void pizzaMaisConsumida(void) {
     }
 
 	//Obter a pizza que sera trabalhada
-	printf("Digite o codigo da pizza que o cliente mais consome: \n");
+	gotoxy(28, 10); printf("Digite o codigo da pizza: ");
 	scanf("%d", &cod);
 	flag = buscaBinariaCodigo(ptr, cod);
 	while (flag == -1 && cod > 0) {
-		printf("Insira um codigo de pizza CADASTRADO:\n");
+		limparquadro();
+		gotoxy(20, 10); printf("Insira um codigo de pizza CADASTRADO: ");
 		scanf("%d", &cod);
 		flag = buscaBinariaCodigo(ptr, cod);
 	}
@@ -427,10 +429,12 @@ void pizzaMaisConsumida(void) {
 		fseek(ptr, pos, 0);
 		fread(&aux, sizeof(TpPizza), 1, ptr);
 
+		limparquadro();
 		if (vezes == 0) {
-			printf("%s nao foi pedida nenhuma vez\n", aux.descricao);
+			gotoxy(22, 10); printf("%s nao foi pedida nenhuma vez", aux.descricao);
 		} else {
-			printf("Cliente que mais pediu %s: %s - %d pedido(s)\n", aux.descricao, auxCliente.nome, vezes);
+			gotoxy(25, 10); printf("Cliente que mais pediu %s:", aux.descricao);
+			gotoxy(25, 11); printf("%s - %d pedido(s)", auxCliente.nome, vezes);
 		}
 		
 	}
@@ -640,12 +644,14 @@ void entregasPorDia(void){
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 
-	if(ptrmotoqueiro == NULL || ptr == NULL)
-		printf("ERRO DE ABERTURA\n");
-	else{
+	limparquadro();
+	int x, y;
+	if (ptrmotoqueiro == NULL || ptr == NULL) {
+		gotoxy(30, 10); printf("ERRO DE ABERTURA");
+	} else {
 		fseek(ptr, 0 , 2);
 		
-		printf("\nInsira a data que deseja verificar:\n");
+		gotoxy(20, 10); printf("Insira a data que deseja verificar:");
 		scanf("%d %d %d", &data.d,&data.m,&data.a);
 		
 		fseek(ptr, 0 , 0);
@@ -698,14 +704,17 @@ void entregasPorDia(void){
 			fread(&motoqueiro, sizeof(TpMotoqueiro), 1, ptrmotoqueiro);
 		}
 		
+		limparquadro();
+		x = 30, y = 10;
 		if(maior != 0){
-			printf("MOTOQUEIRO COM MAIS ENTREGAS:\n");
-			printf("DATA: %d %d %d\n", data.d, data.m, data.a);
-			printf("NOME: %s\n", nome);
-			printf("ENTREGAS REALIZADAS: %d\n", maior);
-		}else
-			printf("NAO HOUVE ENTREGAS NESSA DATA\n");
-		
+			gotoxy(x, y); printf("MOTOQUEIRO COM MAIS ENTREGAS:"); y++;
+			gotoxy(x, y); printf("DATA: %d %d %d", data.d, data.m, data.a); y++;
+			gotoxy(x, y); printf("NOME: %s", nome); y++;
+			gotoxy(x, y); printf("ENTREGAS REALIZADAS: %d", maior); y++;
+		} else {
+			gotoxy(x, y);printf("NAO HOUVE ENTREGAS NESSA DATA");
+		}
+
 		fclose(ptr);
 		fclose(ptrmotoqueiro);
 		getch();
@@ -713,18 +722,19 @@ void entregasPorDia(void){
 }
 
 void rankPizzas(void) {
-	clrscr();
 	TpPedido aux;
 	TpPizza auxPizza;
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
 	int pos, TL, i;
+	int x = 30, y = 10;
 
 	fseek(ptrPizza, 0, 2);
 	int loop = ftell(ptrPizza) / sizeof(TpPizza);
 	//printf("\nLoop = %d\n", loop);
 
-	printf("### Rank de pizzas ###");
+	limparquadro();
+	gotoxy(x, y); printf("### Rank de pizzas ###"); y++;
 	while (loop > 0) {
 		//Colocar todas as pizzas em uma matriz
 		fseek(ptr, 0, 2);
@@ -784,8 +794,9 @@ void rankPizzas(void) {
 
 			fseek(ptrPizza, pos, 0);
 			fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
-
-			printf("\n%s - %d pedido(s)", auxPizza.descricao, vezes);			
+			
+			x = 27;
+			gotoxy(x, y); printf("%s - %d pedido(s)", auxPizza.descricao, vezes);	y++;	
 		}
 
 		loop--;
@@ -865,19 +876,23 @@ void qtdEntregas(void){
 
 	int pizzas, pos, posanterior, loopcpf;
 	int flag;
+	int x = 30, y = 10;
 
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrmotoqueiro = fopen("Motoqueiros.dat", "rb+");
 
-	if(ptr == NULL || ptrmotoqueiro == NULL)
-		printf("ERRO DE ABERTURA\n");
-	else{
+	if (ptr == NULL || ptrmotoqueiro == NULL) {
+		limparquadro();
+		printf("ERRO DE ABERTURA\n");		
+	} else {
 		fseek(ptr, 0 , 2);
 
-		printf("\nInsira a data inicial:\n");
-		scanf("%d %d %d", &datai.d,&datai.m,&datai.a);
-		printf("Insira a data final:\n");
-		scanf("%d %d %d", &dataf.d,&dataf.m,&dataf.a);
+		limparquadro();
+		gotoxy(x, y); printf("Insira a data inicial: "); y++;
+		gotoxy(x, y); scanf("%d %d %d", &datai.d,&datai.m,&datai.a); y++;
+		gotoxy(x, y); printf("Insira a data final:\n"); y++;
+		gotoxy(x, y); scanf("%d %d %d", &dataf.d,&dataf.m,&dataf.a); y++;
+		limparquadro();
 		
 		loopcpf = 0;
 		fseek(ptr, 0 , 0);
@@ -902,9 +917,13 @@ void qtdEntregas(void){
 					if(pos != -1){
 						fseek(ptrmotoqueiro, pos, 0);
 						fread(&motoqueiro, sizeof(TpMotoqueiro), 1, ptrmotoqueiro);
-						printf("MOTOQUEIRO: %s\n", motoqueiro.nome);
+						x = 33, y = 10;
+						gotoxy(x, y); printf("MOTOQUEIRO: %s\n", motoqueiro.nome); y++;
 						pizzas = qtdPizzas(ptr, aux.cpf, datai.d, datai.m, datai.a, dataf.d, dataf.m, dataf.a, aux.dataPedido.d, aux.dataPedido.m, aux.dataPedido.a);
-						printf("PIZZAS ENTREGUES: %d\n\n", pizzas);
+						gotoxy(x, y); printf("PIZZAS ENTREGUES: %d\n\n", pizzas); y++;
+
+						gotoxy(49, 22); printf("ENTER para proxima pagina");
+						getch();
 					}
 					fseek(ptr, posanterior, 0);
 				}
@@ -984,92 +1003,51 @@ int verificaNumPedidoCadastrado(int num){
 }
 
 void motoqueiroMenosExperiente(void) {
-	TpPedido aux;
 	TpMotoqueiro auxMotoqueiro;
+    
+    FILE *ptrMotoqueiro = fopen("Motoqueiros.dat", "rb+");
+	int d, m, a, pos = 0, i = 0;
+	int total;
 
-	FILE *ptr = fopen("Pedidos.dat", "rb+");
-	FILE *ptrMotoqueiro = fopen("Motoqueiros.dat", "rb+");
-	int pos;
+	limparquadro();
+	int x = 30, y = 10;
+    if (ptrMotoqueiro == NULL) {
+        gotoxy(x, y); printf("ERRO DE ABERTURA");
+    } else {
+        fseek(ptrMotoqueiro, 0, 0);
+        fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
 
-	if (ptr == NULL || ptrMotoqueiro == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
-        if (ptr != NULL) fclose(ptr);
-        if (ptrMotoqueiro != NULL) fclose(ptrMotoqueiro);
-        return;
+        d = auxMotoqueiro.data.d;
+        m = auxMotoqueiro.data.m;
+        a = auxMotoqueiro.data.a;
+
+        fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+        while(!feof(ptrMotoqueiro)) {
+			i++;
+			if (auxMotoqueiro.status == 'A') {
+				if (a <= auxMotoqueiro.data.a || 
+					(a == auxMotoqueiro.data.a && m <= auxMotoqueiro.data.m) || 
+					(a == auxMotoqueiro.data.a && m == auxMotoqueiro.data.m && d <= auxMotoqueiro.data.d)) {
+
+					d = auxMotoqueiro.data.d;
+					m = auxMotoqueiro.data.m;
+					a = auxMotoqueiro.data.a;
+					pos = i;
+				}				
+			}
+
+            fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+        }
+
+        fseek(ptrMotoqueiro, pos * sizeof(TpMotoqueiro), 0);
+        fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
+        gotoxy(x, y); printf("Motoqueiro menos experiente:"); y++;
+        gotoxy(x, y); printf("Nome: %s", auxMotoqueiro.nome); y++;
+        gotoxy(x, y); printf("Data de admissao: %d %d %d", auxMotoqueiro.data.d, auxMotoqueiro.data.m, auxMotoqueiro.data.a);
     }
 
-	//Colocar todos os motoqueiros em uma matriz
-	fseek(ptr, 0, 2);
-	int TF = ftell(ptr) / sizeof(TpPedido);
-
-	char listaMotoqueiros[TF][30];
-	fseek(ptr, 0, 0);
-	fread(&aux, sizeof(TpPedido), 1, ptr);
-	int TL = 0;
-	while(!feof(ptr)) {
-		if (aux.status == 'A' && strcmp(aux.situacao, "Entregue") == 0) {
-			strcpy(listaMotoqueiros[TL], aux.cpf);
-			TL++;
-		}
-		fread(&aux, sizeof(TpPedido), 1, ptr);
-	}
-
-	//Debug de informaçoes
-	//printf("\nQuantidade de entregas: %d\nValor de i: %d\n", TF, TL);
-	//printf("Frequencia de motoqueiros:\n");
-	//for (int j = 0; j < TL; j++) {
-	//	pos = buscaCPF(ptrMotoqueiro, listaMotoqueiros[j]);
-	//	fseek(ptrMotoqueiro, pos, 0);
-	//	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
-
-	//	printf("CPF: %s - %s\n", listaMotoqueiros[j], auxMotoqueiro.nome);
-	//}
-
-	//Pegar Motoqueiro por Motoqueiro e verificar
-	int count, vezes = 999;
-	char atual[30], menor[30];
-	fseek(ptrMotoqueiro, 0, 0);
-	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
-	while (!feof(ptrMotoqueiro)) {
-		if (auxMotoqueiro.status == 'A') {
-			for (int j = 0; j < TL; j++) {
-				if (j == 0) {
-					strcpy(atual, auxMotoqueiro.cpf);
-					count = 0;
-					if (strcmp(listaMotoqueiros[j], atual) == 0) {
-						count++;
-					}
-				} else {
-					if (strcmp(listaMotoqueiros[j], atual) == 0) {
-						count++;
-					}
-				}
-			}
-
-			if (count < vezes) {
-				strcpy(menor, atual);
-				vezes = count;
-			}
-		}
-
-		//Debug de informaçoes
-		//printf("\nMotoqueiro analisado: %s - Apareceu %d vezes\nCPF que mais apareceu %s - Vezes que ele apareceu %d", auxMotoqueiro.nome, count, menor, vezes); getch();
-		fread(&auxMotoqueiro, sizeof(TpCliente), 1, ptrMotoqueiro);
-	}
-
-	//Mostrar os valores achados
-	pos = buscaCPF(ptrMotoqueiro, menor);
-	fseek(ptrMotoqueiro, pos, 0);
-	fread(&auxMotoqueiro, sizeof(TpMotoqueiro), 1, ptrMotoqueiro);
-
-	if (vezes == 999) {
-		vezes = 0; //Gambiarra para caso o entregador que tiver menos entregas tiver 0
-	}
-	printf("\nMotoqueiro menos experiente: %s - %d entrega(s)", auxMotoqueiro.nome, vezes);
-
 	getch();
-	fclose(ptr);
-	fclose(ptrMotoqueiro);
+    fclose(ptrMotoqueiro);
 }
 
 void clienteMaisConsome(void) {
@@ -1081,8 +1059,9 @@ void clienteMaisConsome(void) {
 
 	int pos;
 
+	limparquadro();
 	if (ptr == NULL || ptrCliente == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
+        gotoxy(30, 10); printf("Erro ao abrir os arquivos.");
         if (ptr != NULL) fclose(ptr);
 		if (ptrCliente != NULL) fclose(ptrCliente);
         return;
@@ -1152,7 +1131,9 @@ void clienteMaisConsome(void) {
 	fseek(ptrCliente, pos, 0);
 	fread(&auxCliente, sizeof(TpCliente), 1, ptrCliente);
 
-	printf("\nCliente que mais pediu: %s - %d pedido(s)", auxCliente.nome, vezes);
+	limparquadro();
+	gotoxy(28, 10); printf("Cliente que mais pediu pizza:");
+	gotoxy(28, 11); printf("%s - %d pedido(s)", auxCliente.nome, vezes);
 
 	getch();
 	fclose(ptr);
@@ -1165,9 +1146,11 @@ void pizzaMaisPedida(void) {
 	FILE *ptr = fopen("Pedidos.dat", "rb+");
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
 	int pos, TL;
+	int x = 30, y = 10;
 
+	limparquadro();
 	if (ptr == NULL || ptrPizza == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
+		gotoxy(x, y); printf("Erro ao abrir os arquivos.");
         if (ptr != NULL) fclose(ptr);
         if (ptrPizza != NULL) fclose(ptrPizza);
         return;
@@ -1235,10 +1218,10 @@ void pizzaMaisPedida(void) {
 	fseek(ptrPizza, pos, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
-	printf("\nPizza mais pedida: %s - %d pedido(s)", auxPizza.descricao, vezes);
+	x--; gotoxy(x, y); printf("* * * Pizza mais pedida * * *"); y++;
+	gotoxy(x, y); printf("%s - %d pedido(s)", auxPizza.descricao, vezes);
 
 	getch();
-
 	fclose(ptr);
 	fclose(ptrPizza);
 }
@@ -1251,9 +1234,11 @@ void pizzaMenosPedida(void) {
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb+");
 
 	int pos, TL;
+	int x = 30, y = 10;
 
-		if (ptr == NULL || ptrPizza == NULL) {
-        printf("Erro ao abrir os arquivos.\n");
+	limparquadro();
+	if (ptr == NULL || ptrPizza == NULL) {
+        gotoxy(x, y); printf("Erro ao abrir os arquivos.");
         if (ptr != NULL) fclose(ptr);
         if (ptrPizza != NULL) fclose(ptrPizza);
         return;
@@ -1309,10 +1294,10 @@ void pizzaMenosPedida(void) {
 	fseek(ptrPizza, pos, 0);
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
-	printf("\nPizza menos pedida: %s - %d pedido(s)", auxPizza.descricao, vezes);	
+	x--; gotoxy(x, y); printf("* * * Pizza menos pedida * * *"); y++;
+	gotoxy(x, y); printf("%s - %d pedido(s)", auxPizza.descricao, vezes);
 
 	getch();
-
 	fclose(ptr);
 	fclose(ptrPizza);
 }
@@ -1331,6 +1316,7 @@ void exclusaoLogicaPedido(void){
 		gotoxy(l, c);
 		printf("ERRO de abertura");
 	}else{
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Digite o NUMERO DO PEDIDO que deseja excluir:");
 		c++;
@@ -1398,10 +1384,10 @@ void exclusaoLogicaPedido(void){
 				gotoxy(l, c);
 				printf("Exclusao nao realizada");
 			}
+			getch();
 		}
 		
 		fclose(ptr);
-		getch();
 		clrscr();
 	}
 }
@@ -1435,6 +1421,7 @@ void exclusaoLogicaPizza(void){
 		gotoxy(l, c);
 		printf("ERRO de abertura");
 	}else{
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Digite o CODIGO DA PIZZA que deseja excluir:");
 		c++;
@@ -1572,9 +1559,9 @@ void exclusaoLogicaMotoqueiro(void){
 				fread(&aux,sizeof(TpMotoqueiro), 1, ptr);
 				fseek(ptr, flag, 0);	
 
-				l = 30, c =10;
+				l = 22, c =10;
 				limparquadro();
-				gotoxy(l, c);
+				gotoxy(30, c);
 				printf("---> Dados do MOTOQUEIRO <---");
 				c++;
 				gotoxy(l, c);
@@ -1610,8 +1597,8 @@ void exclusaoLogicaMotoqueiro(void){
 				}
 			}			
 		} else {
-			gotoxy(l, c);
-			printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
+			gotoxy(12, c);
+			printf("Motoqueiro cadastrado com pedido ativo! Exclusao nao realizada");
 		}
 
 		fclose(ptr);
@@ -1742,6 +1729,7 @@ void relatorioCliente(void) {
 	FILE *ptrpizza = fopen("Pizzas.dat", "rb+");
 
 	int pos, count = 0, tamanhoPedidos, flag, countLista = 0;
+	int x, y;
 	float valor, total = 0;
 	char telAtual[20];
 
@@ -1756,9 +1744,12 @@ void relatorioCliente(void) {
 	//Imprimir e repetir
 
 	if (ptrcliente == NULL || ptrpedido == NULL || ptrpizza == NULL) {
-		printf("ERRO de abertura\n");
+		limparquadro();
+		gotoxy(x, y); printf("ERRO de abertura\n");
 	} else {
 		while (count < tamanhoPedidos) {
+			limparquadro();
+
 			total = 0, flag = 0;
 			//Pegar numero de um cliente
 			fseek(ptrpedido, 0, 0);
@@ -1789,12 +1780,13 @@ void relatorioCliente(void) {
 			}
 
 			//Informaçoes
-			printf("\nTELEFONE: %s\n", telAtual);
+			x = 30, y = 10;
+			gotoxy(x, y); printf("TELEFONE: %s", telAtual); y++;
 			pos = buscaSentinelaTelefone(ptrcliente, telAtual);
 			fseek(ptrcliente, pos, 0);
 			fread(&aux2, sizeof(TpCliente), 1, ptrcliente);
-			printf("NOME: %s\n", aux2.nome);
-			printf("Pizzas pedidas: \n");
+			gotoxy(x, y); printf("NOME: %s", aux2.nome); y++;
+			gotoxy(x, y); printf("Pizzas pedidas: "); y++;
 			
 			//Buscar detalhes do pedido
 			fseek(ptrpedido, 0, 0);
@@ -1813,16 +1805,16 @@ void relatorioCliente(void) {
 					pos = buscaBinariaCodigo(ptrpizza, aux.codigo);
 					fseek(ptrpizza, pos, 0);
 					fread(&aux3, sizeof(TpPizza), 1, ptrpizza);
-					printf("1x %s - R$ %.2f\n", aux3.descricao, valor);
+					gotoxy(x, y); printf("1x %s - R$ %.2f", aux3.descricao, valor); y++;
 				}
 				
 				fread(&aux, sizeof(TpPedido), 1, ptrpedido);
 			}
 
-			printf("Total gasto = R$ %.2f\n\n", total);			
+			gotoxy(x, y); printf("Total gasto = R$ %.2f\n\n", total); y++;
+			gotoxy(49, 22); printf("ENTER para proxima pagina");
+			getch();		
 		}
-
-		getch();
 
 		fclose(ptrcliente);
 		fclose(ptrpedido);
@@ -2129,12 +2121,13 @@ void filtrarLetra(void) {
 	fread(&aux, sizeof(TpCliente), 1, ptr);
 
 	if (ptr == NULL) {
-		printf("\nErro de abertura!");
+		limparquadro();
+		gotoxy(30, 10); printf("Erro de abertura!");
 	} else {
-		printf("\nDigite a inicial que quer filtrar o nome dos clientes: \n");
+		limparquadro();
+		gotoxy(15, 10); printf("Digite a inicial que quer filtrar o nome dos clientes: ");
 		fflush(stdin);
-		letra = getch();
-
+		letra = getche();
 
 		//Passar letra por parametro pois é o que pede no PDF
 		exibirFiltro(ptr, letra);
@@ -2156,11 +2149,11 @@ void exibirFiltro(FILE *ptr, char letra) {
 	while(!feof(ptr)) {
 
 		if (tolower(aux.nome[0]) == tolower(letra)) {
-			if (cont == 0);
-				printf("\n###Clientes que comecam com %c ###\n", toupper(letra));
+			gotoxy(25, 11); printf("###Clientes que comecam com %c ###", toupper(letra));
+			gotoxy(25, 12); printf("Nome: %s", aux.nome);
 
-			printf("Nome: %s\n", aux.nome);
-
+			gotoxy(49, 22); printf("ENTER para proxima pagina");
+			getch();
 			cont++;
 		}
 
@@ -2168,7 +2161,7 @@ void exibirFiltro(FILE *ptr, char letra) {
 	}
 
 	if (cont == 0) {
-		printf("Nao existem clientes com essa inicial");
+		gotoxy(23, 11); printf("Nao existem clientes com essa inicial");
 	}
 	
 }
@@ -2177,6 +2170,7 @@ void estadoPizza(void) {
 	TpPedido aux;
 	TpPizza auxPizza;
 	int cont, flag;
+	int x, y;
 	FILE *ptr = fopen("Pedidos.dat", "rb");
 	FILE *ptrPizza = fopen("Pizzas.dat", "rb");
 
@@ -2184,25 +2178,28 @@ void estadoPizza(void) {
 	fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
 	if (ptr == NULL || ptrPizza == NULL) {
-		printf("Erro de abertura!");
+		gotoxy(30, 10); printf("Erro de abertura!");
 	} else {
 		cont = 0;
 		while (!feof(ptr)) {
 			
 			if (strcmp(aux.situacao, "Em preparacao") == 0) {
-				if (cont == 0)
-					printf("\n###Pizzas em preparacao###");
+				limparquadro();
+				x = 29, y = 10;
+				gotoxy(x, y); printf("###Pizzas em preparacao###"); y++;
 
 				flag = buscaBinariaCodigo(ptrPizza, aux.codigo);
 				fseek(ptrPizza, flag, 0);
 				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
-				printf("\nNumero do pedido: %d\n", aux.numero);
+				gotoxy(x, y); printf("Numero do pedido: %d", aux.numero); y++;
 				//printf("Codigo da pizza: %d\n", aux.codigo);
-				printf("Descricao: %s\n", auxPizza.descricao);
-				printf("Descricao da pizza: %s\n", aux.situacao);
-				printf("Valor: %.2f\n", auxPizza.valor);
-
+				gotoxy(x, y); printf("Descricao: %s", auxPizza.descricao); y++;
+				gotoxy(x, y); printf("Descricao da pizza: %s", aux.situacao); y++;
+				gotoxy(x, y); printf("Valor: %.2f", auxPizza.valor); y++;
+				
+				gotoxy(49, 22); printf("ENTER para proxima pagina");
+				getch();
 				cont++;
 			}
 
@@ -2210,28 +2207,35 @@ void estadoPizza(void) {
 		}
 
 		if (cont == 0) {
-			printf("\nNenhuma Pizza em Andamento");
+			gotoxy(30, 10); printf("Nenhuma Pizza em Andamento");
 		}
+		
+		limparquadro();
 
 		fseek(ptr, 0, 0); //Volta ptr de pedidos pra fazer mais um loop
 		fread(&aux, sizeof(TpPedido), 1, ptr); 
 		cont = 0;
 		while (!feof(ptr)) {
-			
-			if (strcmp(aux.situacao, "Em rota de entrega") == 0) {
-				if (cont == 0)
-					printf("\n###Pizzas em rota###");
+			x = 29, y = 10;
+			gotoxy(x, y); printf("###Pizzas em rota###");
 
+			if (strcmp(aux.situacao, "Em rota de entrega") == 0) {
+				limparquadro();
+				x = 29, y = 10;
+				gotoxy(x, y); printf("###Pizzas em rota###"); y++;
+					
 				flag = buscaBinariaCodigo(ptrPizza, aux.codigo);
 				fseek(ptrPizza, flag, 0);
 				fread(&auxPizza, sizeof(TpPizza), 1, ptrPizza);
 
-				printf("\nNumero do pedido: %d\n", aux.numero);
+				gotoxy(x, y); printf("Numero do pedido: %d", aux.numero); y++;
 				//printf("Codigo da pizza: %d\n", aux.codigo);
-				printf("Descricao: %s\n", auxPizza.descricao);
-				printf("Descricao da pizza: %s\n", aux.situacao);
-				printf("Valor: %.2f\n", auxPizza.valor);
+				gotoxy(x, y); printf("Descricao: %s", auxPizza.descricao); y++;
+				gotoxy(x, y); printf("Descricao da pizza: %s", aux.situacao); y++;
+				gotoxy(x, y); printf("Valor: %.2f", auxPizza.valor); y++;
 
+				gotoxy(49, 22); printf("ENTER para proxima pagina");
+				getch();
 				cont++;
 			}
 
@@ -2239,7 +2243,7 @@ void estadoPizza(void) {
 		}
 
 		if (cont == 0) {
-			printf("\nNenhuma Pizza em rota de entrega");
+			gotoxy(30, 11); printf("Nenhuma Pizza em rota de entrega");
 		}
 
 		fclose(ptr);
@@ -2250,7 +2254,6 @@ void estadoPizza(void) {
 }
 
 void exclusaoFisicaPedido(void){
-	clrscr();
 	TpPedido aux;
 	int flag, auxnum;
 	int l = 16, c = 10;
@@ -2258,12 +2261,12 @@ void exclusaoFisicaPedido(void){
 	FILE *ptr = fopen("Pedidos.dat", "rb");
 	
 	limparquadro();
-	moldeCadastrar();
 
 	if(ptr == NULL){
 		gotoxy(l, c);
 		printf("ERRO de abertura");
 	}else{
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Digite o NUMERO do pedido que deseja excluir:");
 		c++;
@@ -2342,9 +2345,10 @@ void exclusaoFisicaPedido(void){
 				c++;
 				fclose(ptr);
 			}
+			getch();
 		}
+
 		fclose(ptr);
-		getch();
 		clrscr();	
 	}
 }
@@ -2532,9 +2536,9 @@ void exclusaoFisicaMotoqueiro(void){
 				fseek(ptr, flag, 0); //vai para a pos encontrada
 				fread(&aux, sizeof(TpMotoqueiro), 1, ptr);
 				
-				l = 30, c = 10;	
+				l = 22, c = 10;	
 				limparquadro();
-				gotoxy(l, c);
+				gotoxy(30, c);
 				printf("---> Dados do MOTOQUEIRO <---");
 				c++;
 				gotoxy(l, c);
@@ -2573,7 +2577,7 @@ void exclusaoFisicaMotoqueiro(void){
 						remove("Motoqueiros.dat");
 						rename("novo.dat", "Motoqueiros.dat");
 						gotoxy(l, c);
-						printf("\nExclusao realizada com sucesso!");
+						printf("Exclusao realizada com sucesso!");
 
 				} else{
 					gotoxy(l, c);
@@ -2583,7 +2587,7 @@ void exclusaoFisicaMotoqueiro(void){
 				}
 			}			
 		} else {
-			gotoxy(l, c);
+			gotoxy(12, c);
 			printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
 		}
 	
@@ -2593,8 +2597,7 @@ void exclusaoFisicaMotoqueiro(void){
 	}
 }
 
-void exclusaoFisicaPizza(void){
-	clrscr();
+void exclusaoFisicaPizza(void) {
 	TpPizza aux;
 	int flag, auxcod;
 	int l = 16, c = 10;
@@ -2602,12 +2605,12 @@ void exclusaoFisicaPizza(void){
 	FILE *ptr = fopen("Pizzas.dat", "rb");
 	
 	limparquadro();
-	cadastrarCliente();
 
-	if(ptr == NULL){
+	if (ptr == NULL) {
 		gotoxy(l, c);
 		printf("ERRO de abertura");
-	}else{
+	} else {
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Digite o CODIGO DA PIZZA que deseja excluir:");
 		c++;
@@ -2954,10 +2957,11 @@ void alterarPizza(void){
 	
 	moldeCadastrar();
 
-	if(ptr == NULL){
+	if (ptr == NULL) {
 		gotoxy(l, c);
 		printf("ERRO de abertura");
-	}else{
+	} else {
+		gotoxy(57, 22); printf("Digite 0 para sair");
 		gotoxy(l, c);
 		printf("Insira o CODIGO da Pizza que desja ALTERAR:");
 		c++;
@@ -3615,6 +3619,7 @@ void cadastrarPedido(void){
 	
 	moldeMenuCadastro();
 	limparquadro();
+	gotoxy(57, 22); printf("Digite 0 para sair");
 	gotoxy(l, c);
 	printf("Insira o NUMERO do Pedido:");
 	c++;
@@ -3771,6 +3776,7 @@ void cadastrarPizza(void) {
 	
 	moldeCadastrar();
 	limparquadro();
+	gotoxy(57, 22); printf("Digite 0 para sair");
 	gotoxy(l,c);
 	printf("Insira o CODIGO da Pizza:");
 	c++;
