@@ -88,6 +88,8 @@ void selecaoDiretaPizza(void);
 //void ordenacaoExaustivaCliente(void);
 //void ordenacaoExaustivaPizza(void);
 //void ordenacaoExaustivaPedido(void);
+//Auxiliar de Ordenação
+void primeiroNome(char *str, char *primeiroNome);
 
 //Relatorios
 void qtdEntregas();
@@ -232,6 +234,7 @@ int main(void){
 								exclusaoFisicaPedido();
 								break;
 						}
+					break;
 								
 					case '2':
 						op = menuExcl();
@@ -253,6 +256,7 @@ int main(void){
 								exclusaoLogicaPedido();
 								break;		
 						}
+					break;
 				}
 
 			break;
@@ -436,13 +440,12 @@ void pizzaMaisConsumida(void) {
 			gotoxy(25, 10); printf("Cliente que mais pediu %s:", aux.descricao);
 			gotoxy(25, 11); printf("%s - %d pedido(s)", auxCliente.nome, vezes);
 		}
-		
+		getch();
 	}
 	
 	fclose(ptr);
 	fclose(ptrPedido);
 	fclose(ptrCliente);
-	getch();
 }
 
 void moldura(int colunai, int linhai, int colunaf, int linhaf, int frente, int fundo){
@@ -1937,6 +1940,7 @@ void insercaoDiretaCliente(void) {
 	FILE *ptr = fopen("Clientes.dat", "rb+");
 
 	int quantidade;
+	char primeiroNome1[50], primeiroNome2[50];
 
 	fseek(ptr, 0, 2);
 	quantidade = ftell(ptr) / sizeof(TpCliente);
@@ -1946,14 +1950,16 @@ void insercaoDiretaCliente(void) {
 	int qtdA = quantidade - 1;
 	fseek(ptr, qtdA * sizeof(TpCliente), 0);
 	fread(&A, sizeof(TpCliente), 1, ptr);
+	primeiroNome(A.nome, primeiroNome1);
 	//printf("\nUltimo registro: %s\n", A.nome);
 	
 	int qtdB = qtdA - 1;
 	fseek(ptr, qtdB * sizeof(TpCliente), 0);
 	fread(&B, sizeof(TpCliente), 1, ptr);
+	primeiroNome(B.nome, primeiroNome2);
 	//printf("Penultimo registro: %s\n", B.nome);
 
-	while(qtdB >= 0 && stricmp(A.nome, B.nome) < 0) {
+	while(qtdB >= 0 && stricmp(primeiroNome1, primeiroNome2) < 0) {
 		//aux = B;
 		fseek(ptr, qtdB * sizeof(TpCliente), 0); //Foi para penultima posição
 		fwrite(&A, sizeof(TpCliente), 1, ptr); //coloca o conteudo da ultima na penultima
@@ -1973,6 +1979,19 @@ void insercaoDiretaCliente(void) {
 	}
 
 	fclose(ptr);
+}
+
+void primeiroNome(char *str, char *primeiroNome) {
+    int i = 0;
+
+    // Copia os caracteres enquanto não encontrar um espaço ou o final da string
+    while (str[i] != ' ' && str[i] != '\0') {
+        primeiroNome[i] = str[i];
+        i++;
+    }
+
+    // Adiciona o caractere nulo no final da string copiada
+    primeiroNome[i] = '\0';
 }
 
 void ordenacaoExaustivaCliente(void){
@@ -2246,11 +2265,11 @@ void estadoPizza(void) {
 			gotoxy(29, 11); printf("Nenhuma Pizza em rota de entrega");
 		}
 
+		getch();
 		fclose(ptr);
 		fclose(ptrPizza);
 	}
 
-	getch();
 }
 
 void exclusaoFisicaPedido(void){
@@ -3279,10 +3298,9 @@ void alterarMotoqueiro(void){
 				printf("Alteracao de dados CANCELADA");
 			}	
 			fwrite(&aux, sizeof(TpMotoqueiro), 1, ptr);
-
+			getch();
 		}
 		
-		getch();
 		fclose(ptr);
 		clrscr();	
 	}
@@ -3473,10 +3491,9 @@ void alterarCliente(void){
 				printf("Alteracao de dados CANCELADA");
 			}	
 			fwrite(&aux, sizeof(TpCliente), 1, ptr);
-			
+			getch();
 		}
 		
-		getch();
 		fclose(ptr);
 		clrscr();
 	}
@@ -4165,11 +4182,11 @@ void exibirCliente(void) {
 			}
 			fread(&aux, sizeof(TpCliente), 1, ptrarquivo);
 		}
-		
+
+		getch();
 		fclose(ptrarquivo);
 	}
 	
-	getch();
 	clrscr();
 }
 
@@ -4216,11 +4233,10 @@ void exibirMotoqueiro(void) {
 			}
 			fread(&aux, sizeof(TpMotoqueiro), 1, ptrarquivo);
 		}
-		
+		getch();
 		fclose(ptrarquivo);
 	}
 	
-	getch();
 	clrscr();
 }
 
@@ -4261,11 +4277,10 @@ void exibirPizza(void) {
 			}
 			fread(&aux, sizeof(TpPizza), 1, ptrarquivo);
 		}
-		
+		getch();
 		fclose(ptrarquivo);
 	}
 	
-	getch();
 	clrscr();
 }
 
@@ -4315,11 +4330,10 @@ void exibirPedidos(void){
 			}
 			fread(&aux, sizeof(TpPedido), 1, ptrarquivo);
 		}
-		
+		getch();
 		fclose(ptrarquivo);
 	}
 	
-	getch();
 	clrscr();
 }
 
