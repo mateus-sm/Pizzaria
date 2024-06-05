@@ -586,12 +586,11 @@ void moldeMenuRelatorio(void) {
 	moldura(34,10,51,14,13,14); //ITEM 2 
 	moldura(57,10,73,14,13,14); //ITEM 3 
 
-	moldura(12,17,28,21,13,14); //ITEM 4 
-	moldura(34,17,51,21,13,14); //ITEM 5 
-	moldura(57,17,73,21,13,14); //ITEM 6 
+	moldura(21,17,37,21,13,14); //ITEM 4 
+	moldura(48,17,64,21,13,14); //ITEM 5  
 
 	gotoxy(33, 7); 
-	printf("* * * PIZZARIA * * *");
+	printf("* * * RELATORIO * * *");
 }
 
 void moldeMenuEstatisticas(void) {
@@ -609,7 +608,7 @@ void moldeMenuEstatisticas(void) {
 	moldura(57,17,73,21,17,18); //ITEM 6 
 
 	gotoxy(33, 7); 
-	printf("* * * PIZZARIA * * *");
+	printf("* * * ESTATISTICA * * *");
 }
 
 int pizzasPorDia(FILE *ptr, char cpf[30], int dia, int mes, int ano){
@@ -1487,14 +1486,17 @@ void exclusaoLogicaPizza(void){
 					printf("Exclusao nao realizada");
 					c++;
 				}
+				getch();
 			}			
 		} else {
-			gotoxy(l, c);
-			printf("Pizza cadastrada com pedido ativo!Exclusao nao realizada");
+			if (cod != 0) {
+				gotoxy(l, c);
+				printf("Pizza cadastrada com pedido ativo!Exclusao nao realizada");
+				getch();
+			}
 		}
 		
 		fclose(ptr);
-		getch();
 		clrscr();
 	}
 }
@@ -1598,14 +1600,17 @@ void exclusaoLogicaMotoqueiro(void){
 					printf("Exclusao nao realizada");
 					c++;
 				}
+				getch();
 			}			
 		} else {
-			gotoxy(12, c);
-			printf("Motoqueiro cadastrado com pedido ativo! Exclusao nao realizada");
+			if (strlen(cpf) > 0) {
+				gotoxy(12, c);
+				printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
+				getch();
+			}
 		}
 
 		fclose(ptr);
-		getch();
 		clrscr();
 	}
 }
@@ -1710,14 +1715,17 @@ void exclusaoLogicaCliente(void){
 					printf("Exclusao nao realizada");
 					c++;
 				}
+				getch();
 			}
 		} else {
-			gotoxy(l, c);
-			printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
+			if(strlen(tel) > 0) {
+				gotoxy(l, c);
+				printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
+				getch();
+			}
 		}
 
 		fclose(ptr);
-		getch();
 		clrscr();
 	}
 }
@@ -2415,14 +2423,14 @@ void exclusaoFisicaCliente(void){
 
 	if (ptr == NULL) {
 		gotoxy(l, c);
-		printf("Erro de abertura\n");
+		printf("Erro de abertura");
 	} else {
 
 		fclose(ptr);
 		excluirClienteInativo();
 		FILE *ptr = fopen("Clientes.dat", "rb");
 		gotoxy(l, c);
-		printf("Digite o TELEFONE do cliente que deseja excluir: \n");
+		printf("Digite o TELEFONE do cliente que deseja excluir: ");
 		c++;
 		fflush(stdin);
 		gotoxy(l, c);
@@ -2498,20 +2506,22 @@ void exclusaoFisicaCliente(void){
 					c++;
 					fclose(ptr);
 				}
+				getch();
 			}
 		} else {
-			gotoxy(l, c);
-			printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
+			if (strlen(tel) > 0) {
+				gotoxy(l, c);
+				printf("Cliente cadastrado com pedido ativo!Exclusao nao realizada");
+				getch();				
+			}
 		}
 
 		fclose(ptr);
-		getch();
 		clrscr();		
 	}
 }
 
 void exclusaoFisicaMotoqueiro(void){
-	clrscr();
 	TpMotoqueiro aux;
 	int flag;
 	char cpf[30];
@@ -2604,14 +2614,17 @@ void exclusaoFisicaMotoqueiro(void){
 					c++;
 					fclose(ptr);
 				}
-			}			
+				getch();
+			}
 		} else {
-			gotoxy(12, c);
-			printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
+			if (strlen(cpf) > 0) {
+				gotoxy(12, c);
+				printf("Motoqueiro cadastrado com pedido ativo!Exclusao nao realizada");
+				getch();
+			} 
 		}
 	
 		fclose(ptr);
-		getch();
 		clrscr();	
 	}
 }
@@ -2702,14 +2715,15 @@ void exclusaoFisicaPizza(void) {
 					c++;
 					fclose(ptr);
 				}
-			}			
+				getch();
+			}
 		} else {
 			gotoxy(l, c);
 			printf("Pizza cadastrada com pedido ativo!Exclusao nao realizada");
+			getch();
 		}
 		
 		fclose(ptr);
-		getch();
 		clrscr();	
 	}
 }
@@ -4367,24 +4381,24 @@ char menu(void) {
 char menuNum(void) {
 	clrscr();
 	moldeMenuInicial();
-
+	
 	gotoxy(14,12);
-	printf("[1]Cadastrar");
+	printf("[1] Cadastrar");
 
 	gotoxy(38,12);
-	printf("[2]Exibir");
+	printf("[2] Exibir");
 
 	gotoxy(60,12);
-	printf("[3]Alterar");
+	printf("[3] Alterar");
 
 	gotoxy(15,19);
-	printf("[4]Excluir");
+	printf("[4] Excluir");
 
 	gotoxy(36,19);
-	printf("[5]Relatorios");
+	printf("[5] Relatorio");
 
 	gotoxy(58,19);
-	printf("[6]Estatisticas");
+	printf("[6] Estatistica");
 	gotoxy(76,23);
 
 	return getch();
@@ -4395,16 +4409,16 @@ char menuCad(void) {
 	moldeMenuCadastro();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES");
+	printf("[1] CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS");
+	printf("[2] MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS");
+	printf("[3] PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS");
+	printf("[4] PEDIDOS");
 	gotoxy(76,23);
 
 	return getch();
@@ -4415,16 +4429,16 @@ char menuExib(void) {
 	moldeMenuExibir();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES");
+	printf("[1] CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS");
+	printf("[2] MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS");
+	printf("[3] PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS");
+	printf("[4] PEDIDOS");
 	gotoxy(76,23);
 
 	return getch();
@@ -4435,16 +4449,16 @@ char menuAlt(void) {
 	moldeMenuAlterar();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES");
+	printf("[1] CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS");
+	printf("[2] MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS");
+	printf("[3] PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS");
+	printf("[4] PEDIDOS");
 	gotoxy(76,23);
 
 	return getch();
@@ -4469,19 +4483,19 @@ char menuExcl(void) {
 	moldeMenuExcluir();
 	
 	gotoxy(22,12);
-	printf("[1]CLIENTES");
+	printf("[1] CLIENTES");
 
 	gotoxy(51,12);
-	printf("[2]MOTOQUEIROS");
+	printf("[2] MOTOQUEIROS");
 
 	gotoxy(23,19);
-	printf("[3]PIZZAS");
+	printf("[3] PIZZAS");
 	
 	gotoxy(53,19);
-	printf("[4]PEDIDOS");
+	printf("[4] PEDIDOS");
 	gotoxy(76,23);
 
-	return getche();
+	return getch();
 }
 
 char menuRel(void) {
@@ -4500,13 +4514,13 @@ char menuRel(void) {
 	gotoxy(58,12); printf("[3]    de");
 	gotoxy(62,13); printf("Clientes");
 	
-	gotoxy(17,18); printf("Motoqueiro");
-	gotoxy(13,19); printf("[4] com maior");
-	gotoxy(17,20); printf("entrega");
+	gotoxy(26,18); printf("Motoqueiro");
+	gotoxy(22,19); printf("[4] com maior");
+	gotoxy(26,20); printf("entrega");
 
-	gotoxy(41,18); printf("Rank");
-	gotoxy(35,19); printf("[5]    de");
-	gotoxy(40,20); printf("Pizzas");
+	gotoxy(55,18); printf("Rank");
+	gotoxy(49,19); printf("[5]    de");
+	gotoxy(54,20); printf("Pizzas");
 
 	gotoxy(76,23);
 
