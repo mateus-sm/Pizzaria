@@ -3,7 +3,7 @@ Repositório destinado a resolver e documentar o trabalho de ATP2 proposto no Se
 
 # Avaliação:
   Arquivo enviado para avaliação: hash e9c6ff5  
-  Nota:
+  Nota: 10.0
 
 # Pontos principais:
 - Arquivo Binário
