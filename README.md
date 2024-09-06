@@ -18,7 +18,7 @@ Repositório destinado a resolver e documentar o trabalho de ATP2 proposto no Se
   - Bubble Sort  
   - Seleção Direta  
 
-# Como compilar:
+# Como compilar: [Tutorial](https://github.com/mateus-sm/Conio2-VsCode)
 - Compilado com GNU Compiler Collection (32 bit)
 - Requer Conio2.h
 - Argumentos de compilação:  
