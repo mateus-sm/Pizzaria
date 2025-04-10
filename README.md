@@ -22,10 +22,10 @@ Repositório destinado a resolver e documentar o trabalho de ATP2 proposto no Se
 - Compilado com GNU Compiler Collection (32 bit)
 - Requer Conio2.h
 - Argumentos de compilação:  
-  g++ Pizzaria.cpp -o Pizzaria  
+  gcc Pizzaria.cpp -o Pizzaria  
   -I"C:\ ... \MinGW64\x86_64-w64-mingw32\include"  
   -L"C:\ ... \MinGW64\x86_64-w64-mingw32\lib32"  
-  -static-libgcc -lconio -m32
+  -std=c99 -static-libgcc -lconio -m32
 
 # Autores:
   Kaiky Trevisan  
